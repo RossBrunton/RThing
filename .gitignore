@@ -1,0 +1,14 @@
+/include
+/lib_pypy
+/lib-python
+/lib
+/lib64
+/local
+/bin
+/db.sqlite3
+*.pyc
+__pycache__
+*~
+/site-packages
+/db.cnf
+/bmat/settings.py
