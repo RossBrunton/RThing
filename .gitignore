@@ -11,4 +11,4 @@ __pycache__
 *~
 /site-packages
 /db.cnf
-/bmat/settings.py
+/rthing/settings.py

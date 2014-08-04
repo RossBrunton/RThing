@@ -1,0 +1,7 @@
+[client]
+# Fill this in yourself!
+database = 
+user = 
+host = 
+password = 
+default-character-set = utf8
