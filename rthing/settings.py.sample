@@ -8,9 +8,17 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.6/ref/settings/
 """
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import sys
+
+# Get base dir, you don't need to change this
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
+#####
+#####
+# Change the following
+#####
+#####
 
 # Generate using http://www.miniwebtool.com/django-secret-key-generator/
 SECRET_KEY = ''
@@ -25,7 +33,9 @@ ALLOWED_HOSTS = []
 TEST_SQLITE = True
 
 #####
+#####
 # You probably don't want to change anything below this line
+#####
 #####
 
 TEMPLATE_DEBUG = DEBUG
@@ -38,6 +48,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rthing',
     'courses',
     'tasks',
     'stats',
@@ -60,7 +71,6 @@ WSGI_APPLICATION = 'rthing.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-
 if "test" in sys.argv and TEST_SQLITE:
     DATABASES = {
         'default': {
@@ -76,16 +86,20 @@ else:
         }
     }
 
+
 # Internationalization (not in use)
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
-
 LANGUAGE_CODE = 'en-gb'
 TIME_ZONE = 'UTC'
 USE_I18N = False
 USE_L10N = False
 USE_TZ = False
 
-
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.6/howto/static-files/
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static")
+]
+TEMPLATE_DIRS = [
+    os.path.join(BASE_DIR, "templates")
+]

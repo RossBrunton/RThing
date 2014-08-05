@@ -1,0 +1,16 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>{% block title %}No title given{% endblock %}</title>
+        <script src='{% static "scripts.js" %}'></script>
+        <link rel='stylesheet' type='text/css' href='{% static "styles.css" %}'/>
+    </head>
+    
+    <body>
+        {% block content %}
+        This document defines no content.
+        {% endblock %}
+    </body>
+</html>
