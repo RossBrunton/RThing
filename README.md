@@ -3,9 +3,11 @@
 ### Requirements ###
 This application runs on Python 3.3 or greater, so that is required, as is virtualenv to install dependancies.
 
-A database is also required; by default mysql is used, but this can be changed in the settings file to anything Django supports (PostgreSQL, Sqlite or Oracle), but you'll need to set it up yourself.
+A database is also required; by default mysql is used, but this can be changed in the settings file to anything Django
+supports (PostgreSQL, Sqlite or Oracle), but you'll need to set it up yourself.
 
-When using mysql, you need to install the development libraries for python3 and mysql (python3-dev and libmysqlclient-dev possibly) for the python package "mysqlclient".
+When using mysql, you need to install the development libraries for python3 and mysql (python3-dev and
+libmysqlclient-dev possibly) for the python package "mysqlclient".
 
 ### Installation ###
 Copy the files over to where they will live; you can use any location:
