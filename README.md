@@ -20,7 +20,7 @@ Set up a virtualenv:
 > source bin/activate
 
 Install packages:
-> pip install django
+> pip install django django-ordered-models
 > pip install mysqlclient #mysql only
 
 Set up settings:
