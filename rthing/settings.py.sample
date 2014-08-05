@@ -21,7 +21,8 @@ DEBUG = False
 # A list of the allowed hosts this can run on
 ALLOWED_HOSTS = []
 
-
+# Set this to true if tests should use a sqlite database file rather than connecting to the server
+TEST_SQLITE = True
 
 #####
 # You probably don't want to change anything below this line
@@ -60,12 +61,20 @@ WSGI_APPLICATION = 'rthing.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'OPTIONS': {'read_default_file':os.path.join(BASE_DIR, 'db.cnf')},
+if "test" in sys.argv and TEST_SQLITE:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': 'testingdb.sqlite',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {'read_default_file':os.path.join(BASE_DIR, 'db.cnf')},
+        }
+    }
 
 # Internationalization (not in use)
 # https://docs.djangoproject.com/en/1.6/topics/i18n/

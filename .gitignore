@@ -5,7 +5,7 @@
 /lib64
 /local
 /bin
-/db.sqlite3
+/testingdb.sqlite3
 *.pyc
 __pycache__
 *~
