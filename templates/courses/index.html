@@ -3,5 +3,7 @@
 {% block title %}Hello World!{% endblock %}
 
 {% block content %}
-<div>Hiya!</div>
+{% for c in courses %}
+    {{ c }}
+{% endfor %}
 {% endblock %}

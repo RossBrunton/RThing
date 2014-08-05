@@ -18,19 +18,41 @@ def _autoslug(c):
 
 @_autoslug
 class Course(models.Model):
+    class Meta:
+        permissions = (
+            ("read_all", "Can see all courses"),
+        )
+    
     title = models.CharField(max_length=30)
-    slug = models.SlugField()
+    slug = models.SlugField(blank=True)
     code = models.CharField(max_length=10, blank=True)
     description = models.TextField()
     published = models.BooleanField(default=False)
-    users = models.ManyToManyField(User)
+    users = models.ManyToManyField(User, blank=True)
     
     def __str__(self):
         return "{}: {}".format(self.code, self.title)
+    
+    def can_see(self, user):
+        """Can the given user see this course"""
+        if user.has_perm("courses.read_all"): return True
+        return self.users.filter(pk=user.pk).exists() and self.published
+    
+    @staticmethod
+    def get_courses(user):
+        """Get a list of all courses that the user can see"""
+        if user.has_perm("courses.read_all"): return Course.objects.all()
+        
+        return Course.objects.filter(published=True, users__pk=user.pk)
 
 
 @_autoslug
 class Lesson(OrderedModel):
+    class Meta:
+        permissions = (
+            ("read_all_lesson", "Can see all lessons"),
+        )
+    
     title = models.CharField(max_length=30)
     slug = models.SlugField()
     introduction = models.TextField()
