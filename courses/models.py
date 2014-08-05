@@ -74,6 +74,7 @@ class Task(OrderedModel):
     
     uses_random = models.BooleanField(default=False)
     uses_image = models.BooleanField(default=False)
+    answer_exists = models.BooleanField(default=False)
     
     section = models.ForeignKey(Section)
     order_with_respect_to = "section"
