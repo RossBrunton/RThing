@@ -1,1 +1,107 @@
+/* Document */
+html {
+    height:100%;
+}
 
+body {
+    margin:0px;
+    background-color:#eeeeee;
+    height:100%
+}
+
+
+/* Sidebar and general layout */
+.container {
+    display:-ms-flexbox;
+    display:flex;
+    height:100%;
+    position:fixed;
+    width:100%
+}
+
+.sidebar {
+    width:300px;
+    background-color:#5555ee;
+    border-right:3px solid #333399;
+    color:#eeeeee;
+    padding:3px;
+    display:-ms-flexbox;
+    display:flex;
+    -ms-flex-direction:column;
+    flex-direction:column;
+    height:100%;
+}
+
+.ie10 .sidebar {
+    overflow-y:auto;
+}
+
+.sidebar hr {
+    border:1px solid #6666ff;
+}
+
+.sidebar .location {
+    font-size:120%;
+    -ms-flex:0 0 auto;
+    flex:0 0 auto;
+    
+    padding:5px;
+}
+
+.sidebar-contents {
+    overflow-y:auto;
+}
+
+.logout-form {
+    -ms-flex:0 0 auto;
+    flex:0 0 auto;
+    padding:5px;
+}
+
+.expand-img {
+    position: fixed;
+    left: 284px;
+    top: 8px;
+}
+
+.content {
+    padding:10px;
+    overflow-y:auto;
+    -ms-flex:1 1 auto;
+    flex:1 1 auto;
+}
+
+.content > div, .content > a > div {
+    margin:5px;
+}
+
+/* Course list */
+.course-block {
+    display:-ms-flexbox;
+    display:flex;
+    padding: 5px;
+    background-color: #5555ee;
+    border: 1px solid #3333cc;
+    color: #eeeeee;
+    border-radius: 3px;
+    background: linear-gradient(#5555ee, #3333cc);
+}
+
+.course-block.unpublished {
+    background-color: #8855ee;
+    border: 1px solid #6633cc;
+    background: linear-gradient(#8855ee, #6633cc);
+}
+
+
+/* Utility */
+.stretch {
+    -ms-flex:1 1 auto;
+    flex:1 1 auto;
+}
+
+
+/* Links */
+a {
+    text-decoration:none;
+}

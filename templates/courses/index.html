@@ -1,9 +1,20 @@
-{% extends "base.html" %}
+{% extends "base_sidebar.html" %}
 
-{% block title %}Hello World!{% endblock %}
+{% block title %}Courses{% endblock %}
 
-{% block content %}
+{% block body %}
+<div>
+    Hello student! These are the courses you are currently enrolled in!
+</div>
 {% for c in courses %}
-    {{ c }}
+    <a href='{% url "courses:course" course=c.slug %}'>
+    <div class='course-block {% if not c.published %}unpublished{% endif %}' >
+        <div class='title'>{{ c.title }}</div>
+        <div class='stretch'></div>
+        <div class='code'>{% if not c.published %}Unpublished - {% endif %}{{ c.code }}</div>
+    </div>
+    </a>
 {% endfor %}
 {% endblock %}
+
+{% block location %}Courses{% endblock %}
