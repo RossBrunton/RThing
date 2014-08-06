@@ -6,6 +6,9 @@
 <div>
     Hello student! These are the courses you are currently enrolled in!
 </div>
+<div>
+    This is another paragraph!
+</div>
 {% for c in courses %}
     <a href='{% url "courses:course" course=c.slug %}'>
     <div class='course-block {% if not c.published %}unpublished{% endif %}' >

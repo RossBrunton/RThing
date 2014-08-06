@@ -8,6 +8,12 @@
         <script src='{% static "scripts.js" %}'></script>
         <link rel='stylesheet' type='text/css' href='{% static "styles.css" %}'/>
         <meta charset='UTF-8'>
+        <script>
+            window.rthingAssets = {
+                "close_menu":"{% static 'icons/close_menu.png' %}",
+                "open_menu":"{% static 'icons/open_menu.png' %}",
+            }
+        </script>
         {% block extra-head %}{% endblock %}
     </head>
     

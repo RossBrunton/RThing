@@ -1,12 +1,18 @@
 /* Document */
 html {
     height:100%;
+    font-family:serif;
 }
 
 body {
     margin:0px;
     background-color:#eeeeee;
     height:100%
+}
+
+ul {
+    margin:0px;
+    padding:0px;
 }
 
 
@@ -20,7 +26,9 @@ body {
 }
 
 .sidebar {
-    width:300px;
+    -ms-flex:0 0 auto;
+    flex:0 0 auto;
+    width:250px;
     background-color:#5555ee;
     border-right:3px solid #333399;
     color:#eeeeee;
@@ -30,6 +38,8 @@ body {
     -ms-flex-direction:column;
     flex-direction:column;
     height:100%;
+    white-space:nowrap;
+    overflow-x:hidden;
 }
 
 .ie10 .sidebar {
@@ -50,6 +60,12 @@ body {
 
 .sidebar-contents {
     overflow-y:auto;
+    padding:5px;
+    overflow-x:hidden;
+}
+
+.sidebar-contents ul {
+    
 }
 
 .logout-form {
@@ -60,8 +76,9 @@ body {
 
 .expand-img {
     position: fixed;
-    left: 284px;
+    left: 234px; /* 250 - 8 (padding) - 8 (half the size of the element */
     top: 8px;
+    cursor:pointer;
 }
 
 .content {
@@ -73,10 +90,20 @@ body {
 
 .content > div, .content > a > div {
     margin:5px;
+    margin-top:10px;
+    margin-bottom:5px;
 }
 
-/* Course list */
-.course-block {
+.no-sidebar-block {
+    margin-left: auto;
+    margin-right: auto;
+    width: 400px;
+    padding:50px;
+    text-align: center;
+}
+
+/* Course/lesson list */
+.course-block, .lesson-block {
     display:-ms-flexbox;
     display:flex;
     padding: 5px;
@@ -85,14 +112,20 @@ body {
     color: #eeeeee;
     border-radius: 3px;
     background: linear-gradient(#5555ee, #3333cc);
+    margin:5px;
 }
 
-.course-block.unpublished {
+.lesson-block.no-answers {
     background-color: #8855ee;
     border: 1px solid #6633cc;
     background: linear-gradient(#8855ee, #6633cc);
 }
 
+.course-block.unpublished, .lesson-block.unpublished {
+    background-color: #ee8855;
+    border: 1px solid #cc6633;
+    background: linear-gradient(#bb5533, #993300);
+}
 
 /* Utility */
 .stretch {
@@ -104,4 +137,5 @@ body {
 /* Links */
 a {
     text-decoration:none;
+    color:inherit;
 }

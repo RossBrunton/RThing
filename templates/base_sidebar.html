@@ -4,7 +4,6 @@
 {% block content %}
 <div class='container'>
     <div class='sidebar'>
-        <img width='16' height='16' src='{% static "icons/close_menu.png" %}' class='expand-img'/>
         <div class='location'>{% block location %}&nbsp;{% endblock %}<hr/></div>
         <div class='sidebar-contents'>{% block sidebar %}&nbsp;{% endblock %}</div>
         <div class='stretch'></div>
@@ -13,6 +12,7 @@
             {% csrf_token %}
             {{ user.username }} - <input type='submit' value='Log Out'/> 
         </form>
+        <img width='16' height='16' src='{% static "icons/close_menu.png" %}' class='expand-img'/>
     </div>
     
     <div class='content'>

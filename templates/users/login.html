@@ -3,10 +3,12 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<div>
+<div class='no-sidebar-block'>
 <form method='POST'>
     {% csrf_token %}
-    {{ form }}
+    <strong>Log In</strong><br/>
+    {{ form.username }}<br/>
+    {{ form.password }}<br/>
     <input type='submit'/>
 </form>
 </div>

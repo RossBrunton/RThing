@@ -1,0 +1,31 @@
+{% extends "base_sidebar.html" %}
+{% load lformat %}
+
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block body %}
+{{ course.description|lformat }}
+
+{% for l in lessons %}
+    <a href='{% url "courses:lesson" course=course.slug lesson=l.slug %}'>
+        <div class='lesson-block{% if not l.published %} unpublished{% endif %}
+            {% if not l.answers_published %} no-answers{% endif %}
+        '>
+            <div class='title'>{{ l.title }}</div>
+        </div>
+    </a>
+{% endfor %}
+
+{{ course.ending|lformat }}
+{% endblock %}
+
+{% block location %}{{ course.title }}{% endblock %}
+
+{% block sidebar %}
+<ul>
+    <li><a href='{% url "courses:index" %}'>Courses</a></li>
+    {% for c in all_courses %}
+        <li> - <a href='{% url "courses:course" course=c.slug %}'>{{ c.title }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}
