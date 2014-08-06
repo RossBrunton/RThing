@@ -11,9 +11,9 @@ def _autoslug(c):
         slug = defaultfilters.slugify(self.title)
         
         # Check if slug already exists
-        if c.objects.filter(slug=slug).exists():
+        if c.objects.filter(slug=slug).exclude(pk=self.pk).exists():
             p = 1
-            while c.objects.filter(slug="{}-{}".format(slug, p)).exists():
+            while c.objects.filter(slug="{}-{}".format(slug, p)).exclude(pk=self.pk).exists():
                 p += 1
             slug = "{}-{}".format(slug, p)
         
@@ -31,11 +31,13 @@ class Course(models.Model):
         permissions = (
             ("read_all", "Can see all courses"),
         )
+        ordering = ["code"]
     
     title = models.CharField(max_length=30, unique=True)
-    slug = models.SlugField(blank=True, max_length=40, unique=True)
+    slug = models.SlugField(blank=True, max_length=35, unique=True)
     code = models.CharField(max_length=10, blank=True)
     description = models.TextField()
+    ending = models.TextField(blank=True)
     published = models.BooleanField(default=False)
     users = models.ManyToManyField(User, blank=True)
     
@@ -63,23 +65,29 @@ class Lesson(OrderedModel):
         )
     
     title = models.CharField(max_length=30, unique=True)
-    slug = models.SlugField(blank=True, max_length=40, unique=True)
+    slug = models.SlugField(blank=True, max_length=35, unique=True)
     introduction = models.TextField()
     closing = models.TextField()
     published = models.BooleanField(default=False)
     answers_published = models.BooleanField(default=False)
     
-    course = models.ForeignKey(Course)
+    course = models.ForeignKey(Course, related_name="lessons")
     order_with_respect_to = "course"
     
     def __str__(self):
         return self.title
+    
+    def can_see(self, user):
+        """Can the given user see this lesson"""
+        if user.has_perm("lesson.read_all_lesson"): return True
+        
+        return self.course.can_see(user) and self.published
 
 
 @_autoslug
 class Section(OrderedModel):
     title = models.CharField(max_length=30, unique=True)
-    slug = models.SlugField(blank=True, max_length=40, unique=True)
+    slug = models.SlugField(blank=True, max_length=35, unique=True)
     introduction = models.TextField()
     closing = models.TextField()
     

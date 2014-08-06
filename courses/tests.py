@@ -37,6 +37,18 @@ class CoursesTestCase(TestCase):
         self.assertNotEqual(c.slug, d.slug)
         self.assertEqual(c.slug, "test-course")
         self.assertEqual(d.slug, "test-course-1")
+        
+        # Saving the model should not change it's slug (there was a bug where it would add another number since the slug
+        # was already taken by itself)
+        c.save()
+        self.assertEqual(c.slug, "test-course")
+        c.save()
+        self.assertEqual(c.slug, "test-course")
+        
+        d.save()
+        self.assertEqual(d.slug, "test-course-1")
+        d.save()
+        self.assertEqual(d.slug, "test-course-1")
     
     
     def test_can_see(self):
@@ -85,6 +97,7 @@ class CoursesTestCase(TestCase):
         # Check to see if having more than one course works
         d = Course(title="Test Course 2")
         d.save()
+
         
         self.assertEqual(len(Course.get_courses(u)), 1)
         self.assertEqual(Course.get_courses(u)[0], c)
