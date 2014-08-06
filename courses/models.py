@@ -8,7 +8,16 @@ from ordered_model.models import OrderedModel
 def _autoslug(c):
     """Given a class, edits its save method to update the slug to the value of the "title" field"""
     def slug(self, *args, **kwargs):
-        self.slug = defaultfilters.slugify(self.title)
+        slug = defaultfilters.slugify(self.title)
+        
+        # Check if slug already exists
+        if c.objects.filter(slug=slug).exists():
+            p = 1
+            while c.objects.filter(slug="{}-{}".format(slug, p)).exists():
+                p += 1
+            slug = "{}-{}".format(slug, p)
+        
+        self.slug = slug
         super(c, self).save()
     
     c.save = slug
@@ -23,8 +32,8 @@ class Course(models.Model):
             ("read_all", "Can see all courses"),
         )
     
-    title = models.CharField(max_length=30)
-    slug = models.SlugField(blank=True)
+    title = models.CharField(max_length=30, unique=True)
+    slug = models.SlugField(blank=True, max_length=40, unique=True)
     code = models.CharField(max_length=10, blank=True)
     description = models.TextField()
     published = models.BooleanField(default=False)
@@ -53,8 +62,8 @@ class Lesson(OrderedModel):
             ("read_all_lesson", "Can see all lessons"),
         )
     
-    title = models.CharField(max_length=30)
-    slug = models.SlugField()
+    title = models.CharField(max_length=30, unique=True)
+    slug = models.SlugField(blank=True, max_length=40, unique=True)
     introduction = models.TextField()
     closing = models.TextField()
     published = models.BooleanField(default=False)
@@ -69,8 +78,8 @@ class Lesson(OrderedModel):
 
 @_autoslug
 class Section(OrderedModel):
-    title = models.CharField(max_length=30)
-    slug = models.SlugField()
+    title = models.CharField(max_length=30, unique=True)
+    slug = models.SlugField(blank=True, max_length=40, unique=True)
     introduction = models.TextField()
     closing = models.TextField()
     

@@ -25,30 +25,41 @@ class CoursesTestCase(TestCase):
         s.title = "Goodbye World!"
         s.save()
         self.assertEqual(s.slug, "goodbye-world")
+
+    def test_autoslug(self):
+        """Is the slug field set correctly"""
+        # Courses...
+        c = Course(title="Hello World!")
+        c.save()
+        self.assertEqual(c.slug, "hello-world")
+        
+        # Lessons...
+        l = Lesson(title="Hello World!", course=c)
+        l.save()
+        self.assertEqual(l.slug, "hello-world")
+        
+        # And sections
+        s = Section(title="Hello World!", lesson=l)
+        s.save()
+        self.assertEqual(s.slug, "hello-world")
+        
+        # And check if changing the value works
+        s.title = "Goodbye World!"
+        s.save()
+        self.assertEqual(s.slug, "goodbye-world")
     
     
-    def test_can_see(self):
-        """Test the can_see function"""
-        u = User.objects.create_user("Mittens", "mittensthekitten@gmail.com", "meow")
+    def test_slug_duplication(self):
+        """Slugs should be unique"""
         c = Course(title="Test Course")
         c.save()
         
-        self.assertFalse(c.can_see(u))
-        c.published = True
-        self.assertFalse(c.can_see(u))
-        c.users.add(u)
-        self.assertTrue(c.can_see(u))
-        c.published = False
-        self.assertFalse(c.can_see(u))
+        d = Course(title="Test Course!")
+        d.save()
         
-        # Check to see if permissions work
-        u.user_permissions.add(Permission.objects.get(codename="read_all").pk)
-        u.save()
-        
-        # Need to get the user again to reflect permission change
-        u = User.objects.get(pk=u.pk)
-        
-        self.assertTrue(c.can_see(u))
+        self.assertNotEqual(c.slug, d.slug)
+        self.assertEqual(c.slug, "test-course")
+        self.assertEqual(d.slug, "test-course-1")
     
     
     def test_get_courses(self):
