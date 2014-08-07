@@ -105,6 +105,10 @@ class Section(OrderedModel):
     
     def __str__(self):
         return self.title
+    
+    def can_see(self, user):
+        """Can the given user see this section"""
+        return self.lesson.can_see(user)
 
 
 class Task(OrderedModel):
@@ -129,6 +133,10 @@ class Task(OrderedModel):
     
     def __str__(self):
         return self.description[:50]
+    
+    def can_see(self, user):
+        """Can the given user see this task"""
+        return self.section.can_see(user)
     
     def iface(self):
         """Returns the iface module that this task uses"""

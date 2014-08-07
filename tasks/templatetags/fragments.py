@@ -12,6 +12,12 @@ def task(task, **kwargs):
     
     return kwargs
 
+@register.inclusion_tag("tasks/prompt_entry.html")
+def prompt_entry(task, **kwargs):
+    kwargs["task"] = task
+    
+    return kwargs
+
 @register.inclusion_tag("tasks/lesson_start.html")
 def lesson_start(lesson, **kwargs):
     kwargs["lesson"] = lesson

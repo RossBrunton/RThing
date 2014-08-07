@@ -3,6 +3,29 @@
 window.rthing = (function() {
     var rthing = {};
     
+    // Loading animation
+    var loadAnimation = [
+        "&nbsp;&nbsp;&nbsp;",
+        ".&nbsp;&nbsp;",
+        "..&nbsp;",
+        "&nbsp;..",
+        "&nbsp;&nbsp;."
+    ];
+    var animationPointer = 0;
+    setInterval(function() {
+        $(".loading").html(loadAnimation[animationPointer]);
+        animationPointer = (animationPointer + 1) % loadAnimation.length;
+    }, 100);
+    
+    // Escapes html, not 100% secure
+    var escape = function(str) {
+        str = str.replace(">", "&gt;");
+        str = str.replace("<", "&lt;");
+        str = str.replace("&", "&amp;");
+        
+        return str;
+    };
+    
     // Compare order values
     // Positive if a > b, negative if a < b, 0 if a == b
     var compareOrder = function(a, b) {
@@ -16,7 +39,7 @@ window.rthing = (function() {
         if(+a[1] > +b[1]) return 1;
         if(+a[1] < +b[1]) return -1;
         return 0;
-    }
+    };
     
     // Check if the first parts are equal; 0-1 = 0-0 = 0 != 1-0
     var firstEqual = function(a, b) {
@@ -49,11 +72,19 @@ window.rthing = (function() {
                 $(".content").append(frag.html);
                 break;
             
+            case "prompt-entry":
+                // At the end of its form
+                $(".fragment[data-type=task][data-id="+frag.id+"] form").append(frag.html);
+                $(".fragment[data-type=task][data-id="+frag.id+"] form textarea:not([disabled])")[0].focus();
+                break;
+            
             case "section-end":
                 // Before any element that has a higher order than it, or lesson-end
                 orderMode = 0;
             case "task":
                 // Before element with higher order, lesson end with same order, or lesson-end
+                // But check that it doesn't exist first
+                if($(".fragment[data-type=task][data-id="+frag.id+"] form").length) break;
             case "section-start":
                 // Before any element that has a higher or equal order than it, or lesson-end
                 var added = false;
@@ -87,7 +118,7 @@ window.rthing = (function() {
         
         // Listener for "enter" on textarea
         $(".prompt textarea").on("keypress", function(e) {
-            if(e.which == 13 /* Enter */ && !e.shiftKey) {
+            if(e.which == 13 /* Enter */ && !e.shiftKey && !$(this).parents("form").data("multiline")) {
                 $(this).parents("form").submit();
                 return false;
             }
@@ -117,11 +148,38 @@ window.rthing = (function() {
         
         // Prompt form submit
         $(".prompt").on("submit", function(e) {
-            $.post($(this).attr("action"), $(this).serialize(), function() {
+            var form = $(this);
+            var formData = form.serialize();
+            formData += "&csrfmiddlewaretoken="+$("#csrf").text();
+            
+            $.post(form.attr("action"), formData, function(data) {
+                // Hide load animation
+                form.children(".loading").remove();
                 
-            });
+                // Show output
+                if(data.isError) {
+                    form.append("<div class='output error'>"+escape(data.output)+"</div>");
+                }else{
+                    form.append("<div class='output'>"+escape(data.output)+"</div>");
+                }
+                
+                // And add frags
+                for(var i = 0; i < data.frags.length; i ++) {
+                    insertFragment(data.frags[i]);
+                }
+            }, "json");
+            animationPointer = 0;
+            form.append("<div class='loading'>&nbsp;</div>");
+            
+            // Lock the output
+            $(this).find("textarea").attr("disabled", "disabled");
             
             return false;
+        });
+        
+        // Clicking the promts will focus them
+        $(".prompt").on("click", function(e) {
+            $(this).find("textarea:not([disabled])")[0].focus();
         });
     };
     

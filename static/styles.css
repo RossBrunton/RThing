@@ -108,7 +108,7 @@ ul {
 }
 
 /* Course/lesson list */
-.course-block, .lesson-block {
+.course-block, .lesson-block, .section-head {
     display:-ms-flexbox;
     display:flex;
     padding: 5px;
@@ -149,9 +149,17 @@ ul {
     color:#ddcc88;
 }
 
-.prompt-indicator {
+.prompt-indicator, .loading {
     color:#999999;
     overflow-y:hidden;
+}
+
+.prompt .output {
+    /* color:#cccccc; */
+}
+
+.prompt .output.error {
+    color:#cc7755;
 }
 
 .prompt-entry-container {
@@ -169,6 +177,7 @@ ul {
     height:17px; /* Why 17? No idea */
     font-size:inherit;
     padding:0px;
+    outline:none;
 }
 
 /* Utility */
