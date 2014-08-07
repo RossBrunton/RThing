@@ -32,6 +32,11 @@ ALLOWED_HOSTS = []
 # Set this to true if tests should use a sqlite database file rather than connecting to the server
 TEST_SQLITE = True
 
+# Languages and their packages
+IFACES = {
+    "dummy":("Dummy Interface", "ifaces.dummy.dummy"),
+}
+
 #####
 #####
 # You probably don't want to change anything below this line
@@ -48,6 +53,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'ordered_model',
     'rthing',
     'courses',
     'tasks',

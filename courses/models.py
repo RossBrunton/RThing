@@ -5,6 +5,10 @@ from django.dispatch import receiver
 from django.template import defaultfilters
 from ordered_model.models import OrderedModel
 
+import importlib
+
+from rthing import settings
+
 def _autoslug(c):
     """Given a class, edits its save method to update the slug to the value of the "title" field"""
     def slug(self, *args, **kwargs):
@@ -24,6 +28,11 @@ def _autoslug(c):
     
     return c
 
+# Types for database choices
+_IFACE_CHOICES = map(lambda k : (k, settings.IFACES[k][0]), settings.IFACES.keys())
+
+# Cache for interface modules
+_iface_cache = {}
 
 @_autoslug
 class Course(models.Model):
@@ -103,7 +112,7 @@ class Task(OrderedModel):
     after_text = models.TextField()
     wrong_text = models.TextField()
     commentary = models.TextField(blank=True)
-    language = models.CharField(max_length=10)
+    language = models.CharField(max_length=10, choices=_IFACE_CHOICES)
     
     hidden_pre_code = models.TextField(blank=True)
     visible_pre_code = models.TextField(blank=True)
@@ -120,3 +129,11 @@ class Task(OrderedModel):
     
     def __str__(self):
         return self.description[:50]
+    
+    def iface(self):
+        """Returns the iface module that this task uses"""
+        if self.language in _iface_cache:
+            return _iface_cache[self.language]
+        
+        _iface_cache[self.language] = importlib.import_module(settings.IFACES[self.language][1])
+        return _iface_cache[self.language]
