@@ -91,7 +91,7 @@ class Section(OrderedModel):
     introduction = models.TextField()
     closing = models.TextField()
     
-    lesson = models.ForeignKey(Lesson)
+    lesson = models.ForeignKey(Lesson, related_name="sections")
     order_with_respect_to = "lesson"
     
     def __str__(self):
@@ -115,7 +115,7 @@ class Task(OrderedModel):
     uses_image = models.BooleanField(default=False)
     answer_exists = models.BooleanField(default=False)
     
-    section = models.ForeignKey(Section)
+    section = models.ForeignKey(Section, related_name="tasks")
     order_with_respect_to = "section"
     
     def __str__(self):

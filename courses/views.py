@@ -33,6 +33,9 @@ def lesson(request, course, lesson):
     ctx["lesson"] = get_object_or_404(Lesson, slug=lesson);
     ctx["all_lessons"] = filter(lambda l : l.can_see(request.user), ctx["course"].lessons.all())
     
+    ctx["section"] = ctx["lesson"].sections.get(order=0)
+    ctx["task"] = ctx["section"].tasks.get(order=0)
+    
     if not ctx["lesson"].can_see(request.user):
         raise Http404
     

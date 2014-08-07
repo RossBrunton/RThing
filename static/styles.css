@@ -88,10 +88,14 @@ ul {
     flex:1 1 auto;
 }
 
-.content > div, .content > a > div {
+.content > div, .content > a > div, .content > .fragment > div {
     margin:5px;
     margin-top:10px;
     margin-bottom:5px;
+}
+
+.content > .fragment {
+    margin:0px;
 }
 
 .no-sidebar-block {

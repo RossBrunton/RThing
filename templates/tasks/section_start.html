@@ -1,0 +1,5 @@
+{% load lformat %}
+<div class='fragment' data-type='section-start' data-order='{{ section.order }}'>
+    <h1>{{ section.title }}</h1>
+    {{ section.introduction|lformat }}
+</div>

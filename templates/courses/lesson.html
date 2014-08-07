@@ -1,10 +1,13 @@
 {% extends "base_sidebar.html" %}
-{% load lformat %}
+{% load lformat fragments %}
 
 {% block title %}{{ lesson.title }}{% endblock %}
 
 {% block body %}
-{{ lesson.description|lformat }}
+{% lesson_start lesson %}
+{% section_start section %}
+{% task task %}
+
 {% endblock %}
 
 {% block location %}{{ lesson.title }}{% endblock %}
