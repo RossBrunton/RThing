@@ -7,6 +7,9 @@ register = template.Library()
 @register.inclusion_tag("tasks/task.html")
 def task(task, **kwargs):
     kwargs["task"] = task
+    
+    kwargs["pre_lines"] = task.visible_pre_code.split("\n")
+    
     return kwargs
 
 @register.inclusion_tag("tasks/lesson_start.html")

@@ -2,6 +2,7 @@
 html {
     height:100%;
     font-family:serif;
+    font-size:14px;
 }
 
 body {
@@ -129,6 +130,45 @@ ul {
     background-color: #ee8855;
     border: 1px solid #cc6633;
     background: linear-gradient(#bb5533, #993300);
+}
+
+/* Prompt */
+.prompt {
+    font-family:monospace;
+    margin-left:25px !important;
+    margin-right:25px !important;
+    margin-top:10px;
+    margin-bottom:5px;
+    padding:10px;
+    background-color:#333333;
+    color:#eeeeee;
+    border-radius:5px;
+}
+
+.prompt .pre-code {
+    color:#ddcc88;
+}
+
+.prompt-indicator {
+    color:#999999;
+    overflow-y:hidden;
+}
+
+.prompt-entry-container {
+    display:-ms-flexbox;
+    display:flex;
+}
+
+.prompt textarea {
+    color:inherit;
+    background:inherit;
+    border:none;
+    resize:none;
+    -ms-flex:1 1 auto;
+    flex: 1 1 auto;
+    height:17px; /* Why 17? No idea */
+    font-size:inherit;
+    padding:0px;
 }
 
 /* Utility */

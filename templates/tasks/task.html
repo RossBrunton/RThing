@@ -1,4 +1,21 @@
 {% load lformat %}
 <div class='fragment' data-type='task' data-id='{{ task.pk }}' data-order='{{ task.section.order }}-{{ task.order }}'>
-    
+    {{ task.description|lformat }}
+    <form class='prompt' method='POST' action='{% url "tasks:submit" task=task.pk %}'>
+        {% csrf_token %}
+        {% if pre_lines %}
+            <div class='pre-code'>
+                {% for l in pre_lines %}
+                    <span class='prompt-indicator'>{{ task.iface.get_prompt }}</span> {{ l }}<br/>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <div class='prompt-entry-container'>
+            <div class='prompt-indicator' data-symbol='{{ task.iface.get_prompt }}'>
+                {{ task.iface.get_prompt }}&nbsp;
+            </div>
+            <textarea name='code'></textarea>
+        </div>
+    </form>
 </div>
