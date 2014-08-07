@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User, Permission
-from django.test import TestCase
+from django.test import TestCase, Client
 
 from courses.models import Course, Lesson, Section, Task
 
@@ -25,6 +25,7 @@ class CoursesTestCase(TestCase):
         s.title = "Goodbye World!"
         s.save()
         self.assertEqual(s.slug, "goodbye-world")
+    
     
     def test_slug_duplication(self):
         """Slugs should be unique"""
@@ -121,4 +122,44 @@ class CoursesTestCase(TestCase):
         u = User.objects.get(pk=u.pk)
         
         self.assertEqual(len(Course.get_courses(u)), 2)
+    
+    
+    def test_lookup_course(self):
+        """Test to see if course lookup works with regards to permissions"""
+        u = User.objects.create_user("Mittens", "mittensthekitten@gmail.com", "meow")
+        c = Client()
+        c.login(username="Mittens", password="meow")
+        
+        course = Course(title="Test Course")
+        course.save()
+        
+        self.assertEqual(c.get("/courses/no-such-course/", follow=True).status_code, 404)
+        self.assertEqual(c.get("/courses/test-course/", follow=True).status_code, 404)
+        course.users.add(u)
+        course.published = True
+        course.save()
+        self.assertEqual(c.get("/courses/test-course/").status_code, 200)
+    
+    
+    def test_lookup_lesson(self):
+        """Test to see if lesson lookup works with regards to permissions"""
+        u = User.objects.create_user("Mittens", "mittensthekitten@gmail.com", "meow")
+        c = Client()
+        c.login(username="Mittens", password="meow")
+        
+        course = Course(title="Test Course")
+        course.save()
+        lesson = Lesson(title="Test Lesson", course=course)
+        
+        self.assertEqual(c.get("/courses/test-course/no-such-lesson", follow=True).status_code, 404)
+        self.assertEqual(c.get("/courses/test-course/test-lesson", follow=True).status_code, 404)
+        course.users.add(u)
+        course.published = True
+        course.save()
+        self.assertEqual(c.get("/courses/test-course/").status_code, 200)
+        self.assertEqual(c.get("/courses/test-course/test-lesson", follow=True).status_code, 404)
+        
+        lesson.published = True
+        lesson.save()
+        self.assertEqual(c.get("/courses/test-course/test-lesson", follow=True).status_code, 200)
         

@@ -1,0 +1,19 @@
+{% extends "base_sidebar.html" %}
+{% load lformat %}
+
+{% block title %}{{ lesson.title }}{% endblock %}
+
+{% block body %}
+{{ lesson.description|lformat }}
+{% endblock %}
+
+{% block location %}{{ lesson.title }}{% endblock %}
+
+{% block sidebar %}
+<ul>
+    <li><a href='{% url "courses:course" course=course.slug %}'>{{ course.title }}</a></li>
+    {% for l in all_lessons %}
+        <li> - <a href='{% url "courses:lesson" course=course.slug lesson=l.slug %}'>{{ l.title }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}
