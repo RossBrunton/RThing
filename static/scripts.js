@@ -17,11 +17,12 @@ window.rthing = (function() {
         animationPointer = (animationPointer + 1) % loadAnimation.length;
     }, 100);
     
-    // Escapes html, not 100% secure
-    var escape = function(str) {
-        str = str.replace(">", "&gt;");
-        str = str.replace("<", "&lt;");
-        str = str.replace("&", "&amp;");
+    // Escapes html, not 100% secure, also replaces \n with <br/>
+    var escape = function(str, noLines) {
+        str = str.replace(/\>/g, "&gt;");
+        str = str.replace(/\</g, "&lt;");
+        str = str.replace(/\&/g, "&amp;");
+        if(!noLines) str = str.replace(/\n/g, "<br/>");
         
         return str;
     };

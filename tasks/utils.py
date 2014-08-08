@@ -3,9 +3,37 @@ from django.template import RequestContext
 
 from tasks.templatetags import fragments
 
+# This is used to seperate the user output from the hidden output; it is inserted via a generic_print after code, and
+# all output after it will be hidden from the user
+# This really isn't the best way of doing this, but I can't think up any other way
+SPLIT_TOKEN = "QPZMWOXN_SPLIT_TOKEN_QPZMWOXN"
+
 def perform_execute(code, task, user):
     """Executes code (possibly using a cache) and returns (output, media, isError, isCorrect)"""
-    return (code, None, False, True)
+    
+    code = "\n".join([
+        task.hidden_pre_code,
+        task.visible_pre_code,
+        code,
+        task.iface.generic_print(SPLIT_TOKEN),
+        task.validate_answer,
+        task.post_code
+    ]).strip()
+    
+    
+    input = {
+        "commands":code, "namespace":task.pk, "uses_random":task.uses_random, "uses_image":task.uses_image,
+        "answer_exists":task.answer_exists
+    }
+    
+    output = task.iface.exec(input)
+    
+    return (
+        output["out"] if not output["is_error"] else output["err"],
+        output.get("media", None),
+        output["is_error"],
+        True
+    )
 
 def fragmentate(type, obj, request):
     """Generates a fragment for the given type and object as a python dict"""
