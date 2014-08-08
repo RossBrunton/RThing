@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import SuspiciousOperation
 from django.http import Http404
 
-from courses.models import Course, Lesson
+from courses.models import Course, Lesson, Section
 
 @login_required
 def index(request):
@@ -33,8 +33,12 @@ def lesson(request, course, lesson):
     ctx["lesson"] = get_object_or_404(Lesson, slug=lesson);
     ctx["all_lessons"] = filter(lambda l : l.can_see(request.user), ctx["course"].lessons.all())
     
-    ctx["section"] = ctx["lesson"].sections.get(order=0)
-    ctx["task"] = ctx["section"].tasks.get(order=0)
+    try:
+        ctx["section"] = ctx["lesson"].sections.get(order=0)
+        ctx["task"] = ctx["section"].tasks.get(order=0)
+    except Section.DoesNotExist:
+        ctx["section"] = None
+        ctx["task"] = None
     
     if not ctx["lesson"].can_see(request.user):
         raise Http404

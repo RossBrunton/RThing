@@ -5,8 +5,8 @@
 
 {% block body %}
 {% lesson_start lesson %}
-{% section_start section %}
-{% task task %}
+{% if section %}{% section_start section %}{% endif %}
+{% if task %}{% task task %}{% endif %}
 
 {% endblock %}
 

@@ -20,7 +20,7 @@ Set up a virtualenv:
 > source bin/activate
 
 Install packages:
-> pip install django django-ordered-models
+> pip install django django-ordered-model
 > pip install mysqlclient #mysql only
 
 Set up settings:
@@ -34,3 +34,5 @@ And set up database connection:
 Perform database sync:
 > python manage.py syncdb
 
+Collect static files:
+> python manage.py collectstatic

@@ -5,7 +5,7 @@
         {% if pre_lines and pre_lines.0 %}
             <div class='pre-code'>
                 {% for l in pre_lines %}
-                    <span class='prompt-indicator'>{{ task.iface.get_prompt }}</span> {{ l }}<br/>
+                    <span class='prompt-indicator'>{{ task.iface.PROMPT }}</span> {{ l }}<br/>
                 {% endfor %}
             </div>
         {% endif %}

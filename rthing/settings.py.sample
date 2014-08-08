@@ -37,6 +37,10 @@ IFACES = {
     "dummy":("Dummy Interface", "ifaces.dummy.dummy"),
 }
 
+# Set your web server to serve the files in STATIC_ROOT from STATIC_URL
+STATIC_ROOT = os.path.join(BASE_DIR, 'collectedstatic')
+STATIC_URL = '/static/'
+
 #####
 #####
 # You probably don't want to change anything below this line
@@ -100,8 +104,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = False
 USE_L10N = False
 USE_TZ = False
-
-STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static")

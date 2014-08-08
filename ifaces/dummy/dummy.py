@@ -1,7 +1,6 @@
 # Dummy interface
 
-def get_prompt():
-    return "[d] >"
+PROMPT = "[d] >"
 
 def exec(data):
     ...

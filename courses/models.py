@@ -11,6 +11,7 @@ from rthing import settings
 
 def _autoslug(c):
     """Given a class, edits its save method to update the slug to the value of the "title" field"""
+    save_funct = c.save
     def slug(self, *args, **kwargs):
         slug = defaultfilters.slugify(self.title)
         
@@ -22,11 +23,31 @@ def _autoslug(c):
             slug = "{}-{}".format(slug, p)
         
         self.slug = slug
-        super(c, self).save()
+        save_funct(self, *args, **kwargs)
     
     c.save = slug
     
     return c
+
+
+class TraversableOrderedModel(OrderedModel):
+    class Meta:
+        abstract = True
+    
+    def previous(self):
+        """Returns the previous object"""
+        try:
+            return self.get_ordering_queryset().filter(order__lt=self.order).order_by('-order')[0]
+        except IndexError:
+            return None
+    
+    def next(self):
+        """Returns the next object"""
+        try:
+            return self.get_ordering_queryset().filter(order__gt=self.order)[0]
+        except IndexError:
+            return None
+
 
 # Types for database choices
 _IFACE_CHOICES = map(lambda k : (k, settings.IFACES[k][0]), settings.IFACES.keys())
@@ -67,7 +88,7 @@ class Course(models.Model):
 
 
 @_autoslug
-class Lesson(OrderedModel):
+class Lesson(TraversableOrderedModel):
     class Meta:
         permissions = (
             ("read_all_lesson", "Can see all lessons"),
@@ -94,7 +115,7 @@ class Lesson(OrderedModel):
 
 
 @_autoslug
-class Section(OrderedModel):
+class Section(TraversableOrderedModel):
     title = models.CharField(max_length=30, unique=True)
     slug = models.SlugField(blank=True, max_length=35, unique=True)
     introduction = models.TextField()
@@ -111,7 +132,7 @@ class Section(OrderedModel):
         return self.lesson.can_see(user)
 
 
-class Task(OrderedModel):
+class Task(TraversableOrderedModel):
     description = models.TextField()
     after_text = models.TextField()
     wrong_text = models.TextField()
@@ -138,6 +159,7 @@ class Task(OrderedModel):
         """Can the given user see this task"""
         return self.section.can_see(user)
     
+    @property
     def iface(self):
         """Returns the iface module that this task uses"""
         if self.language in _iface_cache:
@@ -145,3 +167,7 @@ class Task(OrderedModel):
         
         _iface_cache[self.language] = importlib.import_module(settings.IFACES[self.language][1])
         return _iface_cache[self.language]
+    
+    @iface.setter
+    def iface(self, value):
+        raise RuntimeError("You cannot set the interface directly.")

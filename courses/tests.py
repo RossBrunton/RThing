@@ -162,4 +162,22 @@ class CoursesTestCase(TestCase):
         lesson.published = True
         lesson.save()
         self.assertEqual(c.get("/courses/test-course/test-lesson", follow=True).status_code, 200)
+    
+    
+    def test_traversable_ordered_model(self):
+        """Test to see if traversable ordered model works"""
+        c = Course.objects.create()
+        l = Lesson.objects.create(course=c)
+        s = Section.objects.create(lesson=l)
+        a = Task.objects.create(section=s)
+        a.save()
+        b = Task.objects.create(section=s)
+        b.save()
         
+        self.assertEqual(a.order, 0)
+        self.assertEqual(b.order, 1)
+        
+        self.assertEqual(a.previous(), None)
+        self.assertEqual(b.previous(), a)
+        self.assertEqual(a.next(), b)
+        self.assertEqual(b.next(), None)
