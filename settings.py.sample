@@ -12,7 +12,7 @@ import os
 import sys
 
 # Get base dir, you don't need to change this
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+BASE_DIR = os.path.dirname(__file__)
 
 #####
 #####
@@ -76,7 +76,7 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'rthing.urls'
-WSGI_APPLICATION = 'rthing.wsgi.application'
+WSGI_APPLICATION = 'wsgi.application'
 
 
 # Database

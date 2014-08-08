@@ -24,8 +24,8 @@ Install packages:
 > pip install mysqlclient #mysql only
 
 Set up settings:
-> cp ./rthing/settings.py.sample ./rthing/settings.py
-> $EDITOR ./rthing/settings.py
+> cp ./settings.py.sample ./settings.py
+> $EDITOR ./settings.py
 
 And set up database connection:
 > cp ./db.cnf.sample ./db.cnf

@@ -7,7 +7,7 @@ from ordered_model.models import OrderedModel
 
 import importlib
 
-from rthing import settings
+import settings
 
 def _autoslug(c):
     """Given a class, edits its save method to update the slug to the value of the "title" field"""
