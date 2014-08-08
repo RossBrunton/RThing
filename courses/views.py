@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import SuspiciousOperation
 from django.http import Http404
 
-from courses.models import Course, Lesson, Section
+from courses.models import Course, Lesson, Section, Task
 
 @login_required
 def index(request):
@@ -33,14 +33,40 @@ def lesson(request, course, lesson):
     ctx["lesson"] = get_object_or_404(Lesson, slug=lesson);
     ctx["all_lessons"] = filter(lambda l : l.can_see(request.user), ctx["course"].lessons.all())
     
-    try:
-        ctx["section"] = ctx["lesson"].sections.get(order=0)
-        ctx["task"] = ctx["section"].tasks.get(order=0)
-    except Section.DoesNotExist:
-        ctx["section"] = None
-        ctx["task"] = None
-    
+    # Check user has permission
     if not ctx["lesson"].can_see(request.user):
         raise Http404
+    
+    # Load current task from URL
+    section = 0
+    task = 0
+    try:
+        section, task = request.GET.get("t", "1-1").split("-")
+    except ValueError:
+        section = request.GET.get("t", "1")
+    
+    # Check if it is valid
+    try:
+        task = int(task)
+        section = int(section)
+    except ValueError:
+        task = 1
+        section = 1
+    
+    # Get the section and task
+    try:
+        ctx["section"] = ctx["lesson"].sections.get(order=int(section)-1)
+        try:
+            ctx["task"] = ctx["section"].tasks.get(order=int(task)-1)
+        except Task.DoesNotExist:
+            ctx["task"] = ctx["section"].tasks.get(order=0)
+    except Section.DoesNotExist:
+        try:
+            ctx["section"] = ctx["lesson"].sections.get(order=0)
+            ctx["task"] = ctx["section"].tasks.get(order=0)
+        except (Section.DoesNotExist, Task.DoesNotExist):
+            ctx["section"] = None
+            ctx["task"] = None
+            
     
     return render(request, "courses/lesson.html", ctx)

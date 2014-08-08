@@ -34,8 +34,8 @@ window.rthing = (function() {
         
         if(+a[0] > +b[0]) return 1;
         if(+a[0] < +b[0]) return -1;
-        if(b.length < 2 && a.length == 2) return 1; // 0-0 > 0
-        if(b.length == 2 && a.length < 2) return -1;
+        if(b.length < 2 && a.length == 2) return 0; // 0-0 = 0
+        if(b.length == 2 && a.length < 2) return 0;
         if(+a[1] > +b[1]) return 1;
         if(+a[1] < +b[1]) return -1;
         return 0;
@@ -59,6 +59,15 @@ window.rthing = (function() {
             return;
         }
         
+        // Check to see if it already exists
+        if(["lesson-end", "lesson-start"].indexOf(frag.type) !== -1) {
+            if($(".fragment[data-type="+frag.type+"]").length) return;
+        }else if(["section-end", "section-start"].indexOf(frag.type) !== -1) {
+            if($(".fragment[data-type="+frag.type+"][data-order="+frag.order+"]").length) return;
+        }else if(frag.type == "task") {
+            if($(".fragment[data-type=task][data-id="+frag.id+"]").length) return;
+        }
+        
         // Loop through each element until we have one which is too "large", and then insert it before
         var orderMode = -1;
         switch(frag.type) {
@@ -75,7 +84,7 @@ window.rthing = (function() {
             case "prompt-entry":
                 // At the end of its form
                 $(".fragment[data-type=task][data-id="+frag.id+"] form").append(frag.html);
-                $(".fragment[data-type=task][data-id="+frag.id+"] form textarea:not([disabled])")[0].focus();
+                $(".fragment[data-type=task][data-id="+frag.id+"] textarea:not([disabled])")[0].focus();
                 break;
             
             case "section-end":
@@ -83,16 +92,18 @@ window.rthing = (function() {
                 orderMode = 0;
             case "task":
                 // Before element with higher order, lesson end with same order, or lesson-end
-                // But check that it doesn't exist first
-                if($(".fragment[data-type=task][data-id="+frag.id+"] form").length) break;
             case "section-start":
                 // Before any element that has a higher or equal order than it, or lesson-end
                 var added = false;
                 elems.each(function(i, e) {
-                    if(($(e).data("order") !== undefined && compareOrder($(e).data("order"), frag.order)>orderMode)
+                    // If the element has an order and this order is greater than our one or it is lesson-end, insert
+                    // this fragment before it only if it is not the start of the section this task (if it is a task) is
+                    // in
+                    if((($(e).data("order") !== undefined && compareOrder($(e).data("order"), frag.order)>orderMode)
                     || $(e).data("type") == "lesson-end"
-                    || ($(e).data("type") == "section-end" && firstEqual($(e).data("order"), frag.order))
-                    ) {
+                    ) && (
+                        $(e).data("type") != "section-start" && compareOrder($(e).data("order"), frag.order) != 0
+                    )) {
                         $(e).before(frag.html);
                         added = true;
                         return false;
