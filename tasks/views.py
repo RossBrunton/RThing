@@ -32,6 +32,14 @@ def submit(request, task):
     data["isCorrect"] = isCorrect
     data["frags"] = [utils.fragmentate("prompt-entry", task, request)]
     
+    # Custom fragments
+    if task.answer_exists:
+        if isCorrect:
+            data["frags"].append(utils.fragmentate("task-content", task, request, ".after-text", task.after_text))
+        else:
+            data["frags"].append(utils.fragmentate("task-content", task, request, ".wrong-text", task.wrong_text))
+    
+    
     # If they were correct load the next task or section
     if isCorrect:
         n = task.next()

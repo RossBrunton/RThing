@@ -10,32 +10,77 @@ SPLIT_TOKEN = "QPZMWOXN_SPLIT_TOKEN_QPZMWOXN"
 
 def perform_execute(code, task, user):
     """Executes code (possibly using a cache) and returns (output, media, isError, isCorrect)"""
+    # First, check to see if they are equivalent and the answer exists
+    equiv = False
+    if task.iface.is_equivalent(task.model_answer, code) and task.answer_exists:
+        equiv = True
     
-    code = "\n".join([
-        task.hidden_pre_code,
-        task.visible_pre_code,
-        code,
-        task.iface.generic_print(SPLIT_TOKEN),
-        task.validate_answer,
-        task.post_code
-    ]).strip()
+    # Run the user's code, only if the lines of code are not equivalent
+    if not equiv:
+        userCode = "\n".join([
+            task.hidden_pre_code,
+            task.visible_pre_code,
+            code,
+            task.iface.generic_print(SPLIT_TOKEN),
+            task.validate_answer,
+            task.post_code
+        ]).strip()
+        
+        userInput = {
+            "commands":userCode, "namespace":task.pk, "uses_random":task.uses_random, "uses_image":task.uses_image,
+            "answer_exists":task.answer_exists
+        }
+        userOutput = task.iface.exec(userInput)
+        
+        if userOutput["is_error"]:
+            # If the output has an error, assume it's wrong
+            return (
+                userOutput["err"],
+                None,
+                True,
+                False
+            )
     
     
-    input = {
-        "commands":code, "namespace":task.pk, "uses_random":task.uses_random, "uses_image":task.uses_image,
-        "answer_exists":task.answer_exists
-    }
+    # Run the model answer, but only if an answer exists
+    if task.answer_exists:
+        modelCode = "\n".join([
+            task.hidden_pre_code,
+            task.visible_pre_code,
+            task.model_answer,
+            task.iface.generic_print(SPLIT_TOKEN),
+            task.validate_answer,
+            task.post_code
+        ]).strip()
+        
+        modelInput = {
+            "commands":modelCode, "namespace":task.pk, "uses_random":task.uses_random, "uses_image":task.uses_image,
+            "answer_exists":task.answer_exists
+        }
+        modelOutput = task.iface.exec(modelInput)
+        # If the answers are equivalent, then set the users output to the models output
+        if equiv:
+            userOutput = modelOutput
     
-    output = task.iface.exec(input)
+    # Strip all lines after the split token
+    displayedOutput = ""
+    lines = userOutput["out"].split("\n")
+    for l in range(len(lines)-1, -1, -1):
+        # Loop backwards, when we find the token, claim every line before this one as the output
+        if SPLIT_TOKEN in lines[l]:
+            displayedOutput = "\n".join(lines[:-len(lines)+l])
+            break
     
+    # And return
     return (
-        output["out"] if not output["is_error"] else output["err"],
-        output.get("media", None),
-        output["is_error"],
-        True
+        displayedOutput,
+        userOutput.get("media", None),
+        False,
+        equiv or (task.answer_exists and userOutput["out"] == modelOutput["out"])
     )
 
-def fragmentate(type, obj, request):
+
+def fragmentate(type, obj, request, content_select=None, content_value=None):
     """Generates a fragment for the given type and object as a python dict"""
     frag = {"type":type}
     
@@ -43,6 +88,11 @@ def fragmentate(type, obj, request):
         frag["id"] = obj.pk
         frag["order"] = "{}-{}".format(obj.section.order, obj.order)
         frag["html"] = render_to_string("tasks/task.html", fragments.task(obj))
+    
+    if type == "task-content":
+        frag["id"] = obj.pk
+        frag["select"] = content_select
+        frag["html"] = content_value
     
     if type == "lesson-start":
         frag["html"] = render_to_string("tasks/lesson_start.html", fragments.lesson_start(obj))

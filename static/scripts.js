@@ -88,6 +88,11 @@ window.rthing = (function() {
                 $(".fragment[data-type=task][data-id="+frag.id+"] textarea:not([disabled])")[0].focus();
                 break;
             
+            case "task-content":
+                // Replace a specific ID
+                $(".fragment[data-type=task][data-id="+frag.id+"]").find(frag.select).html(frag.html)
+                break;
+            
             case "section-end":
                 // Before any element that has a higher order than it, or lesson-end
                 orderMode = 0;

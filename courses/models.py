@@ -134,8 +134,9 @@ class Section(TraversableOrderedModel):
 
 class Task(TraversableOrderedModel):
     description = models.TextField()
-    after_text = models.TextField()
-    wrong_text = models.TextField()
+    after_text = models.TextField(blank=True)
+    wrong_text = models.TextField(blank=True)
+    skip_text = models.TextField(blank=True)
     commentary = models.TextField(blank=True)
     language = models.CharField(max_length=10, choices=_IFACE_CHOICES)
     
@@ -147,7 +148,7 @@ class Task(TraversableOrderedModel):
     
     uses_random = models.BooleanField(default=False)
     uses_image = models.BooleanField(default=False)
-    answer_exists = models.BooleanField(default=False)
+    answer_exists = models.BooleanField(default=True)
     
     section = models.ForeignKey(Section, related_name="tasks")
     order_with_respect_to = "section"
