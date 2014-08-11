@@ -12,7 +12,7 @@ def perform_execute(code, task, user):
     """Executes code (possibly using a cache) and returns (output, media, isError, isCorrect)"""
     # First, check to see if they are equivalent and the answer exists
     equiv = False
-    if task.iface.is_equivalent(task.model_answer, code) and task.answer_exists:
+    if task.iface.is_equivalent(task.model_answer, code) and task.automark:
         equiv = True
     
     # Run the user's code, only if the lines of code are not equivalent
@@ -28,7 +28,7 @@ def perform_execute(code, task, user):
         
         userInput = {
             "commands":userCode, "namespace":task.pk, "uses_random":task.uses_random, "uses_image":task.uses_image,
-            "answer_exists":task.answer_exists
+            "automark":task.automark
         }
         userOutput = task.iface.exec(userInput)
         
@@ -43,7 +43,7 @@ def perform_execute(code, task, user):
     
     
     # Run the model answer, but only if an answer exists
-    if task.answer_exists:
+    if task.automark:
         modelCode = "\n".join([
             task.hidden_pre_code,
             task.visible_pre_code,
@@ -55,7 +55,7 @@ def perform_execute(code, task, user):
         
         modelInput = {
             "commands":modelCode, "namespace":task.pk, "uses_random":task.uses_random, "uses_image":task.uses_image,
-            "answer_exists":task.answer_exists
+            "automark":task.automark
         }
         modelOutput = task.iface.exec(modelInput)
         # If the answers are equivalent, then set the users output to the models output
@@ -76,7 +76,7 @@ def perform_execute(code, task, user):
         displayedOutput,
         userOutput.get("media", None),
         False,
-        equiv or (task.answer_exists and userOutput["out"] == modelOutput["out"])
+        equiv or (task.automark and userOutput["out"] == modelOutput["out"])
     )
 
 

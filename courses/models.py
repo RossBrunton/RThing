@@ -148,7 +148,7 @@ class Task(TraversableOrderedModel):
     
     uses_random = models.BooleanField(default=False)
     uses_image = models.BooleanField(default=False)
-    answer_exists = models.BooleanField(default=True)
+    automark = models.BooleanField(default=True)
     
     section = models.ForeignKey(Section, related_name="tasks")
     order_with_respect_to = "section"

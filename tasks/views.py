@@ -33,7 +33,7 @@ def submit(request, task):
     data["frags"] = [utils.fragmentate("prompt-entry", task, request)]
     
     # Custom fragments
-    if task.answer_exists:
+    if task.automark:
         if isCorrect:
             data["frags"].append(utils.fragmentate("task-content", task, request, ".after-text", task.after_text))
         else:

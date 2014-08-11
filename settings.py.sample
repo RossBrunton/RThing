@@ -35,11 +35,16 @@ TEST_SQLITE = True
 # Languages and their packages
 IFACES = {
     "dummy":("Dummy Interface", "ifaces.dummy.dummy"),
+    "r":("R", "ifaces.r.r"),
 }
 
 # Set your web server to serve the files in STATIC_ROOT from STATIC_URL
 STATIC_ROOT = os.path.join(BASE_DIR, 'collectedstatic')
 STATIC_URL = '/static/'
+
+# What files/dirs R needs to see (use ldd)
+R_BINARY = '/usr/bin/Rscript'
+R_FILES = ['/lib64', '/usr/lib64', '/usr/bin/R', '/dev/stdin', '/tmp', '/bin']
 
 #####
 #####
@@ -114,3 +119,6 @@ TEMPLATE_DIRS = [
 
 LOGIN_URL = "users:login"
 LOGOUT_URL = "users:logout"
+
+NAMESPACE_DIR = os.path.join(BASE_DIR, "namespaces")
+MOUNT_DIR = os.path.join(BASE_DIR, "mnt")

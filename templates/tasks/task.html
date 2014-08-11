@@ -13,7 +13,7 @@
         {% prompt_entry task %}
     </form>
     
-    {% if not task.answer_exists %}<div class='no-answer-exists'>
+    {% if not task.automark %}<div class='no-answer-exists'>
         This question cannot be automatically checked; try it and click the "continue" button to see the model answer.
     </div>{% endif %}
     <div class='wrong-text'></div>
