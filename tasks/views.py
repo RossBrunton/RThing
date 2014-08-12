@@ -35,16 +35,23 @@ def submit(request, task):
         data["output"] = output
         data["isError"] = isError
         data["isCorrect"] = isCorrect
-        data["frags"] = [utils.fragmentate("prompt-entry", task, request)]
+        data["revealed"] = False
     elif mode == "skipped":
         data["output"] = "[skipped]"
         data["isError"] = False
         data["isCorrect"] = False
-        data["frags"] = [utils.fragmentate("prompt-entry", task, request)]
-        
+        data["revealed"] = False
+    elif mode == "revealed":
+        data["output"] = task.model_answer
+        data["isError"] = False
+        data["isCorrect"] = False
+        data["revealed"] = True
+    
+    # Give the client another entry
+    data["frags"] = [utils.fragmentate("prompt-entry", task, request)]
     
     # Custom fragments
-    if task.automark:
+    if task.automark and mode != "revealed":
         if mode == "skipped":
             data["frags"].append(utils.fragmentate("task-content", task, request, ".skip-text", task.skip_text))
         elif isCorrect:
@@ -54,7 +61,7 @@ def submit(request, task):
     
     
     # If they were correct (or skipped) then load the next task or section
-    if mode == "skipped" or isCorrect:
+    if mode == "skipped" or mode == "revealed" or isCorrect:
         n = task.next()
         if n:
             data["frags"].append(utils.fragmentate("task", n, request))

@@ -170,12 +170,6 @@ ul {
 }
 
 [data-type=task] hr {
-    border:0px;
-    margin:0px;
-}
-
-[data-type=task]~[data-type=task] hr {
-    /* All tasks preceded by a task */
     border:1px solid #ccc;
     width: 50%;
     margin:auto;
@@ -196,6 +190,10 @@ ul {
 
 .prompt .output.error {
     color:#cc7755;
+}
+
+.prompt .output.revealed {
+    color:#7799ee;
 }
 
 .prompt-entry-container {
@@ -223,6 +221,10 @@ ul {
 }
 
 .prompt-button.skip {
+    right:31px;
+}
+
+.prompt-button.reveal {
     right:10px;
 }
 

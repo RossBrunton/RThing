@@ -171,6 +171,12 @@ window.rthing = (function() {
             $(this).parents("form").submit();
         });
         
+        // Reveal button
+        $(".prompt-button.reveal").click(function(e) {
+            $(this).parents("form").children("input[name=mode]").val("revealed");
+            $(this).parents("form").submit();
+        });
+        
         // Prompt form submit
         $(".prompt").on("submit", function(e) {
             var form = $(this);
@@ -183,7 +189,9 @@ window.rthing = (function() {
                 form.children(".loading").remove();
                 
                 // Show output
-                if(data.isError) {
+                if(data.revealed) {
+                    form.append("<div class='output revealed'>"+escape(data.output)+"</div>");
+                }else if(data.isError) {
                     form.append("<div class='output error'>"+escape(data.output)+"</div>");
                 }else{
                     form.append("<div class='output'>"+escape(data.output)+"</div>");
