@@ -135,21 +135,34 @@ ul {
 /* Prompt */
 .prompt {
     font-family:monospace;
-    margin-left:25px !important;
-    margin-right:25px !important;
+    margin-left:15px !important;
+    margin-right:15px !important;
     margin-top:10px;
     margin-bottom:5px;
     padding:10px;
     background-color:#333333;
     color:#eeeeee;
     border-radius:5px;
+    position:relative;
+}
+
+[data-type=task] hr {
+    border:0px;
+    margin:0px;
+}
+
+[data-type=task]~[data-type=task] hr {
+    /* All tasks preceded by a task */
+    border:1px solid #ccc;
+    width: 50%;
+    margin:auto;
 }
 
 .prompt .pre-code {
     color:#ddcc88;
 }
 
-.prompt-indicator, .loading {
+.prompt-indicator, .loading, .no-answer-exists {
     color:#999999;
     overflow-y:hidden;
 }
@@ -178,6 +191,16 @@ ul {
     font-size:inherit;
     padding:0px;
     outline:none;
+}
+
+.prompt-button {
+    position:absolute;
+    top:10px;
+    cursor:pointer;
+}
+
+.prompt-button.skip {
+    right:10px;
 }
 
 /* Utility */

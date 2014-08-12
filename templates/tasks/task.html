@@ -1,7 +1,12 @@
-{% load lformat fragments %}
+{% load lformat fragments staticfiles %}
 <div class='fragment' data-type='task' data-id='{{ task.pk }}' data-order='{{ task.section.order }}-{{ task.order }}'>
+    <hr/>
     {{ task.description|lformat }}
     <form class='prompt' method='POST' action='{% url "tasks:submit" task=task.pk %}'>
+        <input type='hidden' name='mode' value=''/>
+        {% if not task.automark %}<div class='no-answer-exists'>
+            This question cannot be automatically checked; try it and click the continue button to see the model answer.
+        </div>{% endif %}
         {% if pre_lines and pre_lines.0 %}
             <div class='pre-code'>
                 {% for l in pre_lines %}
@@ -11,11 +16,9 @@
         {% endif %}
         
         {% prompt_entry task %}
+        <img class='prompt-button skip' title='Skip' alt='Skip' src='{% static "icons/skip.png" %}' width=16 height=16/>
     </form>
     
-    {% if not task.automark %}<div class='no-answer-exists'>
-        This question cannot be automatically checked; try it and click the "continue" button to see the model answer.
-    </div>{% endif %}
     <div class='wrong-text'></div>
     <div class='skip-text'></div>
     <div class='after-text'></div>

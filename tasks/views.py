@@ -23,25 +23,38 @@ def submit(request, task):
     if "code" not in request.POST:
         raise SuspiciousOperation
     
-    # Run the code
-    output, media, isError, isCorrect = utils.perform_execute(request.POST["code"], task, request.user)
+    mode = request.POST.get("mode", "answered")
+    if mode not in ["skipped", "revealed", "answered"]:
+        mode = "answered"
     
-    # Set output
-    data["output"] = output
-    data["isError"] = isError
-    data["isCorrect"] = isCorrect
-    data["frags"] = [utils.fragmentate("prompt-entry", task, request)]
+    # Run the code
+    if mode == "answered":
+        output, media, isError, isCorrect = utils.perform_execute(request.POST["code"], task, request.user)
+    
+        # Set output
+        data["output"] = output
+        data["isError"] = isError
+        data["isCorrect"] = isCorrect
+        data["frags"] = [utils.fragmentate("prompt-entry", task, request)]
+    elif mode == "skipped":
+        data["output"] = "[skipped]"
+        data["isError"] = False
+        data["isCorrect"] = False
+        data["frags"] = [utils.fragmentate("prompt-entry", task, request)]
+        
     
     # Custom fragments
     if task.automark:
-        if isCorrect:
+        if mode == "skipped":
+            data["frags"].append(utils.fragmentate("task-content", task, request, ".skip-text", task.skip_text))
+        elif isCorrect:
             data["frags"].append(utils.fragmentate("task-content", task, request, ".after-text", task.after_text))
         else:
             data["frags"].append(utils.fragmentate("task-content", task, request, ".wrong-text", task.wrong_text))
     
     
-    # If they were correct load the next task or section
-    if isCorrect:
+    # If they were correct (or skipped) then load the next task or section
+    if mode == "skipped" or isCorrect:
         n = task.next()
         if n:
             data["frags"].append(utils.fragmentate("task", n, request))
@@ -53,5 +66,6 @@ def submit(request, task):
                 data["frags"].append(utils.fragmentate("task", new_sect.tasks.all()[0], request))
             else:
                 data["frags"].append(utils.fragmentate("lesson-end", task.section.lesson, request))
+    
     
     return HttpResponse(json.dumps(data), content_type="application/json")

@@ -132,10 +132,12 @@ window.rthing = (function() {
         // Erase all curent listeners
         $(".prompt textarea").off();
         $(".prompt").off();
+        $(".prompt-button").off();
         
         // Listener for "enter" on textarea
         $(".prompt textarea").on("keypress", function(e) {
             if(e.which == 13 /* Enter */ && !e.shiftKey && !$(this).parents("form").data("multiline")) {
+                $(this).parents("form").children("input[name=mode]").val("answered");
                 $(this).parents("form").submit();
                 return false;
             }
@@ -163,13 +165,20 @@ window.rthing = (function() {
             elem.siblings(".prompt-indicator").html(str);
         });
         
+        // Skip button
+        $(".prompt-button.skip").click(function(e) {
+            $(this).parents("form").children("input[name=mode]").val("skipped");
+            $(this).parents("form").submit();
+        });
+        
         // Prompt form submit
         $(".prompt").on("submit", function(e) {
             var form = $(this);
             var formData = form.serialize();
             formData += "&csrfmiddlewaretoken="+$("#csrf").text();
             
-            $.post(form.attr("action"), formData, function(data) {
+            $.ajax(form.attr("action"), {"method":"POST", "data":formData, "dataType":"json",
+                "success":function(data) {
                 // Hide load animation
                 form.children(".loading").remove();
                 
@@ -184,7 +193,7 @@ window.rthing = (function() {
                 for(var i = 0; i < data.frags.length; i ++) {
                     insertFragment(data.frags[i]);
                 }
-            }, "json");
+            }});
             animationPointer = 0;
             form.append("<div class='loading'>&nbsp;</div>");
             
@@ -196,7 +205,8 @@ window.rthing = (function() {
         
         // Clicking the promts will focus them
         $(".prompt").on("click", function(e) {
-            $(this).find("textarea:not([disabled])")[0].focus();
+            if($(this).find("textarea:not([disabled])").length)
+                $(this).find("textarea:not([disabled])")[0].focus();
         });
     };
     
@@ -228,6 +238,9 @@ window.rthing = (function() {
         
         // First update
         update();
+        
+        // Fix Firefox being dumb
+        $("textarea:last-child").attr("disabled", false)
     });
     
     return rthing;
