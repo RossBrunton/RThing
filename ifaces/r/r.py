@@ -26,6 +26,8 @@ def exec(data):
     # Set the command argument
     _command[_argindex] = data["commands"].replace("\n", ";").replace("\r", "").replace(";;", ";")
     
+    print(" ".join(_command))
+    
     # Create the process
     stdout, stderr = "", ""
     try:
@@ -54,7 +56,7 @@ def generic_print(expr):
 # Generate command
 _command.append("proot")
 
-for f in settings.R_FILES:
+for f in settings.R_BOUND:
     _command.append("-b {}".format(f))
 
 _nsindex = len(_command)
@@ -62,9 +64,7 @@ _command.append("")
 _wdindex = len(_command)
 _command.append("")
 
-_command.append("-r {}".format(settings.MOUNT_DIR))
-_command.append("-b {}:/rwrap".format(os.path.join(os.path.dirname(__file__), "rwrap")))
-_command.append("-b {}:/Rscript".format(settings.R_BINARY))
+_command.append("-r {}".format(os.path.join(settings.SANDBOX_DIR, "r")))
 _command.append("/rwrap")
 
 _argindex = len(_command)

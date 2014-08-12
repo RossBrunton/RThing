@@ -43,8 +43,13 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'collectedstatic')
 STATIC_URL = '/static/'
 
 # What files/dirs R needs to see (use ldd)
-R_BINARY = '/usr/bin/Rscript'
-R_FILES = ['/lib64', '/usr/lib64', '/usr/bin/R', '/dev/stdin', '/tmp', '/bin']
+R_FILES = [
+    '/usr/bin/R', '/usr/bin/Rscript'
+]
+R_BOUND = [
+    '/usr/lib64/R', '/usr/lib64/', '/lib64', '/bin'
+]
+R_LDD = []#['/usr/lib64/R/bin/exec/R', '/bin/sed', '/bin/ls', '/usr/lib64/R/library/stats/libs/stats.so']
 
 #####
 #####
@@ -68,7 +73,8 @@ INSTALLED_APPS = (
     'tasks',
     'stats',
     'staff',
-    'users'
+    'users',
+    'ifaces'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -121,4 +127,5 @@ LOGIN_URL = "users:login"
 LOGOUT_URL = "users:logout"
 
 NAMESPACE_DIR = os.path.join(BASE_DIR, "namespaces")
+SANDBOX_DIR = os.path.join(BASE_DIR, "sandboxes")
 MOUNT_DIR = os.path.join(BASE_DIR, "mnt")
