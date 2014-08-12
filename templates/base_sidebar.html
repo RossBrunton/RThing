@@ -16,8 +16,11 @@
     </div>
     
     <div class='content'>
+        <div id='error'>
+            <span id='error-body'></span>
+            <img width=16 height=16 alt='Dismiss' title='Dismiss'src='{% static "icons/close.png" %}' id='error-close'/>
+        </div>
         {% block body %}&nbsp;{% endblock %}
-        
     </div>
 </div>
 {% endblock %}

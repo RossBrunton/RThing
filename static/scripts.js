@@ -193,6 +193,15 @@ window.rthing = (function() {
                 for(var i = 0; i < data.frags.length; i ++) {
                     insertFragment(data.frags[i]);
                 }
+            }, "error":function(jqXHR, textStatus, errorThrown) {
+                // Hide load animation
+                form.children(".loading").remove();
+                
+                // Enable textarea again
+                form.find(".prompt-entry-container:last textarea").attr("disabled", false);
+                
+                // And fire the window event handler
+                window.onerror("Could not submit code");
             }});
             animationPointer = 0;
             form.append("<div class='loading'>&nbsp;</div>");
@@ -236,11 +245,20 @@ window.rthing = (function() {
             }
         });
         
-        // First update
-        update();
+        // Error handling
+        window.onerror = function(msg) {
+            $("#error-body").html("Sorry, an error has occured: " + msg);
+            $("#error").slideDown();
+        };
+        $("#error-close").on("click", function(e) {
+            $("#error").slideUp();
+        });
         
         // Fix Firefox being dumb
-        $("textarea:last-child").attr("disabled", false)
+        $("textarea:last-child").attr("disabled", false);
+        
+        // First update
+        update();
     });
     
     return rthing;

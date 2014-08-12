@@ -83,7 +83,7 @@ ul {
 }
 
 .content {
-    padding:10px;
+    /*padding:10px;*/
     overflow-y:auto;
     -ms-flex:1 1 auto;
     flex:1 1 auto;
@@ -93,6 +93,8 @@ ul {
     margin:5px;
     margin-top:10px;
     margin-bottom:5px;
+    margin-left:10px;
+    margin-right:10px;
 }
 
 .content > .fragment {
@@ -105,6 +107,27 @@ ul {
     width: 400px;
     padding:50px;
     text-align: center;
+}
+
+#error {
+    margin-left:0px;
+    margin-right:0px;
+    padding:5px;
+    padding-right:26px;
+    margin-top:0px;
+    background-color:#cc3333;
+    border-bottom:3px solid #771111;
+    border-right:3px solid #771111;
+    border-bottom-right-radius:5px;
+    position:fixed;
+    display:none;
+    z-index:1;
+}
+
+#error-close {
+    position:absolute;
+    right:5px;
+    cursor:pointer;
 }
 
 /* Course/lesson list */
