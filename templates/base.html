@@ -3,6 +3,7 @@
 
 <html>
     <head>
+        {% block first-head %}{% endblock %}
         <title>{% block title %}No title given{% endblock %}</title>
         <script src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
         <script src='{% static "scripts.js" %}'></script>

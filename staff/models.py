@@ -1,3 +1,7 @@
 from django.db import models
+from django.contrib import admin
 
-# Create your models here.
+from courses.models import Course
+
+class CourseAdmin(admin.ModelAdmin):
+    ...

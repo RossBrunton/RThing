@@ -1,0 +1,21 @@
+{% extends "base_staff.html" %}
+
+{% block title %}Staff{% endblock %}
+
+{% block body %}
+<div>
+    Staff page
+</div>
+
+{% for c in courses %}
+    <a href='{% url "staff:course" course=c.slug %}'>
+    <div class='course-block {% if not c.published %}unpublished{% endif %}' >
+        <div class='title'>{{ c.title }}</div>
+        <div class='stretch'></div>
+        <div class='code'>{% if not c.published %}Unpublished - {% endif %}{{ c.code }}</div>
+    </div>
+    </a>
+{% endfor %}
+{% endblock %}
+
+{% block location %}Staff{% endblock %}

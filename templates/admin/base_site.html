@@ -1,0 +1,20 @@
+{% extends "base_staff.html" %}
+{% load i18n admin_static %}
+{% load firstof from future %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block first-head %}
+<link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}" />
+{% block extrastyle %}{% endblock %}
+<script type="text/javascript">window.__admin_media_prefix__ = "{% filter escapejs %}{% static "admin/" %}{% endfilter %}";</script>
+
+{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE" />{% endblock %}
+{% endblock %}
+
+{% block branding %}
+<h1 id="site-name">Rthing</h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
+{% block extrahead %}{% block extra-head %}{{ block.super }}{% endblock %}{% endblock %}
