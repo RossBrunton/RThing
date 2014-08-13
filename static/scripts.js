@@ -133,6 +133,12 @@ window.rthing = (function() {
         $(".prompt textarea").off();
         $(".prompt").off();
         $(".prompt-button").off();
+        $(".l-click").off();
+        
+        // l-click click listener
+        $(".l-click").on("click", function(e) {
+            $(this).parent().nextAll("form").first().find("textarea:not([disabled])").val($(this).text());
+        });
         
         // Listener for "enter" on textarea
         $(".prompt textarea").on("keypress", function(e) {

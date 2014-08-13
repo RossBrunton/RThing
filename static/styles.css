@@ -2,7 +2,7 @@
 html {
     height:100%;
     font-family:serif;
-    font-size:14px;
+    font-size:16px;
 }
 
 body {
@@ -91,10 +91,10 @@ ul {
 
 .content > div, .content > a > div, .content > .fragment > div {
     margin:5px;
-    margin-top:10px;
+    margin-top:15px;
     margin-bottom:5px;
-    margin-left:10px;
-    margin-right:10px;
+    margin-left:15px;
+    margin-right:15px;
 }
 
 .content > .fragment {
@@ -227,6 +227,47 @@ ul {
 
 .prompt-button.reveal {
     right:10px;
+}
+
+/* Lecturer formatting */
+.l-warning, .l-note, .l-info {
+    padding:5px;
+    border-radius:3px;
+}
+
+.l-warning {
+    background-color:#eecccc;
+}
+
+.l-warning::before {
+    content:"Warning:";
+    color:#883333;
+}
+
+.l-note {
+    background-color:#cceecc;
+}
+
+.l-note::before {
+    content:"Note:";
+    color:#337733;
+}
+
+.l-info {
+    background-color:#ccccee;
+}
+
+.l-info::before {
+    content:"Extra Info:";
+    color:#333388;
+}
+
+.l-click {
+    font-family:mono;
+    background-color:#dddddd;
+    padding:2px;
+    border-radius:2px;
+    cursor:pointer;
 }
 
 /* Utility */
