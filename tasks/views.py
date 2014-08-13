@@ -10,10 +10,18 @@ from tasks import utils
 
 import json
 import time
+import datetime
 
 @login_required
 @require_POST
 def submit(request, task):
+    def create_error(reason):
+        """Creates a simple return value representing an error"""
+        return HttpResponse(json.dumps(
+            {"output":reason, "isError":True, "isCorrect":False, "revealed":False,
+            "frags":[utils.fragmentate("prompt-entry", task, request)]}
+        ), content_type="application/json")
+    
     data = {}
     
     task = get_object_or_404(Task, pk=task)
@@ -26,6 +34,28 @@ def submit(request, task):
     mode = request.POST.get("mode", "answered")
     if mode not in ["skipped", "revealed", "answered"]:
         mode = "answered"
+    
+    # Users cannot submit the scripts faster than one a second
+    if request.user.extra.last_script_time + datetime.timedelta(milliseconds=1000) > datetime.datetime.now():
+        return create_error("You are running scripts too fast!")
+    
+    # Users also can't submit an empty string
+    if not len(request.POST["code"]):
+        return create_error("You didn't submit anything.")
+    
+    # Or a string that is too long
+    if len(request.POST["code"]) > 1000:
+        return create_error("That script is too long.")
+    
+    # Or the same script twice
+    if request.user.extra.last_script_code == request.POST["code"]:
+        return HttpResponse(json.dumps(
+            {"output":request.user.extra.last_script_output,
+            "isError":request.user.extra.last_script_error,
+            "isCorrect":False,
+            "revealed":False,
+            "frags":[utils.fragmentate("prompt-entry", task, request)]}
+        ), content_type="application/json")
     
     # Run the code
     if mode == "answered":
@@ -46,6 +76,13 @@ def submit(request, task):
         data["isError"] = False
         data["isCorrect"] = False
         data["revealed"] = True
+    
+    # Set the last script values
+    request.user.extra.last_script_code = request.POST["code"]
+    request.user.extra.last_script_output = data["output"]
+    request.user.extra.last_script_error = data["isError"]
+    request.user.extra.last_script_time = datetime.datetime.now()
+    request.user.extra.save()
     
     # Give the client another entry
     data["frags"] = [utils.fragmentate("prompt-entry", task, request)]
