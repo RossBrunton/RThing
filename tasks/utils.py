@@ -30,8 +30,8 @@ def perform_execute(code, task, user):
         ]).strip()
         
         userInput = {
-            "commands":userCode, "namespace":task.pk, "uses_random":task.uses_random, "uses_image":task.uses_image,
-            "automark":task.automark
+            "commands":userCode, "namespace":task.section.lesson.pk, "uses_random":task.uses_random,
+            "uses_image":task.uses_image, "automark":task.automark
         }
         userOutput = task.iface.exec(userInput)
         
@@ -57,8 +57,8 @@ def perform_execute(code, task, user):
         ]).strip()
         
         modelInput = {
-            "commands":modelCode, "namespace":task.pk, "uses_random":task.uses_random, "uses_image":task.uses_image,
-            "automark":task.automark
+            "commands":modelCode, "namespace":task.section.lesson.pk, "uses_random":task.uses_random,
+            "uses_image":task.uses_image, "automark":task.automark
         }
         modelOutput = task.iface.exec(modelInput)
         # If the answers are equivalent, then set the users output to the models output

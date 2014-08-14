@@ -6,6 +6,15 @@
         {% block first-head %}{% endblock %}
         <title>{% block title %}No title given{% endblock %}</title>
         <script src='//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
+        <script src='http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></script>
+        <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {
+                inlineMath: [['$','$']],
+            }
+        });
+        </script>
+
         <script src='{% static "scripts.js" %}'></script>
         <link rel='stylesheet' type='text/css' href='{% static "styles.css" %}'/>
         <meta charset='UTF-8'>

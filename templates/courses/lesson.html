@@ -4,6 +4,19 @@
 {% block title %}{{ lesson.title }}{% endblock %}
 
 {% block body %}
+{% if user.is_staff %}
+    <div class='staff-options'>
+        As a staff member, you can do the following with this lesson:<br/>
+        - <a href='{% url "admin:courses_lesson_change" lesson.pk %}'>Edit it</a><br/>
+        - <form style='display:inline' enctype='multipart/form-data' method='POST'
+            action='{% url "staff:upload" course=course.slug lesson=lesson.slug %}'>
+            {% csrf_token %}
+            <input type='file' name='file'/>
+            <input type='submit' value='Upload a file'/>
+          </form>
+    </div>
+{% endif %}
+
 {% lesson_start lesson %}
 {% if section %}{% section_start section %}{% endif %}
 {% if task %}{% task task %}{% endif %}

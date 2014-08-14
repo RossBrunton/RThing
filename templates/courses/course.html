@@ -4,6 +4,14 @@
 {% block title %}{{ course.title }}{% endblock %}
 
 {% block body %}
+{% if user.is_staff %}
+    <div class='staff-options'>
+        As a staff member, you can do the following with this course:<br/>
+        - <a href='{% url "admin:courses_course_change" course.pk %}'>Edit it</a><br/>
+        - <a href='{% url "admin:courses_lesson_add" %}?course={{ course.pk }}'>Add a lesson</a>
+    </div>
+{% endif %}
+
 {{ course.description|lformat }}
 
 {% for l in lessons %}

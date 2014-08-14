@@ -6,8 +6,9 @@ from django.template import defaultfilters
 from ordered_model.models import OrderedModel
 
 import importlib
-
 import settings
+import os
+from os import path
 
 def _autoslug(c):
     """Given a class, edits its save method to update the slug to the value of the "title" field"""
@@ -56,11 +57,8 @@ _IFACE_CHOICES = map(lambda k : (k, settings.IFACES[k][0]), settings.IFACES.keys
 _iface_cache = {}
 
 @_autoslug
-class Course(models.Model):
+class Course(TraversableOrderedModel):
     class Meta:
-        permissions = (
-            ("read_all", "Can see all courses"),
-        )
         ordering = ["code"]
     
     title = models.CharField(max_length=30, unique=True)
@@ -76,13 +74,13 @@ class Course(models.Model):
     
     def can_see(self, user):
         """Can the given user see this course"""
-        if user.has_perm("courses.read_all"): return True
+        if user.is_staff: return True
         return self.users.filter(pk=user.pk).exists() and self.published
     
     @staticmethod
     def get_courses(user):
         """Get a list of all courses that the user can see"""
-        if user.has_perm("courses.read_all"): return Course.objects.all()
+        if user.is_staff: return Course.objects.all()
         
         return Course.objects.filter(published=True, users__pk=user.pk)
 
@@ -90,26 +88,25 @@ class Course(models.Model):
 @_autoslug
 class Lesson(TraversableOrderedModel):
     class Meta:
-        permissions = (
-            ("read_all_lesson", "Can see all lessons"),
-        )
+        ordering = ["course", "order"]
     
     title = models.CharField(max_length=30, unique=True)
     slug = models.SlugField(blank=True, max_length=35, unique=True)
     introduction = models.TextField()
-    closing = models.TextField()
+    closing = models.TextField(blank=True)
     published = models.BooleanField(default=False)
     answers_published = models.BooleanField(default=False)
     
     course = models.ForeignKey(Course, related_name="lessons")
     order_with_respect_to = "course"
     
+    
     def __str__(self):
-        return self.title
+        return "{}: {}".format(self.course.code, self.title)
     
     def can_see(self, user):
         """Can the given user see this lesson"""
-        if user.has_perm("lesson.read_all_lesson"): return True
+        if user.is_staff: return True
         
         return self.course.can_see(user) and self.published
 
@@ -119,7 +116,7 @@ class Section(TraversableOrderedModel):
     title = models.CharField(max_length=30, unique=True)
     slug = models.SlugField(blank=True, max_length=35, unique=True)
     introduction = models.TextField()
-    closing = models.TextField()
+    closing = models.TextField(blank=True)
     
     lesson = models.ForeignKey(Lesson, related_name="sections")
     order_with_respect_to = "lesson"
@@ -172,3 +169,10 @@ class Task(TraversableOrderedModel):
     @iface.setter
     def iface(self, value):
         raise RuntimeError("You cannot set the interface directly.")
+
+
+@receiver(post_save, sender=Lesson)
+def _task_saved(sender, instance, created, **kwargs):
+    """Make namespace folder"""
+    if not path.isdir(path.join(settings.NAMESPACE_DIR, str(instance.pk))):
+        os.mkdir(path.join(settings.NAMESPACE_DIR, str(instance.pk)), 0o750)

@@ -40,7 +40,7 @@ def submit(request, task):
         return create_error("You are running scripts too fast!")
     
     # Users also can't submit an empty string
-    if not len(request.POST["code"]):
+    if not len(request.POST["code"]) and mode == "answered":
         return create_error("You didn't submit anything.")
     
     # Or a string that is too long
@@ -48,7 +48,7 @@ def submit(request, task):
         return create_error("That script is too long.")
     
     # Or the same script twice
-    if request.user.extra.last_script_code == request.POST["code"]:
+    if request.user.extra.last_script_code == request.POST["code"] and mode == "answered":
         return HttpResponse(json.dumps(
             {"output":request.user.extra.last_script_output,
             "isError":request.user.extra.last_script_error,

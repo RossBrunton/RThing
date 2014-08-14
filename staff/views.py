@@ -1,9 +1,15 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import SuspiciousOperation
 from django.http import Http404
+from django.views.decorators.http import require_POST
 
 from courses.models import Course, Lesson, Section, Task
+from staff.forms import NamespaceUploadForm
+
+from os import path
+import settings
+import os
 
 @login_required
 @user_passes_test(lambda u: u.is_staff)
@@ -16,13 +22,22 @@ def index(request):
 
 @login_required
 @user_passes_test(lambda u: u.is_staff)
-def course(request, course):
-    ctx = {}
-    ctx["all_courses"] = Course.get_courses(request.user);
-    ctx["course"] = get_object_or_404(Course, slug=course);
-    ctx["lessons"] = filter(lambda l : l.can_see(request.user), ctx["course"].lessons.all())
+@require_POST
+def upload(request, course, lesson):
+    course = get_object_or_404(Course, slug=course)
+    lesson = get_object_or_404(Lesson, slug=lesson)
     
-    if not ctx["course"].can_see(request.user):
-        raise Http404
+    form = NamespaceUploadForm(request.POST, request.FILES)
+    if not form.is_valid():
+        raise SuspiciousOperation
     
-    return render(request, "staff/course.html", ctx)
+    name = path.basename(request.FILES["file"].name)
+    
+    with open(path.join(settings.NAMESPACE_DIR, str(lesson.pk), name), "wb+") as dest:
+        for chunk in request.FILES["file"].chunks():
+            dest.write(chunk)
+    
+    # Set permissions
+    os.chmod(path.join(settings.NAMESPACE_DIR, str(lesson.pk), name), 0o640)
+    
+    return redirect("courses:lesson", course=course.slug, lesson=lesson.slug)
