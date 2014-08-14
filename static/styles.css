@@ -187,6 +187,7 @@ ul {
 
 .prompt .output {
     /* color:#cccccc; */
+    white-space:pre;
 }
 
 .prompt .output.error {

@@ -17,11 +17,16 @@ window.rthing = (function() {
         animationPointer = (animationPointer + 1) % loadAnimation.length;
     }, 100);
     
+    var getLineNumber = function(textarea) {
+        // http://stackoverflow.com/questions/9185630/find-out-the-line-row-number-of-the-cursor-in-a-textarea
+        return textarea.value.substr(0, textarea.selectionStart).split("\n").length;
+    }
+    
     // Escapes html, not 100% secure, also replaces \n with <br/>
     var escape = function(str, noLines) {
+        str = str.replace(/\&/g, "&amp;");
         str = str.replace(/\>/g, "&gt;");
         str = str.replace(/\</g, "&lt;");
-        str = str.replace(/\&/g, "&amp;");
         if(!noLines) str = str.replace(/\n/g, "<br/>");
         
         return str;
@@ -146,6 +151,57 @@ window.rthing = (function() {
                 $(this).parents("form").children("input[name=mode]").val("answered");
                 $(this).parents("form").submit();
                 return false;
+            }
+        });
+        
+        // And "up" on keypress
+        $(".prompt textarea").on("keydown", function(e) {
+            if(e.which == 38 /* Up */ && getLineNumber(this) == 1) {
+                if($(this).data("rlPointer") === undefined) $(this).data("rlPointer", -1);
+                
+                // Increment it
+                $(this).data("rlPointer", $(this).data("rlPointer") + 1);
+                
+                // When we have reached the first one, don't go any more back
+                if($(this).data("rlPointer") >= $(this).parent().prevAll(".prompt-entry-container").length) {
+                    $(this).data("rlPointer", $(this).data("rlPointer") - 1);
+                }
+                
+                // No other entires
+                if($(this).parent().prevAll(".prompt-entry-container").length == 0) {
+                    return true;
+                }
+                
+                $(this).val(
+                    $(this).parent().prevAll(".prompt-entry-container").children("textarea")
+                        [$(this).data("rlPointer")].value
+                );
+                return false;
+            }else if(e.which == 40 /* Down */ && getLineNumber(this) == this.value.split("\n").length) {
+                if($(this).data("rlPointer") === undefined) $(this).data("rlPointer", 0);
+                
+                // Increment it
+                $(this).data("rlPointer", $(this).data("rlPointer") - 1);
+                
+                // If less than zero, clear the input and set it to zero
+                if($(this).data("rlPointer") < 0) {
+                    $(this).data("rlPointer", 0);
+                    $(this).val("");
+                    return true;
+                }
+                
+                // No other entries
+                if($(this).parent().prevAll(".prompt-entry-container").length == 0) {
+                    return true;
+                }
+                
+                $(this).val(
+                    $(this).parent().prevAll(".prompt-entry-container").children("textarea")
+                        [$(this).data("rlPointer")].value
+                );
+                return false;
+            }else{
+                $(this).data("rlPointer", -1);
             }
         });
         
