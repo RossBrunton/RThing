@@ -12,7 +12,7 @@ _nsindex = 0
 _wdindex = 0
 _argindex = 0
 
-def exec(data):
+def run(data):
     output = {}
     
     # Set the namespace and working directory
@@ -26,8 +26,6 @@ def exec(data):
     # Set the command argument
     _command[_argindex] = data["commands"].replace("\n", ";").replace("\r", "").replace(";;", ";")
     
-    print(" ".join(_command))
-    
     # Create the process
     stdout, stderr = "", ""
     try:
@@ -36,7 +34,7 @@ def exec(data):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             universal_newlines=True
-        ).communicate(timeout=500/1000)
+        ).communicate(timeout=1000)
     except subprocess.TimeoutExpired:
         stderr = "Timeout expired; check to see if you have any infinite loops"
     

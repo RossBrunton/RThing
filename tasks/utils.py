@@ -33,7 +33,7 @@ def perform_execute(code, task, user):
             "commands":userCode, "namespace":task.section.lesson.pk, "uses_random":task.uses_random,
             "uses_image":task.uses_image, "automark":task.automark
         }
-        userOutput = task.iface.exec(userInput)
+        userOutput = task.iface.run(userInput)
         
         if userOutput["is_error"]:
             # If the output has an error, assume it's wrong
@@ -60,7 +60,7 @@ def perform_execute(code, task, user):
             "commands":modelCode, "namespace":task.section.lesson.pk, "uses_random":task.uses_random,
             "uses_image":task.uses_image, "automark":task.automark
         }
-        modelOutput = task.iface.exec(modelInput)
+        modelOutput = task.iface.run(modelInput)
         # If the answers are equivalent, then set the users output to the models output
         if equiv:
             userOutput = modelOutput

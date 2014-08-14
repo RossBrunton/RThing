@@ -4,7 +4,7 @@ import time
 
 PROMPT = "[d] >"
 
-def exec(data):
+def run(data):
     output = {}
     output["out"] = data["commands"].replace("\r", "")\
         .replace("replace_me", "replaced") # This is done for testing
