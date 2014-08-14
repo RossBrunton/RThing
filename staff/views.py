@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import SuspiciousOperation
 from django.http import Http404
 from django.views.decorators.http import require_POST
+from django.contrib.auth.models import User
 
 from courses.models import Course, Lesson, Section, Task
 from staff.forms import NamespaceUploadForm
@@ -41,3 +42,39 @@ def upload(request, course, lesson):
     os.chmod(path.join(settings.NAMESPACE_DIR, str(lesson.pk), name), 0o640)
     
     return redirect("courses:lesson", course=course.slug, lesson=lesson.slug)
+
+
+@login_required
+@user_passes_test(lambda u: u.is_staff)
+def add_users(request, course):
+    course = get_object_or_404(Course, slug=course)
+    
+    if request.method == "POST":
+        if not "users" in request.POST:
+            raise SuspiciousOperation
+        
+        users = request.POST.get("users", "").split("\n")
+        
+        print(users)
+        
+        course.users.clear()
+        
+        for user in users:
+            u = user.strip().split(" ")[0]
+            
+            if u:
+                user_obj = None
+                try:
+                    user_obj = User.objects.get(username=u)
+                except User.DoesNotExist:
+                    user_obj = User.objects.create_user(u, "", u)
+                
+                course.users.add(user_obj)
+            
+        return redirect("courses:course", course=course.slug)
+                
+    else:
+        ctx = {}
+        ctx["course"] = course
+        ctx["users"] = "\n".join([u.username for u in course.users.all()])
+        return render(request, "staff/add_user.html", ctx)

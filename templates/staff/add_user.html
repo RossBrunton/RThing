@@ -1,0 +1,16 @@
+{% extends "base_staff.html" %}
+
+{% block title %}Staff{% endblock %}
+
+{% block body %}
+<div><form method='POST'>
+    {% csrf_token %}
+    Each user must be on their own line, and only the first &quot;word&quot; on each line will be used.<br/>
+    <br/>
+    Users:<br/>
+    <textarea name='users'>{{ users }}</textarea><br/><br/>
+    <input type='submit'>
+</form></div>
+{% endblock %}
+
+{% block location %}Staff{% endblock %}
