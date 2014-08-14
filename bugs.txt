@@ -1,0 +1,4 @@
+No unicode support for Python 2.
+Escaping issues in prompt output.
+Tabular output data not supported
+Icons are ugly for skip and reveal

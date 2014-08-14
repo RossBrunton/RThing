@@ -1,4 +1,5 @@
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
@@ -72,6 +73,9 @@ class Course(TraversableOrderedModel):
     def __str__(self):
         return "{}: {}".format(self.code, self.title)
     
+    def get_absolute_url(self):
+        return reverse("courses:course", kwargs={"course":self.slug})
+    
     def can_see(self, user):
         """Can the given user see this course"""
         if user.is_staff: return True
@@ -104,6 +108,9 @@ class Lesson(TraversableOrderedModel):
     def __str__(self):
         return "{}: {}".format(self.course.code, self.title)
     
+    def get_absolute_url(self):
+        return reverse("courses:lesson", kwargs={"course":self.course.slug, "lesson":self.slug})
+    
     def can_see(self, user):
         """Can the given user see this lesson"""
         if user.is_staff: return True
@@ -123,6 +130,12 @@ class Section(TraversableOrderedModel):
     
     def __str__(self):
         return self.title
+    
+    def get_absolute_url(self):
+        return "{}?t={}".format(
+            reverse("courses:lesson", kwargs={"course":self.lesson.course.slug, "lesson":self.lesson.slug}),
+            self.order+1
+        )
     
     def can_see(self, user):
         """Can the given user see this section"""
@@ -152,6 +165,15 @@ class Task(TraversableOrderedModel):
     
     def __str__(self):
         return self.description[:50]
+    
+    def get_absolute_url(self):
+        return "{}?t={}-{}".format(
+            reverse("courses:lesson",
+                kwargs={"course":self.section.lesson.course.slug, "lesson":self.section.lesson.slug}
+            ),
+            self.section.order+1,
+            self.order+1
+        )
     
     def can_see(self, user):
         """Can the given user see this task"""

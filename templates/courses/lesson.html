@@ -18,7 +18,7 @@
 {% endif %}
 
 {% lesson_start lesson %}
-{% if section %}{% section_start section %}{% endif %}
+{% if section %}{% section_start section user.is_staff %}{% endif %}
 {% if task %}{% task task %}{% endif %}
 
 {% endblock %}

@@ -29,8 +29,9 @@ def lesson_end(lesson, **kwargs):
     return kwargs
 
 @register.inclusion_tag("tasks/section_start.html")
-def section_start(section, **kwargs):
+def section_start(section, staff, **kwargs):
     kwargs["section"] = section
+    kwargs["staff"] = staff
     return kwargs
 
 @register.inclusion_tag("tasks/section_end.html")

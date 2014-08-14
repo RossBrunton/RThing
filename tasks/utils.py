@@ -109,7 +109,7 @@ def fragmentate(type, obj, request, content_select=None, content_value=None):
     
     if type == "section-start":
         frag["order"] = obj.order
-        frag["html"] = render_to_string("tasks/section_start.html", fragments.section_start(obj))
+        frag["html"] = render_to_string("tasks/section_start.html", fragments.section_start(obj, request.user.is_staff))
         return frag
     
     if type == "section-end":
