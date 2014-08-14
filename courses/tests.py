@@ -67,7 +67,7 @@ class CoursesTestCase(TestCase):
         self.assertFalse(c.can_see(u))
         
         # Check to see if permissions work
-        u.user_permissions.add(Permission.objects.get(codename="read_all").pk)
+        u.is_staff = True
         u.save()
         
         # Need to get the user again to reflect permission change
@@ -115,7 +115,7 @@ class CoursesTestCase(TestCase):
         self.assertEqual(Course.get_courses(u)[0], c)
         
         # Check to see if permissions work
-        u.user_permissions.add(Permission.objects.get(codename="read_all").pk)
+        u.is_staff = True
         u.save()
         
         # Need to get the user again to reflect permission change
