@@ -46,6 +46,9 @@ STATIC_URL = '/static/'
 R_FILES = [
     '/usr/bin/R', '/usr/bin/Rscript'
 ]
+# Files that are bound in the chroot. What is required here varies wildly; try /lib and /etc if you get file not found
+# All files in these folders will be visible from the system (using ls, for example), and they may be able to delete
+# them if for some reason they are world writable or the sandbox user can write them
 R_BOUND = [
     '/usr/lib64/R', '/usr/lib64/', '/lib64', '/bin'
 ]

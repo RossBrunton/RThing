@@ -5,10 +5,6 @@ import os
 import settings
 import shlex
 import six
-import threading
-
-class _py2TimeoutExpired(Exception):
-    pass
 
 PROMPT = ">"
 
@@ -36,8 +32,6 @@ def run(data):
     # Create the process
     stdout, stderr = "", ""
     
-    TimeoutExpired = (six.PY3 and sbprocess.TimeoutExpired) or _py2TimeoutExpired
-    
     proc = subprocess.Popen(
         _command,
         stdout=subprocess.PIPE,
@@ -46,18 +40,8 @@ def run(data):
     )
     
     try:
-        t = None
-        if six.PY2:
-            def timeout():
-                raise _py2TimeoutExpired
-            
-            t = threading.Timer(1, timeout)
-            t.start()
-        
-        stdout, stderr = (six.PY3 and proc.communicate(timeout=1000)) or proc.communicate()
-        if t:
-            t.cancel()
-    except TimeoutExpired:
+        stdout, stderr = proc.communicate()
+    except None:
         stderr = "Timeout expired; check to see if you have any infinite loops"
     
     output["out"] = stdout
@@ -74,7 +58,13 @@ def generic_print(expr):
     return "print(\"{}\");".format(expr)
 
 # Generate command
-_command.append("proot")
+
+# Timeout
+_command.append("timeout")
+_command.append("1s")
+
+# Prootwrap
+_command.append(os.path.join(os.path.dirname(__file__), "prootwrap"))
 
 for f in settings.R_BOUND:
     _command.append("-b {}".format(f))
@@ -85,7 +75,10 @@ _wdindex = len(_command)
 _command.append("")
 
 _command.append("-r {}".format(os.path.join(settings.SANDBOX_DIR, "r")))
-_command.append("/rwrap")
+
+# Rscript
+_command.append("/usr/bin/Rscript")
+_command.append("-e")
 
 _argindex = len(_command)
 _command.append("")

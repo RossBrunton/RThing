@@ -58,7 +58,7 @@ class Command(BaseCommand):
         os.mkdir(basedir, 0o750)
         
         self.stdout.write("Making /tmp")
-        os.mkdir(path.join(basedir, "tmp"), 0o750)
+        os.mkdir(path.join(basedir, "tmp"), 0o770)
         
         # Library list
         llist = settings.R_FILES[:]
@@ -96,11 +96,41 @@ class Command(BaseCommand):
         
         bindir = path.join(settings.BASE_DIR, "ifaces", "r")
         # Make binaries
-        for b in ["rwrap"]:
-            self.stdout.write("Compiling {}".format(b))
-            os.system("gcc -o {bin} {bin}.c".format(bin=path.join(bindir, b)))
+        self.stdout.write("Compiling prootwrap")
+        os.system("gcc -o {bin} {bin}.c".format(bin=path.join(bindir, "prootwrap")))
+        
+        os.chmod(path.join(bindir, "prootwrap"), 0o750)
+        
+        # Priviliged stuff
+        print("I need to do the following, but I need permission to do so:")
+        print("- Change the group of all the files in the sandbox to the web user")
+        print("- Change the owner of prootwrap to a sandbox user")
+        print("- Add the setuid bit to prootwrap")
+        print("The source of prootwrap is in ifaces/r/prootwrap.c if you are worried")
+        
+        i = None
+        while i not in ["y", "n", "yes", "no"]:
+            i = input("Do you agree to this? [Y/N/?] ")
             
-            self.stdout.write("Copying {} to /{}".format(path.join(bindir, b), b))
-            shutil.copy(path.join(bindir, b), path.join(basedir, b))
-            os.chmod(path.join(basedir, b), 0o750)
-            os.chmod(path.join(basedir, b), 0o750 | stat.S_ISGID)
+            if i == "?":
+                print("The following commands will be ran:")
+                print("sudo chgrp -R {} '{}'".format("[webuser]", settings.BASE_DIR))
+                print("sudo chmod -R g-w '{}'".format(settings.BASE_DIR))
+                print("sudo chmod g+w '{}'".format(path.join(basedir, "tmp")))
+                print("sudo chown {} '{}'".format("[nobody]", path.join(bindir, "prootwrap")))
+                print("sudo chmod u+s '{}'".format(path.join(bindir, "prootwrap")))
+        
+        if i in ["y", "yes"]:
+            webuser = input("What is the name/id of the webuser (possibly 'www-data')? ")
+            nobody = input("What shall I use as the name/id as the sandbox user (maybe 'nobody')? ")
+            
+            os.system("sudo chgrp -R {} '{}'".format(webuser, settings.BASE_DIR))
+            os.system("sudo chmod -R g-w '{}'".format(settings.BASE_DIR))
+            os.system("sudo chmod g+w '{}'".format(path.join(basedir, "tmp")))
+            os.system("sudo chown {} '{}'".format(nobody, path.join(bindir, "prootwrap")))
+            os.system("sudo chmod u+s '{}'".format(path.join(bindir, "prootwrap")))
+            
+            print("Files permissioned succesfully.")
+            print("Note that any change in permission in the future will likely break the setuid.")
+        else:
+            print("Okay, the system should still run but it will not be sandboxed; people WILL try to delete files")

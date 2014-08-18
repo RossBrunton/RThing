@@ -14,6 +14,6 @@ __pycache__
 /db.cnf
 /settings.py
 /namespaces/*
-/ifaces/r/rwrap
+/ifaces/r/prootwrap
 /src
 /sandboxes/*
