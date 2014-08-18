@@ -4,6 +4,11 @@ import subprocess
 import os
 import settings
 import shlex
+import six
+import threading
+
+class _py2TimeoutExpired(Exception):
+    pass
 
 PROMPT = ">"
 
@@ -26,16 +31,33 @@ def run(data):
     # Set the command argument
     _command[_argindex] = data["commands"].replace("\n", ";").replace("\r", "").replace(";;", ";")
     
+    print(" ".join(_command))
+    
     # Create the process
     stdout, stderr = "", ""
+    
+    TimeoutExpired = (six.PY3 and sbprocess.TimeoutExpired) or _py2TimeoutExpired
+    
+    proc = subprocess.Popen(
+        _command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        universal_newlines=True
+    )
+    
     try:
-        stdout, stderr = subprocess.Popen(
-            _command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            universal_newlines=True
-        ).communicate(timeout=1000)
-    except subprocess.TimeoutExpired:
+        t = None
+        if six.PY2:
+            def timeout():
+                raise _py2TimeoutExpired
+            
+            t = threading.Timer(1, timeout)
+            t.start()
+        
+        stdout, stderr = (six.PY3 and proc.communicate(timeout=1000)) or proc.communicate()
+        if t:
+            t.cancel()
+    except TimeoutExpired:
         stderr = "Timeout expired; check to see if you have any infinite loops"
     
     output["out"] = stdout

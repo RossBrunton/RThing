@@ -7,6 +7,7 @@ from os import path
 import stat
 import re
 import subprocess
+from six.moves import input
 
 import settings
 
@@ -46,7 +47,7 @@ class Command(BaseCommand):
                 return
             
             while not options["replace"] and i not in ["y", "n", "yes", "no"]:
-                i = input("Sandbox exists, replace it? [Y/N]")
+                i = input("Sandbox exists, replace it? [Y/N] ")
                 
                 if i in ["n", "no"]:
                     return

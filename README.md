@@ -1,7 +1,8 @@
 ## RThing ##
 
 ### Requirements ###
-This application runs on Python 3.3 or greater, so that is required, as is virtualenv to install dependancies.
+This application runs on Python 3.3 or greater or Python 2.7 or greater, so one of those is required, as is virtualenv
+to install dependancies.
 
 A database is also required; by default mysql is used, but this can be changed in the settings file to anything Django
 supports (PostgreSQL, Sqlite or Oracle), but you'll need to set it up yourself.

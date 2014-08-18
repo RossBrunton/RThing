@@ -6,6 +6,7 @@
 /local
 /bin
 /testingdb.sqlite3
+/db.sqlite
 *.pyc
 __pycache__
 *~
@@ -15,3 +16,4 @@ __pycache__
 /namespaces/*
 /ifaces/r/rwrap
 /src
+/sandboxes/*
