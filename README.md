@@ -12,6 +12,9 @@ libmysqlclient-dev possibly) for the python package "mysqlclient".
 
 Memcached and gcc is also required.
 
+For Debian; the packages (`python2.7` or `python3`), `python-virtualenv`, (`python2.7-dev` or `python3-dev`),
+`libmysqlclient-dev`, `memcached`, `gcc`
+
 ### Installation ###
 Copy the files over to where they will live; you can use any location:
 > mkdir /var/www/rthing
@@ -23,7 +26,7 @@ Set up a virtualenv:
 > source bin/activate
 
 Install packages:
-> pip install django django-ordered-model
+> pip install django django-ordered-model six
 > pip install mysqlclient # mysql only
 > pip install python-memcached # Python 2.*
 > pip install python3-memcached # Python 3.*

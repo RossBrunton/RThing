@@ -115,8 +115,8 @@ class Command(BaseCommand):
             if i == "?":
                 print("The following commands will be ran:")
                 print("sudo chgrp -R {} '{}'".format("[webuser]", settings.BASE_DIR))
-                print("sudo chmod -R g-w '{}'".format(settings.BASE_DIR))
-                print("sudo chmod g+w '{}'".format(path.join(basedir, "tmp")))
+                print("sudo chmod -R g=rx '{}'".format(settings.BASE_DIR))
+                print("sudo find {} -type d -print0 | xargs -0 chmod g+w".format(settings.BASE_DIR))
                 print("sudo chown {} '{}'".format("[nobody]", path.join(bindir, "prootwrap")))
                 print("sudo chmod u+s '{}'".format(path.join(bindir, "prootwrap")))
         
@@ -125,8 +125,8 @@ class Command(BaseCommand):
             nobody = input("What shall I use as the name/id as the sandbox user (maybe 'nobody')? ")
             
             os.system("sudo chgrp -R {} '{}'".format(webuser, settings.BASE_DIR))
-            os.system("sudo chmod -R g-w '{}'".format(settings.BASE_DIR))
-            os.system("sudo chmod g+w '{}'".format(path.join(basedir, "tmp")))
+            os.system("sudo chmod -R g=rx '{}'".format(settings.BASE_DIR))
+            os.system("sudo find {} -type d -print0 | xargs -0 chmod g+w".format(settings.BASE_DIR))
             os.system("sudo chown {} '{}'".format(nobody, path.join(bindir, "prootwrap")))
             os.system("sudo chmod u+s '{}'".format(path.join(bindir, "prootwrap")))
             
