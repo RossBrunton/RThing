@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     // Lower priority
     nice(5);
     
-    execve("/usr/bin/proot", argv, env);
+    execve("/usr/bin/timeout", argv, env);
     perror("execve");
     return -1;
 }

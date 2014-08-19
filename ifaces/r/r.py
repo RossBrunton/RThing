@@ -59,12 +59,14 @@ def generic_print(expr):
 
 # Generate command
 
-# Timeout
-_command.append("timeout")
-_command.append("1s")
-
 # Prootwrap
 _command.append(os.path.join(os.path.dirname(__file__), "prootwrap"))
+
+# Timeout
+_command.append("1s")
+
+# Proot
+_command.append("proot")
 
 for f in settings.R_BOUND:
     _command.append("-b {}".format(f))
