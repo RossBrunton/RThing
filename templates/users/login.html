@@ -9,7 +9,9 @@
     <strong>Log In</strong><br/>
     {{ form.username }}<br/>
     {{ form.password }}<br/>
-    <input type='submit'/>
+    <input type='submit'/><br/>
+    <br/>
+    <a href='{% url "users:reset" %}'>Forgot Password?</a>
 </form>
 </div>
 {% endblock %}

@@ -1,6 +1,6 @@
 from django.contrib.auth import logout as alogout, login as alogin, authenticate
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
@@ -31,3 +31,24 @@ def login(request):
 def logout(request):
     alogout(request)
     return render(request, "users/goodbye.html", {})
+
+
+@login_required
+def password_changed(request):
+    return render(request, "users/password_changed.html", {})
+
+
+@login_required
+def edit(request):
+    if request.method == "GET":
+        return render(request, "users/edit.html", {"form":PasswordChangeForm(request.user), "area":"users"});
+    
+    elif request.method == "POST":
+        f = PasswordChangeForm(request.user, request.POST)
+        
+        if not f.is_valid():
+            return render(request, "users/edit.html", {"form":f});
+    
+        f.save()
+    
+    return redirect("users:password_changed")

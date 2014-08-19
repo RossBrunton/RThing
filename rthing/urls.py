@@ -12,7 +12,7 @@ admin.autodiscover()
 
 urlpatterns = patterns("",
     url(r"^/?$", views.index, name="index"),
-     
+    
     url(r"^admin/", include(admin_site.urls)),
     url(r"^courses/", include(courses, namespace="courses")),
     url(r"^tasks/", include(tasks, namespace="tasks")),

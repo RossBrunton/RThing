@@ -67,7 +67,7 @@ def add_users(request, course):
                 try:
                     user_obj = User.objects.get(username=u)
                 except User.DoesNotExist:
-                    user_obj = User.objects.create_user(u, "", u)
+                    user_obj = User.objects.create_user(u, "{}@{}".format(u, settings.EMAIL_DOMAIN), u)
                 
                 course.users.add(user_obj)
             

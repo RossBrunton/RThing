@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Reset Your Password{% endblock %}
+
+{% block content %}
+<div class='no-sidebar-block'>
+<form method='POST'>
+    {% csrf_token %}
+    <strong>Forgot Password</strong><br/>
+    Enter your email here to be sent a reset token<br/>
+    {{ form.email }}<br/>
+    <input type="submit" value="Reset Password" placeholder="email"/>
+</form>
+</div>
+{% endblock %}
