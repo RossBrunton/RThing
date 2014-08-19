@@ -10,6 +10,8 @@ supports (PostgreSQL, Sqlite or Oracle), but you'll need to set it up yourself.
 When using mysql, you need to install the development libraries for python3 and mysql (python3-dev and
 libmysqlclient-dev possibly) for the python package "mysqlclient".
 
+Memcached and gcc is also required.
+
 ### Installation ###
 Copy the files over to where they will live; you can use any location:
 > mkdir /var/www/rthing
@@ -22,7 +24,9 @@ Set up a virtualenv:
 
 Install packages:
 > pip install django django-ordered-model
-> pip install mysqlclient #mysql only
+> pip install mysqlclient # mysql only
+> pip install python-memcached # Python 2.*
+> pip install python3-memcached # Python 3.*
 
 Set up settings:
 > cp ./settings.py.sample ./settings.py

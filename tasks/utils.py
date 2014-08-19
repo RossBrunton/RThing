@@ -1,5 +1,6 @@
 from django.template.loader import render_to_string
 from django.template import RequestContext
+from django.core.cache import cache
 
 from tasks.templatetags import fragments
 
@@ -53,20 +54,34 @@ def perform_execute(code, task, user):
     
     # Run the model answer, but only if an answer exists
     if task.automark:
-        modelCode = "\n".join([
-            task.hidden_pre_code,
-            task.visible_pre_code,
-            task.model_answer,
-            task.iface.generic_print(_SPLIT_TOKEN),
-            task.validate_answer,
-            task.post_code
-        ]).strip()
+        # Check the cache for a model answer
+        cache_value = None
+        if not task.uses_random:
+            cache_value = cache.get("task_model_{}".format(task.pk))
         
-        modelInput = {
-            "commands":modelCode, "namespace":task.section.lesson.pk, "uses_random":task.uses_random,
-            "uses_image":task.uses_image, "automark":task.automark, "seed":seed
-        }
-        modelOutput = task.iface.run(modelInput)
+        if not cache_value:
+            # Miss
+            modelCode = "\n".join([
+                task.hidden_pre_code,
+                task.visible_pre_code,
+                task.model_answer,
+                task.iface.generic_print(_SPLIT_TOKEN),
+                task.validate_answer,
+                task.post_code
+            ]).strip()
+            
+            modelInput = {
+                "commands":modelCode, "namespace":task.section.lesson.pk, "uses_random":task.uses_random,
+                "uses_image":task.uses_image, "automark":task.automark, "seed":seed
+            }
+            modelOutput = task.iface.run(modelInput)
+            
+            if not task.uses_random:
+                cache.set("task_model_{}".format(task.pk), modelOutput)
+        else:
+            # Hit
+            modelOutput = cache_value
+        
         # If the answers are equivalent, then set the users output to the models output
         if equiv:
             userOutput = modelOutput
