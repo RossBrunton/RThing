@@ -3,6 +3,8 @@ from django.template import RequestContext
 
 from tasks.templatetags import fragments
 
+import random
+
 # This is used to seperate the user output from the hidden output; it is inserted via a generic_print after code, and
 # all output after it will be hidden from the user
 # This really isn't the best way of doing this, but I can't think up any other way
@@ -14,9 +16,13 @@ def perform_execute(code, task, user):
     is_correct will always be false if the task has automark set to false.
     """
     # First, check to see if they are equivalent and the answer exists
-    equiv = False
-    if task.iface.is_equivalent(task.model_answer, code) and task.automark:
-        equiv = True
+    # if the task cannot be automarked, equiv is always false
+    equiv = task.iface.is_equivalent(task.model_answer, code) and task.automark
+    
+    # Generate a seed if needed
+    seed = 0
+    if task.uses_random:
+        seed = random.randint(0, 1 << 30)
     
     # Run the user's code, only if the lines of code are not equivalent
     if not equiv:
@@ -31,7 +37,7 @@ def perform_execute(code, task, user):
         
         userInput = {
             "commands":userCode, "namespace":task.section.lesson.pk, "uses_random":task.uses_random,
-            "uses_image":task.uses_image, "automark":task.automark
+            "uses_image":task.uses_image, "automark":task.automark, "seed":seed
         }
         userOutput = task.iface.run(userInput)
         
@@ -58,7 +64,7 @@ def perform_execute(code, task, user):
         
         modelInput = {
             "commands":modelCode, "namespace":task.section.lesson.pk, "uses_random":task.uses_random,
-            "uses_image":task.uses_image, "automark":task.automark
+            "uses_image":task.uses_image, "automark":task.automark, "seed":seed
         }
         modelOutput = task.iface.run(modelInput)
         # If the answers are equivalent, then set the users output to the models output

@@ -23,6 +23,9 @@ def run(data):
     )
     _command[_wdindex] = "-w /{}".format(str(data["namespace"]))
     
+    # Seed the RNG if needed
+    if data.get("uses_random", False):
+        data["commands"] = "set.seed({});".format(data["seed"]) + data["commands"]
     
     # Set the command argument
     _command[_argindex] = data["commands"].replace("\n", ";").replace("\r", "").replace(";;", ";")
