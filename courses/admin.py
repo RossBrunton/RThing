@@ -1,7 +1,9 @@
 from django.contrib import admin
 from ordered_model.admin import OrderedModelAdmin
 
+from staff.admin import admin_site
 from courses.models import Course, Lesson, Section, Task
+
 
 class CourseAdmin(admin.ModelAdmin):
     fieldsets = (
@@ -14,7 +16,7 @@ class CourseAdmin(admin.ModelAdmin):
         })
     )
 
-admin.site.register(Course, CourseAdmin)
+admin_site.register(Course, CourseAdmin)
 
 
 class LessonAdmin(OrderedModelAdmin):
@@ -31,7 +33,7 @@ class LessonAdmin(OrderedModelAdmin):
         })
     )
 
-admin.site.register(Lesson, LessonAdmin)
+admin_site.register(Lesson, LessonAdmin)
 
 
 class TaskInline(admin.StackedInline):
@@ -66,5 +68,5 @@ class SectionAdmin(OrderedModelAdmin):
         })
     )
 
-admin.site.register(Section, SectionAdmin)
-admin.site.register(Task)
+admin_site.register(Section, SectionAdmin)
+admin_site.register(Task)
