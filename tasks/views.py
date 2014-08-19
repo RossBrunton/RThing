@@ -8,6 +8,8 @@ from courses.models import Task
 
 from tasks import utils
 
+from stats.models import UserOnTask
+
 import json
 import time
 import datetime
@@ -60,8 +62,7 @@ def submit(request, task):
     # Run the code
     if mode == "answered":
         output, media, isError, isCorrect = utils.perform_execute(request.POST["code"], task, request.user)
-    
-        # Set output
+        
         data["output"] = output
         data["isError"] = isError
         data["isCorrect"] = isCorrect
@@ -110,6 +111,19 @@ def submit(request, task):
                 data["frags"].append(utils.fragmentate("task", new_sect.tasks.all()[0], request))
             else:
                 data["frags"].append(utils.fragmentate("lesson-end", task.section.lesson, request))
+    
+    
+    # Store statistics on the user
+    if mode == "answered" and not request.user.is_staff:
+        uot = UserOnTask.objects.get_or_create(user=request.user, task=task)[0]
+        
+        if not uot.correct:
+            uot.correct = isCorrect
+            uot.tries += 1
+            if not uot.correct:
+                uot.add_wrong_answer(request.POST["code"])
+            
+            uot.save()
     
     
     return HttpResponse(json.dumps(data), content_type="application/json")

@@ -1,1 +1,2 @@
 Icons are ugly for skip and reveal
+There is no way to check if a lecturer's tasks work correctly
