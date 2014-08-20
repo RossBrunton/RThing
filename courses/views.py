@@ -5,6 +5,8 @@ from django.http import Http404
 
 from courses.models import Course, Lesson, Section, Task
 
+from ifaces.r import r
+
 @login_required
 def index(request):
     ctx = {}
@@ -20,6 +22,12 @@ def course(request, course):
     ctx["course"] = get_object_or_404(Course, slug=course);
     ctx["lessons"] = filter(lambda l : l.can_see(request.user), ctx["course"].lessons.all())
     
+    for x in xrange(0, 2):
+        r.run({
+            "commands":"print('hello world');", "namespace":1, "uses_random":True,
+            "uses_image":True, "automark":False, "seed":1
+        })
+    
     if not ctx["course"].can_see(request.user):
         raise Http404
     
@@ -30,7 +38,7 @@ def course(request, course):
 def lesson(request, course, lesson):
     ctx = {}
     ctx["course"] = get_object_or_404(Course, slug=course)
-    ctx["lesson"] = get_object_or_404(Lesson, slug=lesson)
+    ctx["lesson"] = get_object_or_404(Lesson, slug=lesson, course=ctx["course"])
     ctx["all_lessons"] = filter(lambda l : l.can_see(request.user), ctx["course"].lessons.all())
     
     # Check user has permission

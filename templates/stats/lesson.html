@@ -1,0 +1,34 @@
+{% extends "base_staff.html" %}
+{% load lformat fragments %}
+
+{% block title %}{{ lesson.title }} Statistics{% endblock %}
+
+{% block body %}
+<div>
+    You are viewing statistics for this lesson.
+    
+    {% for s in sectiondata %}
+        <div class='section-head'>{{ s.section.order|add:1 }}: {{ s.section.title }}</div>
+        
+        {% for t in s.taskdata %}
+            {% if not forloop.first %}<hr/>{% endif %}
+            
+            <div>For the task starting with "{{ t.task.description|truncatewords:100 }}":</div>
+            <div>Of the {{ t.attempts }} people who have attempted this task, {{ t.correct }} got it correct, making
+                a completion rate of {% widthratio t.completion 1 100 %}%.
+            
+        {% endfor %}
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block location %}Stats: {{ lesson.title }}{% endblock %}
+
+{% block sidebar %}
+<ul>
+    <li><a href='{% url "courses:course" course=course.slug %}'>{{ course.title }}</a></li>
+    {% for l in all_lessons %}
+        <li> - <a href='{% url "stats:lesson" course=course.slug lesson=l.slug %}'>{{ l.title }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}

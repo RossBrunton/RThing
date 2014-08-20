@@ -4,6 +4,7 @@ from courses.urls import urlpatterns as courses
 from users.urls import urlpatterns as users
 from tasks.urls import urlpatterns as tasks
 from staff.urls import urlpatterns as staff
+from stats.urls import urlpatterns as stats
 import rthing.views as views
 
 from staff.admin import admin_site
@@ -18,4 +19,5 @@ urlpatterns = patterns("",
     url(r"^tasks/", include(tasks, namespace="tasks")),
     url(r"^users/", include(users, namespace="users")),
     url(r"^staff/", include(staff, namespace="staff")),
+    url(r"^stats/", include(stats, namespace="stats")),
 )
