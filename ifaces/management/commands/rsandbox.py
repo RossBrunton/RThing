@@ -120,7 +120,7 @@ class Command(BaseCommand):
         
         # Download proot
         self.stdout.write("Downloading proot from http://static.proot.me/")
-        os.system("wget -q -O '{}' http://static.proot.me/proot-`uname -p`".format(path.join(bindir, "proot")))
+        os.system("wget -q -O '{}' http://static.proot.me/proot-`uname -m`".format(path.join(bindir, "proot")))
         os.chmod(path.join(bindir, "proot"), 0o750)
         
         # Priviliged stuff
@@ -137,9 +137,9 @@ class Command(BaseCommand):
             if i == "?":
                 self.stdout.write("The following commands will be ran:")
                 self.stdout.write("sudo chgrp -R {} '{}'".format("[webuser]", settings.BASE_DIR))
-                self.stdout.write("sudo chmod -R g=rx '{}'".format(settings.BASE_DIR))
+                self.stdout.write("sudo chmod -R g+rx '{}'".format(settings.BASE_DIR))
                 self.stdout.write(
-                    "sudo find {} -type d -self.stdout.write0 | xargs -0 chmod g+w".format(settings.BASE_DIR)
+                    "sudo find {} -type d -print0 | xargs -0 chmod g+w".format(settings.BASE_DIR)
                 )
                 self.stdout.write("sudo chown {} '{}'".format("[nobody]", path.join(bindir, "prootwrap")))
                 self.stdout.write("sudo chmod u+s '{}'".format(path.join(bindir, "prootwrap")))
@@ -149,8 +149,8 @@ class Command(BaseCommand):
             nobody = input("What shall I use as the name/id as the sandbox user (maybe 'nobody')? ")
             
             os.system("sudo chgrp -R {} '{}'".format(webuser, settings.BASE_DIR))
-            os.system("sudo chmod -R g=rx '{}'".format(settings.BASE_DIR))
-            os.system("sudo find {} -type d -self.stdout.write0 | xargs -0 chmod g+w".format(settings.BASE_DIR))
+            os.system("sudo chmod -R g+rx '{}'".format(settings.BASE_DIR))
+            os.system("sudo find {} -type d -print0 | xargs -0 chmod g+w".format(settings.BASE_DIR))
             os.system("sudo chown {} '{}'".format(nobody, path.join(bindir, "prootwrap")))
             os.system("sudo chmod u+s '{}'".format(path.join(bindir, "prootwrap")))
             
