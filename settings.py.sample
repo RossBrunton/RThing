@@ -46,14 +46,16 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'collectedstatic')
 STATIC_URL = '/static/'
 
 # What files/dirs R needs to see (use ldd)
+# Copy these files
 R_FILES = [
-    '/usr/bin/R', '/usr/bin/Rscript'
+    '/usr/bin/R', '/usr/bin/Rscript', '/usr/bin/less', '/bin/sh', '/bin/bash', '/bin/uname', '/bin/sed', '/bin/rm',
+    '/bin/cat'
 ]
 # Files that are bound in the chroot. What is required here varies wildly; try /lib and /etc if you get file not found
 # All files in these folders will be visible from the system (using ls, for example), and they may be able to delete
 # them if for some reason they are world writable or the sandbox user can write them
 R_BOUND = [
-    '/usr/lib64/R', '/usr/lib64/', '/lib64', '/bin'
+    '/usr/lib64/R', '/usr/lib64/', '/lib64'
 ]
 R_LDD = []#['/usr/lib64/R/bin/exec/R', '/bin/sed', '/bin/ls', '/usr/lib64/R/library/stats/libs/stats.so']
 
