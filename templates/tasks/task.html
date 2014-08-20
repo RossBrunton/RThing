@@ -2,10 +2,15 @@
 <div class='fragment' data-type='task' data-id='{{ task.pk }}' data-order='{{ task.section.order }}-{{ task.order }}'>
     <hr/>
     {{ task.description|lformat }}
-    <form class='prompt' method='POST' action='{% url "tasks:submit" task=task.pk %}'>
+    <form class='prompt' method='POST' action='{% url "tasks:submit" task=task.pk %}'
+        {% if multiline %}data-multiline{% endif %}
+    >
         <input type='hidden' name='mode' value=''/>
         {% if not task.automark %}<div class='no-answer-exists'>
             This question cannot be automatically checked; try it and click the continue button to see the model answer.
+        </div>{% endif %}
+        {% if multiline %}<div class='is-multiline'>
+            This question expects multiple lines of code.
         </div>{% endif %}
         {% if pre_lines and pre_lines.0 %}
             <div class='pre-code'>
@@ -20,6 +25,11 @@
         <img class='prompt-button reveal' title='Reveal' alt='Reveal' src='{% static "icons/reveal.png" %}'
             width=16 height=16
         />
+        {% if multiline %}
+            <img class='prompt-button run' title='Run' alt='Run' src='{% static "icons/run.png" %}'
+                width=16 height=16
+            />
+        {% endif %}
     </form>
     
     <div class='wrong-text'></div>

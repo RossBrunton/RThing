@@ -188,7 +188,7 @@ ul {
     color:#ddcc88;
 }
 
-.prompt-indicator, .loading, .no-answer-exists {
+.prompt-indicator, .loading, .no-answer-exists, .is-multiline {
     color:#999999;
     overflow-y:hidden;
 }
@@ -239,6 +239,12 @@ ul {
 
 .prompt-button.reveal {
     right:10px;
+}
+
+.prompt-button.run {
+    right:10px;
+    bottom:10px;
+    top:inherit;
 }
 
 /* Lecturer formatting */

@@ -7,7 +7,7 @@ register = template.Library()
 @register.inclusion_tag("tasks/task.html")
 def task(task, **kwargs):
     kwargs["task"] = task
-    
+    kwargs["multiline"] = "\n" in task.model_answer
     kwargs["pre_lines"] = task.visible_pre_code.split("\n")
     
     return kwargs

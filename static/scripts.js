@@ -147,7 +147,10 @@ window.rthing = (function() {
         
         // Listener for "enter" on textarea
         $(".prompt textarea").on("keypress", function(e) {
-            if(e.which == 13 /* Enter */ && !e.shiftKey && !$(this).parents("form").data("multiline")) {
+            // Check if multiline
+            var multiline = $(this).parents("[data-multiline]").length > 0;
+            
+            if((e.which == 13 || e.which == 10) /* Enter */ && !e.shiftKey && (e.ctrlKey || !multiline)) {
                 $(this).parents("form").children("input[name=mode]").val("answered");
                 $(this).parents("form").submit();
                 return false;
@@ -236,6 +239,12 @@ window.rthing = (function() {
         // Reveal button
         $(".prompt-button.reveal").click(function(e) {
             $(this).parents("form").children("input[name=mode]").val("revealed");
+            $(this).parents("form").submit();
+        });
+        
+        // Run button
+        $(".prompt-button.run").click(function(e) {
+            $(this).parents("form").children("input[name=mode]").val("answered");
             $(this).parents("form").submit();
         });
         
