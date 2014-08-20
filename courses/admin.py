@@ -1,11 +1,20 @@
 from django.contrib import admin
+from django.http import Http404, HttpResponseRedirect
+
 from ordered_model.admin import OrderedModelAdmin
 
 from staff.admin import admin_site
 from courses.models import Course, Lesson, Section, Task
 
+class _CustomAdmin(admin.ModelAdmin):
+    def response_post_save_change(self, request, obj):
+        return HttpResponseRedirect(obj.get_absolute_url())
+    
+    def response_post_save_add(self, request, obj):
+        return HttpResponseRedirect(obj.get_absolute_url())
+    
 
-class CourseAdmin(admin.ModelAdmin):
+class CourseAdmin(_CustomAdmin):
     fieldsets = (
         (None, {
             "fields":(("title", "code"), "description")
@@ -19,7 +28,7 @@ class CourseAdmin(admin.ModelAdmin):
 admin_site.register(Course, CourseAdmin)
 
 
-class LessonAdmin(OrderedModelAdmin):
+class LessonAdmin(OrderedModelAdmin, _CustomAdmin):
     list_display = ("title", "course", "order", "move_up_down_links")
     list_filter = ["course"]
     
@@ -53,7 +62,7 @@ class TaskInline(admin.StackedInline):
         }),
     )
 
-class SectionAdmin(OrderedModelAdmin):
+class SectionAdmin(OrderedModelAdmin, _CustomAdmin):
     list_display = ("title", "lesson", "move_up_down_links")
     list_filter = ["lesson"]
     inlines = [TaskInline]
