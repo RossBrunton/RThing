@@ -15,5 +15,6 @@ __pycache__
 /settings.py
 /namespaces/*
 /ifaces/r/prootwrap
+/ifaces/r/proot
 /src
 /sandboxes/*

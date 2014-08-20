@@ -26,6 +26,20 @@ class Command(BaseCommand):
             dest='no-replace',
             default=False,
             help='Do not replace the sandbox if it exists',
+        ),
+        
+        make_option('--suid',
+            action='store_true',
+            dest='suid',
+            default=False,
+            help='Suid the prootwrap binary, which requires sudo',
+        ),
+        
+        make_option('--no-suid',
+            action='store_true',
+            dest='no-suid',
+            default=False,
+            help='Do not suid the prootwrap binary, which is a security issue',
         )
     )
 
@@ -34,6 +48,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         if options["replace"] and options["no-replace"]:
+            raise CommandError("--replace and --no-replace given")
+        
+        if options["suid"] and options["no-suid"]:
             raise CommandError("--replace and --no-replace given")
         
         self.stdout.write("Creating sandbox for R")
@@ -95,42 +112,51 @@ class Command(BaseCommand):
         
         
         bindir = path.join(settings.BASE_DIR, "ifaces", "r")
+        
         # Make binaries
         self.stdout.write("Compiling prootwrap")
         os.system("gcc -o {bin} {bin}.c".format(bin=path.join(bindir, "prootwrap")))
-        
         os.chmod(path.join(bindir, "prootwrap"), 0o750)
         
+        # Download proot
+        self.stdout.write("Downloading proot from http://static.proot.me/")
+        os.system("wget -q -O '{}' http://static.proot.me/proot-`uname -p`".format(path.join(bindir, "proot")))
+        os.chmod(path.join(bindir, "proot"), 0o750)
+        
         # Priviliged stuff
-        print("I need to do the following, but I need permission to do so:")
-        print("- Change the group of all the files in the sandbox to the web user")
-        print("- Change the owner of prootwrap to a sandbox user")
-        print("- Add the setuid bit to prootwrap")
-        print("The source of prootwrap is in ifaces/r/prootwrap.c if you are worried")
+        self.stdout.write("I need to do the following, but I need permission to do so:")
+        self.stdout.write("- Change the group of all the files in the sandbox to the web user")
+        self.stdout.write("- Change the owner of prootwrap to a sandbox user")
+        self.stdout.write("- Add the setuid bit to prootwrap")
+        self.stdout.write("The source of prootwrap is in ifaces/r/prootwrap.c if you are worried")
         
         i = None
-        while i not in ["y", "n", "yes", "no"]:
+        while not options["suid"] and not options["no-suid"] and i not in ["y", "n", "yes", "no"]:
             i = input("Do you agree to this? [Y/N/?] ")
             
             if i == "?":
-                print("The following commands will be ran:")
-                print("sudo chgrp -R {} '{}'".format("[webuser]", settings.BASE_DIR))
-                print("sudo chmod -R g=rx '{}'".format(settings.BASE_DIR))
-                print("sudo find {} -type d -print0 | xargs -0 chmod g+w".format(settings.BASE_DIR))
-                print("sudo chown {} '{}'".format("[nobody]", path.join(bindir, "prootwrap")))
-                print("sudo chmod u+s '{}'".format(path.join(bindir, "prootwrap")))
+                self.stdout.write("The following commands will be ran:")
+                self.stdout.write("sudo chgrp -R {} '{}'".format("[webuser]", settings.BASE_DIR))
+                self.stdout.write("sudo chmod -R g=rx '{}'".format(settings.BASE_DIR))
+                self.stdout.write(
+                    "sudo find {} -type d -self.stdout.write0 | xargs -0 chmod g+w".format(settings.BASE_DIR)
+                )
+                self.stdout.write("sudo chown {} '{}'".format("[nobody]", path.join(bindir, "prootwrap")))
+                self.stdout.write("sudo chmod u+s '{}'".format(path.join(bindir, "prootwrap")))
         
-        if i in ["y", "yes"]:
+        if options["suid"] or i in ["y", "yes"]:
             webuser = input("What is the name/id of the webuser (possibly 'www-data')? ")
             nobody = input("What shall I use as the name/id as the sandbox user (maybe 'nobody')? ")
             
             os.system("sudo chgrp -R {} '{}'".format(webuser, settings.BASE_DIR))
             os.system("sudo chmod -R g=rx '{}'".format(settings.BASE_DIR))
-            os.system("sudo find {} -type d -print0 | xargs -0 chmod g+w".format(settings.BASE_DIR))
+            os.system("sudo find {} -type d -self.stdout.write0 | xargs -0 chmod g+w".format(settings.BASE_DIR))
             os.system("sudo chown {} '{}'".format(nobody, path.join(bindir, "prootwrap")))
             os.system("sudo chmod u+s '{}'".format(path.join(bindir, "prootwrap")))
             
-            print("Files permissioned succesfully.")
-            print("Note that any change in permission in the future will likely break the setuid.")
+            self.stdout.write("Files permissioned succesfully.")
+            self.stdout.write("Note that any change in permission in the future will likely break the setuid.")
         else:
-            print("Okay, the system should still run but it will not be sandboxed; people WILL try to delete files")
+            self.stdout.write(
+                "The system should still run but it will not be sandboxed; people WILL try to delete files"
+            )

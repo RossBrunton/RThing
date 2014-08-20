@@ -60,6 +60,7 @@ def is_equivalent(a, b):
 def generic_print(expr):
     return "print(\"{}\");".format(expr)
 
+
 # Generate command
 
 # Prootwrap
@@ -69,7 +70,7 @@ _command.append(os.path.join(os.path.dirname(__file__), "prootwrap"))
 _command.append("1s")
 
 # Proot
-_command.append("proot")
+_command.append(os.path.join(os.path.dirname(__file__), "proot"))
 
 for f in settings.R_BOUND:
     _command.append("-b {}".format(f))
