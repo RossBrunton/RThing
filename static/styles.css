@@ -19,6 +19,7 @@ ul {
 
 /* Sidebar and general layout */
 .container {
+    display:-webkit-flex;
     display:-ms-flexbox;
     display:flex;
     height:100%;
@@ -27,6 +28,7 @@ ul {
 }
 
 .sidebar {
+    -webkit-flex:0 0 auto;
     -ms-flex:0 0 auto;
     flex:0 0 auto;
     width:250px;
@@ -34,8 +36,10 @@ ul {
     border-right:3px solid #333399;
     color:#eeeeee;
     padding:3px;
+    display:-webkit-flex;
     display:-ms-flexbox;
     display:flex;
+    -webkit-flex-direction:column;
     -ms-flex-direction:column;
     flex-direction:column;
     height:100%;
@@ -53,6 +57,7 @@ ul {
 
 .sidebar .location {
     font-size:120%;
+    -webkit-flex:0 0 auto;
     -ms-flex:0 0 auto;
     flex:0 0 auto;
     
@@ -70,6 +75,7 @@ ul {
 }
 
 .logout-form {
+    -webkit-flex:0 0 auto;
     -ms-flex:0 0 auto;
     flex:0 0 auto;
     padding:5px;
@@ -85,6 +91,7 @@ ul {
 .content {
     /*padding:10px;*/
     overflow-y:auto;
+    -webkit-flex:1 1 auto;
     -ms-flex:1 1 auto;
     flex:1 1 auto;
 }
@@ -133,6 +140,7 @@ ul {
 
 /* Course/lesson list */
 .course-block, .lesson-block, .section-head {
+    display:-webkit-flex;
     display:-ms-flexbox;
     display:flex;
     padding: 5px;
@@ -199,6 +207,7 @@ ul {
 }
 
 .prompt-entry-container {
+    display:-webkit-flex;
     display:-ms-flexbox;
     display:flex;
 }
@@ -208,12 +217,14 @@ ul {
     background:inherit;
     border:none;
     resize:none;
+    -webkit-flex:1 1 auto;
     -ms-flex:1 1 auto;
     flex: 1 1 auto;
     height:17px; /* Why 17? No idea */
     font-size:inherit;
     padding:0px;
     outline:none;
+    overflow:hidden;
 }
 
 .prompt-button {
@@ -281,6 +292,7 @@ ul {
 
 /* Utility */
 .stretch {
+    display:-webkit-flex;
     -ms-flex:1 1 auto;
     flex:1 1 auto;
 }
