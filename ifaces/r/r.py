@@ -5,6 +5,7 @@ import os
 import settings
 import shlex
 import six
+from base64 import b64encode
 
 PROMPT = ">"
 
@@ -12,6 +13,9 @@ _command = []
 _nsindex = 0
 _wdindex = 0
 _argindex = 0
+
+width = 13
+height = 5
 
 def run(data):
     output = {}
@@ -27,10 +31,15 @@ def run(data):
     if data.get("uses_random", False):
         data["commands"] = "set.seed({});".format(data["seed"]) + data["commands"]
     
+    # And also the image
+    if data.get("uses_image", False):
+        data["commands"] = ('postscript(file="/tmp/plot_{}.ps", '
+            'width={}, height={}'
+            ', paper="special", horizontal=FALSE);'
+        ).format(data.get("user", 0), width, height) + data["commands"]
+    
     # Set the command argument
     _command[_argindex] = data["commands"].replace("\n", ";").replace("\r", "").replace(";;", ";")
-    
-    print(" ".join(_command))
     
     # Create the process
     stdout, stderr = "", ""
@@ -42,6 +51,8 @@ def run(data):
         universal_newlines=True
     )
     
+    print(" ".join(_command))
+    
     try:
         stdout, stderr = proc.communicate()
     except None:
@@ -52,6 +63,23 @@ def run(data):
     
     output["is_error"] = output["err"] != ""
     
+    if data.get("uses_image", False):
+        # Read the image to media
+        path = os.path.join(settings.BASE_DIR, "sandboxes", "r", "tmp", "plot_{}.ps".format(data.get("user", 0)))
+        if os.path.isfile(path):
+            image = subprocess.Popen(
+                [
+                    "gs", "-q", "-sDEVICE=png16", "-sOutputFile=-", "-DPARANOIDSAFER", "-dBATCH", "-dQUIET",
+                    "-dNOPROMPT", "-dNOPAUSE", "-dDEVICEWIDTHPOINTS={}".format(width*72),
+                    "-dDEVICEHEIGHTPOINTS={}".format(height*72), path
+                ],
+                stdout=subprocess.PIPE,
+            ).communicate()[0]
+            
+            output["media"] = "data:image/png;base64,{}".format(b64encode(image))
+            
+            #os.remove(path)
+    
     return output
 
 def is_equivalent(a, b):
@@ -60,6 +88,10 @@ def is_equivalent(a, b):
 def generic_print(expr):
     return "print(\"{}\");".format(expr)
 
+@property
+def graphic_out():
+    return "void <- dev.off();"
+
 
 # Generate command
 
@@ -67,7 +99,7 @@ def generic_print(expr):
 _command.append(os.path.join(os.path.dirname(__file__), "prootwrap"))
 
 # Timeout
-_command.append("1s")
+_command.append("1m")
 
 # Proot
 _command.append(os.path.join(os.path.dirname(__file__), "proot"))

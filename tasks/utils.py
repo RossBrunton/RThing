@@ -38,7 +38,7 @@ def perform_execute(code, task, user):
         
         userInput = {
             "commands":userCode, "namespace":task.section.lesson.pk, "uses_random":task.uses_random,
-            "uses_image":task.uses_image, "automark":task.automark, "seed":seed
+            "uses_image":task.uses_image, "automark":task.automark, "seed":seed, "user":user.pk
         }
         userOutput = task.iface.run(userInput)
         
@@ -72,7 +72,7 @@ def perform_execute(code, task, user):
             
             modelInput = {
                 "commands":modelCode, "namespace":task.section.lesson.pk, "uses_random":task.uses_random,
-                "uses_image":task.uses_image, "automark":task.automark, "seed":seed
+                "uses_image":task.uses_image, "automark":task.automark, "seed":seed, "user":user.pk
             }
             modelOutput = task.iface.run(modelInput)
             

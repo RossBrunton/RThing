@@ -64,6 +64,7 @@ def submit(request, task):
         output, media, isError, isCorrect = utils.perform_execute(request.POST["code"], task, request.user)
         
         data["output"] = output
+        data["media"] = media
         data["isError"] = isError
         data["isCorrect"] = isCorrect
         data["revealed"] = False

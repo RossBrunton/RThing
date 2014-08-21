@@ -254,7 +254,7 @@ window.rthing = (function() {
             formData += "&csrfmiddlewaretoken="+$("#csrf").text();
             
             $.ajax(form.attr("action"), {"method":"POST", "data":formData, "dataType":"json",
-                "success":function(data) {
+            "success":function(data) {
                 // Hide load animation
                 form.children(".loading").remove();
                 
@@ -265,6 +265,11 @@ window.rthing = (function() {
                     form.append("<div class='output error'>"+escape(data.output)+"</div>");
                 }else{
                     form.append("<div class='output'>"+escape(data.output)+"</div>");
+                }
+                
+                // Show media
+                if(data.media) {
+                    form.append("<img class='plot' src='"+data.media+"'/>");
                 }
                 
                 // And add frags

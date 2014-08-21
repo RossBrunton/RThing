@@ -247,6 +247,11 @@ ul {
     top:inherit;
 }
 
+.prompt img.plot {
+    border:2px solid #999999;
+    border-radius:10px;
+}
+
 /* Lecturer formatting */
 .l-warning, .l-note, .l-info, .staff-options {
     padding:5px;
