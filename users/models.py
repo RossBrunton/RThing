@@ -12,6 +12,8 @@ class UserExtraData(models.Model):
     last_script_output = models.TextField(default="", max_length=1000, blank=True)
     last_script_error = models.BooleanField(default=False, blank=True)
     
+    password_forced = models.BooleanField(default=True)
+    
     def __str__(self):
         return "Extra data for {}".format(self.user.username)
 

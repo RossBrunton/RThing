@@ -41,14 +41,19 @@ def password_changed(request):
 @login_required
 def edit(request):
     if request.method == "GET":
-        return render(request, "users/edit.html", {"form":PasswordChangeForm(request.user), "area":"users"});
+        return render(request, "users/edit.html",
+            {"form":PasswordChangeForm(request.user), "area":"users", "forced":request.GET.get("forced", False)}
+        )
     
     elif request.method == "POST":
         f = PasswordChangeForm(request.user, request.POST)
         
         if not f.is_valid():
-            return render(request, "users/edit.html", {"form":f});
+            return render(request, "users/edit.html", {"form":f})
     
         f.save()
+        
+        request.user.extra.password_forced = False
+        request.user.extra.save()
     
     return redirect("users:password_changed")

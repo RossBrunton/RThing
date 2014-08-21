@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import SuspiciousOperation
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
+from django.core.urlresolvers import reverse
 
 from courses.models import Course, Lesson, Section, Task
 
@@ -11,6 +12,10 @@ from ifaces.r import r
 def index(request):
     ctx = {}
     ctx["courses"] = Course.get_courses(request.user);
+    
+    # Check if the user needs to change their password
+    if request.user.extra.password_forced:
+        return HttpResponseRedirect("{}?forced=1".format(reverse("users:edit")))
     
     return render(request, "courses/index.html", ctx)
 

@@ -5,6 +5,9 @@
 {% block content %}
 <div class='no-sidebar-block'>
     {{ form.errors }}<br/>
+    {% if forced %}
+        Sorry, but because this is the first time you have logged in, you need to set a new password.
+    {% endif %}
     Just enter a new password twice
     <form method="post">
         {% csrf_token %}
