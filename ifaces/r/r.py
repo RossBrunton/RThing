@@ -53,9 +53,9 @@ def run(data):
     
     print(" ".join(_command))
     
-    try:
-        stdout, stderr = proc.communicate()
-    except None:
+    stdout, stderr = proc.communicate()
+    
+    if proc.returncode == 124:
         stderr = "Timeout expired; check to see if you have any infinite loops"
     
     output["out"] = stdout
@@ -77,8 +77,10 @@ def run(data):
             ).communicate()[0]
             
             output["media"] = "data:image/png;base64,{}".format(b64encode(image))
+            if output["media"] == _empty_plot:
+                output["media"] = None
             
-            #os.remove(path)
+            os.remove(path)
     
     return output
 
@@ -88,10 +90,6 @@ def is_equivalent(a, b):
 def generic_print(expr):
     return "print(\"{}\");".format(expr)
 
-@property
-def graphic_out():
-    return "void <- dev.off();"
-
 
 # Generate command
 
@@ -99,7 +97,7 @@ def graphic_out():
 _command.append(os.path.join(os.path.dirname(__file__), "prootwrap"))
 
 # Timeout
-_command.append("1m")
+_command.append("1s")
 
 # Proot
 _command.append(os.path.join(os.path.dirname(__file__), "proot"))
@@ -115,8 +113,18 @@ _command.append("")
 _command.append("-r {}".format(os.path.join(settings.SANDBOX_DIR, "r")))
 
 # Rscript
-_command.append("/usr/bin/Rscript")
+_command.append("/usr/bin/R")
+_command.append("--slave")
+_command.append("--vanilla")
+_command.append("--no-readline")
 _command.append("-e")
 
 _argindex = len(_command)
 _command.append("")
+
+
+# Now generate the empty image so we can check if the plot is empty
+_empty_plot = None
+_empty_plot = run({
+    "commands":"", "namespace":None, "uses_random":False, "uses_image":True, "automark":False, "seed":0, "user":0
+}).get("media", "")

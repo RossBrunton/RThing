@@ -39,7 +39,14 @@ class Command(BaseCommand):
             action='store_true',
             dest='no-suid',
             default=False,
-            help='Do not suid the prootwrap binary, which is a security issue',
+            help='Do not suid the prootwrap binary. Using this flag is a security issue',
+        ),
+        
+        make_option('--no-download',
+            action='store_true',
+            dest='no-download',
+            default=False,
+            help='Do not download proot',
         )
     )
 
@@ -83,17 +90,19 @@ class Command(BaseCommand):
         # Get libraries for R
         def addLib(lib):
             ldd = subprocess.Popen(
-                ["ldd", lib],
+                "ldd {}".format(lib),
                 stdout=subprocess.PIPE,
-                universal_newlines=True
+                universal_newlines=True,
+                shell=True
             ).communicate()[0]
+            
             for l in ldd.split("\n"):
-                search = re.search(r"(\/[^\s]+)", l)
+                search = re.search(r"(\/[^\s]+)\s\(", l)
                 if search and search.group(1) not in llist:
                     llist.append(search.group(1))
                     addLib(search.group(1))
         
-        for lib in settings.R_LDD:
+        for lib in settings.R_LDD + settings.R_FILES:
             self.stdout.write("Calculating libraries for {}".format(lib))
             addLib(lib)
         
@@ -119,16 +128,18 @@ class Command(BaseCommand):
         os.chmod(path.join(bindir, "prootwrap"), 0o750)
         
         # Download proot
-        self.stdout.write("Downloading proot from http://static.proot.me/")
-        os.system("wget -q -O '{}' http://static.proot.me/proot-`uname -m`".format(path.join(bindir, "proot")))
-        os.chmod(path.join(bindir, "proot"), 0o750)
+        if not options["no-download"]:
+            self.stdout.write("Downloading proot from http://static.proot.me/")
+            os.system("wget -q -O '{}' http://static.proot.me/proot-`uname -m`".format(path.join(bindir, "proot")))
+            os.chmod(path.join(bindir, "proot"), 0o750)
         
         # Priviliged stuff
-        self.stdout.write("I need to do the following, but I need permission to do so:")
-        self.stdout.write("- Change the group of all the files in the sandbox to the web user")
-        self.stdout.write("- Change the owner of prootwrap to a sandbox user")
-        self.stdout.write("- Add the setuid bit to prootwrap")
-        self.stdout.write("The source of prootwrap is in ifaces/r/prootwrap.c if you are worried")
+        if not options["suid"] and not options["no-suid"]:
+            self.stdout.write("I need to do the following, but I need permission to do so:")
+            self.stdout.write("- Change the group of all the files in the sandbox to the web user")
+            self.stdout.write("- Change the owner of prootwrap to a sandbox user")
+            self.stdout.write("- Add the setuid bit to prootwrap")
+            self.stdout.write("The source of prootwrap is in ifaces/r/prootwrap.c if you are worried")
         
         i = None
         while not options["suid"] and not options["no-suid"] and i not in ["y", "n", "yes", "no"]:
