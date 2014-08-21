@@ -18,7 +18,6 @@ window.rthing = (function() {
     }, 100);
     
     var getLineNumber = function(textarea) {
-        // http://stackoverflow.com/questions/9185630/find-out-the-line-row-number-of-the-cursor-in-a-textarea
         return textarea.value.substr(0, textarea.selectionStart).split("\n").length;
     }
     
@@ -296,6 +295,9 @@ window.rthing = (function() {
             if($(this).find("textarea:not([disabled])").length)
                 $(this).find("textarea:not([disabled])")[0].focus();
         });
+        
+        // Update MathJax
+        window.MathJax.Hub.Typeset(document);
     };
     
     $(document).ready(function() {
