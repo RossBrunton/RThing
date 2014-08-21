@@ -203,7 +203,7 @@ window.rthing = (function() {
                 );
                 return false;
             }else{
-                $(this).data("rlPointer", -1);
+                //$(this).data("rlPointer", -1);
             }
         });
         
