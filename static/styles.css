@@ -314,3 +314,7 @@ a {
     text-decoration:none;
     color:inherit;
 }
+
+div:not(.content) > a {
+    text-decoration:underline;
+}
