@@ -8,6 +8,7 @@ import six
 from base64 import b64encode
 
 PROMPT = ">"
+LINE_END = ";"
 
 _command = []
 _nsindex = 0
@@ -39,7 +40,9 @@ def run(data):
         ).format(data.get("user", 0), width, height) + data["commands"]
     
     # Set the command argument
-    _command[_argindex] = data["commands"].replace("\n", ";").replace("\r", "").replace(";;", ";")
+    cmd_arg = data["commands"].replace("\n", ";").replace("\r", "")
+    
+    _command[_argindex] = cmd_arg
     
     # Create the process
     stdout, stderr = "", ""

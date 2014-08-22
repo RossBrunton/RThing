@@ -16,28 +16,42 @@ def perform_execute(code, task, user):
     
     is_correct will always be false if the task has automark set to false.
     """
+    # Ensure the code ends with ";" or whatever
+    if not code.endswith(task.iface.LINE_END):
+        code += task.iface.LINE_END
+    
     # First, check to see if they are equivalent and the answer exists
     # if the task cannot be automarked, equiv is always false
     equiv = task.iface.is_equivalent(task.model_answer, code) and task.automark
     
+    # Look up prior
+    prior = ""
+    if task.takes_prior and task.previous():
+        prior = task.previous().as_prior() + task.iface.generic_print(_SPLIT_TOKEN)
+    
     # Generate a seed if needed
     seed = 0
-    if task.uses_random:
+    if task.random_poison():
         seed = random.randint(0, 1 << 30)
+    
+    if task.takes_prior and task.previous():
+        seed = task.previous().prior_seed(user)
+        
     
     # Run the user's code, only if the lines of code are not equivalent
     if not equiv:
-        userCode = "\n".join([
+        userCode = "".join(filter(lambda x: bool(x), [
+            prior,
             task.hidden_pre_code,
             task.visible_pre_code,
             code,
             task.iface.generic_print(_SPLIT_TOKEN),
             task.validate_answer,
             task.post_code
-        ]).strip()
+        ])).strip()
         
         userInput = {
-            "commands":userCode, "namespace":task.section.lesson.pk, "uses_random":task.uses_random,
+            "commands":userCode, "namespace":task.section.lesson.pk, "uses_random":task.random_poison(),
             "uses_image":task.uses_image, "automark":task.automark, "seed":seed, "user":user.pk
         }
         userOutput = task.iface.run(userInput)
@@ -56,27 +70,28 @@ def perform_execute(code, task, user):
     if task.automark:
         # Check the cache for a model answer
         cache_value = None
-        if not task.uses_random:
+        if not task.random_poison():
             cache_value = cache.get("task_model_{}".format(task.pk))
         
         if not cache_value:
             # Miss
-            modelCode = "\n".join([
+            modelCode = "".join(filter(lambda x: bool(x), [
+                prior,
                 task.hidden_pre_code,
                 task.visible_pre_code,
                 task.model_answer,
                 task.iface.generic_print(_SPLIT_TOKEN),
                 task.validate_answer,
                 task.post_code
-            ]).strip()
+            ])).strip()
             
             modelInput = {
-                "commands":modelCode, "namespace":task.section.lesson.pk, "uses_random":task.uses_random,
+                "commands":modelCode, "namespace":task.section.lesson.pk, "uses_random":task.random_poison(),
                 "uses_image":task.uses_image, "automark":task.automark, "seed":seed, "user":user.pk
             }
             modelOutput = task.iface.run(modelInput)
             
-            if not task.uses_random:
+            if not task.random_poison():
                 cache.set("task_model_{}".format(task.pk), modelOutput)
         else:
             # Hit
@@ -88,12 +103,33 @@ def perform_execute(code, task, user):
     
     # Strip all lines after the split token
     displayedOutput = ""
+    rangeend = 0
+    rangestart = 0
+    
     lines = userOutput["out"].split("\n")
     for l in range(len(lines)-1, -1, -1):
-        # Loop backwards, when we find the token, claim every line before this one as the output
-        if _SPLIT_TOKEN in lines[l]:
-            displayedOutput = "\n".join(lines[:-len(lines)+l])
+        # Loop backwards until we find the token, to see what range of lines we should output
+        
+        # This is for takes_prior (takes_prior injects another split token before the command) for the start of range
+        if rangeend and _SPLIT_TOKEN in lines[l]:
+            rangestart = -len(lines)+l+1
             break
+        
+        # And this is for the end of the range, to delete post_code and validate_answer
+        if _SPLIT_TOKEN in lines[l]:
+            rangeend = -len(lines)+l
+            if not task.takes_prior:
+                break
+        
+        
+    
+    displayedOutput = "\n".join(lines[rangestart:rangeend])
+    
+    # Store the seed
+    if seed:
+        uot = task.get_uot(user)
+        uot.seed = seed
+        uot.save()
     
     # And return
     return (

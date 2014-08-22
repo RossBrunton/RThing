@@ -3,6 +3,7 @@
 import time
 
 PROMPT = "[d] >"
+LINE_END = ""
 
 def run(data):
     output = {}

@@ -128,8 +128,5 @@ def submit(request, task):
                 uot.add_wrong_answer(request.POST["code"])
             elif mode == "revealed":
                 uot.state = UserOnTask.STATE_REVEALED
-            
-            uot.save()
-    
     
     return HttpResponse(json.dumps(data), content_type="application/json")

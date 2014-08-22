@@ -57,7 +57,7 @@ class TaskInline(admin.StackedInline):
                 ("hidden_pre_code", "visible_pre_code"),
                 ("model_answer"),
                 ("validate_answer", "post_code"),
-                ("language", "uses_random", "uses_image", "automark")
+                ("language", "uses_random", "uses_image", "automark", "takes_prior")
             )
         }),
     )

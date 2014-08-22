@@ -160,6 +160,7 @@ class Task(TraversableOrderedModel):
     uses_random = models.BooleanField(default=False)
     uses_image = models.BooleanField(default=False)
     automark = models.BooleanField(default=True)
+    takes_prior = models.BooleanField(default=False)
     
     section = models.ForeignKey(Section, related_name="tasks")
     order_with_respect_to = "section"
@@ -192,6 +193,50 @@ class Task(TraversableOrderedModel):
     @iface.setter
     def iface(self, value):
         raise RuntimeError("You cannot set the interface directly.")
+    
+    def as_prior(self):
+        """Returns the full code that the task uses for the model answer, for takes_prior
+        
+        If the previous task has takes_prior, this will include it as well.
+        """
+        prior = ""
+        if self.takes_prior and self.previous():
+            prior = self.previous().as_prior()
+        
+        out = []
+        if prior: out += [prior]
+        if self.hidden_pre_code: out += [self.hidden_pre_code]
+        if self.visible_pre_code: out += [self.visible_pre_code]
+        out += [self.model_answer]
+        if self.post_code: out += [self.post_code]
+        
+        return "".join(out)
+    
+    def get_uot(self, user):
+        """Get the UOT for the given user"""
+        # Importing here to avoid circular import
+        from stats.models import UserOnTask
+        return UserOnTask.objects.get_or_create(task=self, user=user)[0]
+    
+    def prior_seed(self, user):
+        """Goes back on the "prior" chain to find a seed to use for this, returns None if there is no seed"""
+        if self.takes_prior and self.previous():
+            return self.previous().prior_seed(user)
+        
+        if self.get_uot(user):
+            return self.get_uot(user).seed
+        
+        return None
+    
+    def random_poison(self):
+        """Returns true if this depends on a random number"""
+        if self.uses_random:
+            return True
+        
+        if self.takes_prior and self.previous() and self.previous().uses_random:
+            return True
+        
+        return False
 
 
 @receiver(post_save, sender=Lesson)
