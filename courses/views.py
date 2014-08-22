@@ -27,12 +27,6 @@ def course(request, course):
     ctx["course"] = get_object_or_404(Course, slug=course);
     ctx["lessons"] = filter(lambda l : l.can_see(request.user), ctx["course"].lessons.all())
     
-    for x in xrange(0, 2):
-        r.run({
-            "commands":"print('hello world');", "namespace":1, "uses_random":True,
-            "uses_image":True, "automark":False, "seed":1
-        })
-    
     if not ctx["course"].can_see(request.user):
         raise Http404
     
