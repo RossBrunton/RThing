@@ -54,7 +54,7 @@ def run(data):
         universal_newlines=True
     )
     
-    print(" ".join(_command))
+    # print(" ".join(_command))
     
     stdout, stderr = proc.communicate()
     

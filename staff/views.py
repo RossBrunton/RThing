@@ -16,7 +16,7 @@ import os
 @user_passes_test(lambda u: u.is_staff)
 def index(request):
     ctx = {}
-    ctx["courses"] = Course.get_courses(request.user);
+    ctx["courses"] = Course.get_courses(request.user)
     
     return render(request, "staff/index.html", ctx)
 
@@ -78,3 +78,12 @@ def add_users(request, course):
         ctx["course"] = course
         ctx["users"] = "\n".join([u.username for u in course.users.all()])
         return render(request, "staff/add_user.html", ctx)
+
+
+@login_required
+@user_passes_test(lambda u: u.is_staff)
+def strain(request, task):
+    ctx = {}
+    ctx["task"] = get_object_or_404(Task, pk=task);
+    
+    return render(request, "staff/strain.html", ctx)
