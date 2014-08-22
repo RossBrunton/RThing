@@ -4,6 +4,7 @@ from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.template import defaultfilters
+from django.core.cache import cache
 from ordered_model.models import OrderedModel
 
 import importlib
@@ -195,6 +196,9 @@ class Task(TraversableOrderedModel):
 
 @receiver(post_save, sender=Lesson)
 def _task_saved(sender, instance, created, **kwargs):
-    """Make namespace folder"""
+    # Make namespace folder
     if not path.isdir(path.join(settings.NAMESPACE_DIR, str(instance.pk))):
         os.mkdir(path.join(settings.NAMESPACE_DIR, str(instance.pk)), 0o750)
+    
+    # Remove it's cached version from the cache
+    cache.delete("task_model_{}".format(instance.pk))
