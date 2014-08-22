@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import SuspiciousOperation
 from django.http import Http404, HttpResponse
 from django.views.decorators.http import require_POST
+from django.db.models import F
 
 from courses.models import Task
 
@@ -115,14 +116,18 @@ def submit(request, task):
     
     
     # Store statistics on the user
-    if mode == "answered" and not request.user.is_staff:
+    if mode in ["answered", "revealed"] and not request.user.is_staff:
         uot = UserOnTask.objects.get_or_create(user=request.user, task=task)[0]
         
-        if not uot.correct:
-            uot.correct = isCorrect
-            uot.tries += 1
-            if not uot.correct:
+        if uot.state == UserOnTask.STATE_NONE:
+            if mode == "answered" and isCorrect:
+                uot.tries = F("tries") + 1
+                uot.state = UserOnTask.STATE_CORRECT
+            elif mode == "answered":
+                uot.tries = F("tries") + 1
                 uot.add_wrong_answer(request.POST["code"])
+            elif mode == "revealed":
+                uot.state = UserOnTask.STATE_REVEALED
             
             uot.save()
     

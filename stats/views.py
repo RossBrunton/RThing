@@ -25,6 +25,9 @@ def lesson(request, course, lesson):
                     "task":t,
                     "attempts":utils.attempts(t),
                     "correct":utils.correct(t),
+                    "revealed":utils.revealed(t),
+                    "average_tries_correct":utils.average_tries_correct(t),
+                    "average_tries_reveal":utils.average_tries_reveal(t),
                     "completion":utils.completion(t)
                 }
                 for t in s.tasks.all()
