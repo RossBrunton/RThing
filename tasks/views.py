@@ -38,9 +38,10 @@ def submit(request, task):
     if mode not in ["skipped", "revealed", "answered"]:
         mode = "answered"
     
-    # Users cannot submit the scripts faster than one a second
+    # Users cannot submit the scripts faster than one a second if they are not staff
     if request.user.extra.last_script_time + datetime.timedelta(milliseconds=1000) > datetime.datetime.now():
-        return create_error("You are running scripts too fast!")
+        if not request.user.is_staff:
+            return create_error("You are running scripts too fast!")
     
     # Users also can't submit an empty string
     if not len(request.POST["code"]) and mode == "answered":
@@ -121,12 +122,14 @@ def submit(request, task):
         
         if uot.state == UserOnTask.STATE_NONE:
             if mode == "answered" and isCorrect:
-                uot.tries = F("tries") + 1
+                uot.tries += 1
                 uot.state = UserOnTask.STATE_CORRECT
             elif mode == "answered":
-                uot.tries = F("tries") + 1
+                uot.tries += 1
                 uot.add_wrong_answer(request.POST["code"])
             elif mode == "revealed":
                 uot.state = UserOnTask.STATE_REVEALED
+        
+        uot.save()
     
     return HttpResponse(json.dumps(data), content_type="application/json")

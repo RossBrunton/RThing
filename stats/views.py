@@ -38,3 +38,15 @@ def lesson(request, course, lesson):
     ]
     
     return render(request, "stats/lesson.html", ctx)
+
+
+@login_required
+@user_passes_test(lambda u: u.is_staff)
+def wrong(request, task):
+    ctx = {}
+    ctx["task"] = get_object_or_404(Task, pk=task)
+    ctx["lesson"] = ctx["task"].section.lesson
+    ctx["wrong"] = [uot.wrong_answers.all() for uot in ctx["task"].uots.all()]
+    print(ctx["wrong"])
+    
+    return render(request, "stats/wrong.html", ctx)

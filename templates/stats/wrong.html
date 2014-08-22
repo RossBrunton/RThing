@@ -1,0 +1,37 @@
+{% extends "base_staff.html" %}
+{% load lformat %}
+
+{% block title %}Wrong Answers for task {{ task.pk }}{% endblock %}
+
+{% block body %}
+<div>
+    You are viewing the wrong answers for the task:
+</div>
+
+{{ task.description|lformat }}
+
+<div>
+    The model answer for this question is:
+</div>
+
+<div class='prompt'>
+    {{ task.model_answer }}
+</div>
+    
+<div>
+    {% for outer in wrong %}
+        {% if outer %}
+            For the user {{ outer.0.uot.user.username }}:
+            {% for inner in outer %}
+                <div class='prompt'>{{ inner.code }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block location %}Wrong Answers{% endblock %}
+
+{% block sidebar %}
+
+{% endblock %}

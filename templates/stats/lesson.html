@@ -20,6 +20,7 @@
                 - {{ t.average_tries_correct }} is the average number of tries before a person got it correct<br/>
                 - {{ t.average_tries_reveal }} is the average number of tries before a person revealed the answer<br/>
                 - {{ t.completion }} is the fraction of people who attempted this question, and got it correct<br/>
+                - <a href='{% url "stats:wrong" task=t.task.pk %}'>View wrong answers</a>
             </div>
             
         {% endfor %}
