@@ -100,7 +100,11 @@ def perform_execute(code, task, user):
         displayedOutput,
         userOutput.get("media", None),
         False,
-        equiv or (task.automark and userOutput["out"]==modelOutput["out"] and userOutput["media"]==modelOutput["media"])
+        equiv or (
+            task.automark
+            and userOutput["out"] == modelOutput["out"]
+            and userOutput.get("media", None) == modelOutput.get("media", None)
+        )
     )
 
 
