@@ -7,6 +7,7 @@ from os import path
 import stat
 import re
 import subprocess
+from distutils.spawn import find_executable
 from six.moves import input
 
 import settings
@@ -134,6 +135,14 @@ class Command(BaseCommand):
             os.chmod(path.join(bindir, "proot"), 0o750)
         
         # Priviliged stuff
+        root_commands = [
+            "chgrp -R {webuser} '{base}'".format(base=settings.BASE_DIR, webuser="{webuser}"),
+            "chmod -R g+rx '{}'".format(settings.BASE_DIR),
+            "find {} -type d -print0 | xargs -0 chmod g+w".format(settings.BASE_DIR),
+            "chown {nobody} '{prootwrap}'".format(prootwrap = path.join(bindir, "prootwrap"), nobody="{nobody}"),
+            "chmod u+s '{}'".format(path.join(bindir, "prootwrap"))
+        ]
+        
         if not options["suid"] and not options["no-suid"]:
             self.stdout.write("I need to do the following, but I need permission to do so:")
             self.stdout.write("- Change the group of all the files in the sandbox to the web user")
@@ -141,32 +150,40 @@ class Command(BaseCommand):
             self.stdout.write("- Add the setuid bit to prootwrap")
             self.stdout.write("The source of prootwrap is in ifaces/r/prootwrap.c if you are worried")
         
+        
+        def write_help(webuser, nobody):
+            for l in root_commands:
+                self.stdout.write(l.format(webuser=webuser, nobody=nobody))
+        
+        # Sudo check
+        sudo = False
+        #if not find_executable("sudo"):
+        #    sudo = False
+        
         i = None
         while not options["suid"] and not options["no-suid"] and i not in ["y", "n", "yes", "no"]:
             i = input("Do you agree to this? [Y/N/?] ")
             
             if i == "?":
                 self.stdout.write("The following commands will be ran:")
-                self.stdout.write("sudo chgrp -R {} '{}'".format("[webuser]", settings.BASE_DIR))
-                self.stdout.write("sudo chmod -R g+rx '{}'".format(settings.BASE_DIR))
-                self.stdout.write(
-                    "sudo find {} -type d -print0 | xargs -0 chmod g+w".format(settings.BASE_DIR)
-                )
-                self.stdout.write("sudo chown {} '{}'".format("[nobody]", path.join(bindir, "prootwrap")))
-                self.stdout.write("sudo chmod u+s '{}'".format(path.join(bindir, "prootwrap")))
+                write_help("[webuser]", "[nobody]")
         
         if options["suid"] or i in ["y", "yes"]:
             webuser = input("What is the name/id of the webuser (possibly 'www-data')? ")
             nobody = input("What shall I use as the name/id as the sandbox user (maybe 'nobody')? ")
             
-            os.system("sudo chgrp -R {} '{}'".format(webuser, settings.BASE_DIR))
-            os.system("sudo chmod -R g+rx '{}'".format(settings.BASE_DIR))
-            os.system("sudo find {} -type d -print0 | xargs -0 chmod g+w".format(settings.BASE_DIR))
-            os.system("sudo chown {} '{}'".format(nobody, path.join(bindir, "prootwrap")))
-            os.system("sudo chmod u+s '{}'".format(path.join(bindir, "prootwrap")))
+            if sudo:
+                for l in root_commands:
+                    self.stdout.write("sudo "+l.format(webuser=webuser, nobody=nobody))
+                    os.system("sudo "+l.format(webuser=webuser, nobody=nobody))
             
-            self.stdout.write("Files permissioned succesfully.")
-            self.stdout.write("Note that any change in permission in the future will likely break the setuid.")
+                self.stdout.write("Files permissioned succesfully.")
+                self.stdout.write("Note that any change in permission in the future will likely break the setuid.")
+            else:
+                self.stdout.write(
+                    "Sudo was not found on your system; you need to run the following commands manually as root:"
+                )
+                write_help(webuser, nobody)
         else:
             self.stdout.write(
                 "The system should still run but it will not be sandboxed; people WILL try to delete files"
