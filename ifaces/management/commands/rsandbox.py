@@ -156,9 +156,9 @@ class Command(BaseCommand):
                 self.stdout.write(l.format(webuser=webuser, nobody=nobody))
         
         # Sudo check
-        sudo = False
-        #if not find_executable("sudo"):
-        #    sudo = False
+        sudo = True
+        if not find_executable("sudo"):
+            sudo = False
         
         i = None
         while not options["suid"] and not options["no-suid"] and i not in ["y", "n", "yes", "no"]:
