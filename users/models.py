@@ -13,7 +13,7 @@ class UserExtraData(models.Model):
     last_script_code = models.TextField(default="", max_length=1000, blank=True)
     last_script_output = models.TextField(default="", max_length=1000, blank=True)
     last_script_error = models.BooleanField(default=False, blank=True)
-    last_task = models.ForeignKey(Task, null=True, default=None)
+    last_task = models.ForeignKey(Task, null=True, default=None, on_delete=models.SET_NULL)
     
     password_forced = models.BooleanField(default=True)
     
