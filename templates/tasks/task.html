@@ -12,6 +12,9 @@
         {% if multiline %}<div class='is-multiline'>
             This question expects multiple lines of code.
         </div>{% endif %}
+        {% if task.takes_prior %}<div class='takes-prior'>
+            This question continues on from the previous question.
+        </div>{% endif %}
         {% if pre_lines and pre_lines.0 %}
             <div class='pre-code'>
                 {% for l in pre_lines %}

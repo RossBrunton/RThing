@@ -188,7 +188,7 @@ ul {
     color:#ddcc88;
 }
 
-.prompt-indicator, .loading, .no-answer-exists, .is-multiline {
+.prompt-indicator, .loading, .no-answer-exists, .is-multiline, .takes-prior {
     color:#999999;
     overflow-y:hidden;
 }
