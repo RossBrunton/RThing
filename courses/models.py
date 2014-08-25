@@ -11,6 +11,9 @@ import importlib
 import settings
 import os
 from os import path
+import six
+
+from rthing.utils import py2_str
 
 def _autoslug(c):
     """Given a class, edits its save method to update the slug to the value of the "title" field"""
@@ -73,6 +76,7 @@ def _complete(states):
 
 
 @_autoslug
+@py2_str
 class Course(TraversableOrderedModel):
     class Meta:
         ordering = ["code"]
@@ -86,7 +90,7 @@ class Course(TraversableOrderedModel):
     users = models.ManyToManyField(User, blank=True)
     
     def __str__(self):
-        return "{}: {}".format(self.code, self.title)
+        return u"{}: {}".format(self.code, self.title)
     
     def get_absolute_url(self):
         return reverse("courses:course", kwargs={"course":self.slug})
@@ -112,6 +116,7 @@ class Course(TraversableOrderedModel):
 
 
 @_autoslug
+@py2_str
 class Lesson(TraversableOrderedModel):
     class Meta:
         ordering = ["course", "order"]
@@ -128,7 +133,7 @@ class Lesson(TraversableOrderedModel):
     
     
     def __str__(self):
-        return "{}: {}".format(self.course.code, self.title)
+        return u"{}: {}".format(self.course.code, self.title)
     
     def get_absolute_url(self):
         return reverse("courses:lesson", kwargs={"course":self.course.slug, "lesson":self.slug})
@@ -152,6 +157,7 @@ class Lesson(TraversableOrderedModel):
 
 
 @_autoslug
+@py2_str
 class Section(TraversableOrderedModel):
     title = models.CharField(max_length=30, unique=True)
     slug = models.SlugField(blank=True, max_length=35, unique=True)
@@ -165,7 +171,7 @@ class Section(TraversableOrderedModel):
         return self.title
     
     def get_absolute_url(self):
-        return "{}?t={}".format(
+        return u"{}?t={}".format(
             reverse("courses:lesson", kwargs={"course":self.lesson.course.slug, "lesson":self.lesson.slug}),
             self.order+1
         )
@@ -181,7 +187,7 @@ class Section(TraversableOrderedModel):
         """
         return _complete([task.complete(user) for task in self.tasks.all()])
 
-
+@py2_str
 class Task(TraversableOrderedModel):
     description = models.TextField()
     after_text = models.TextField(blank=True)
@@ -208,7 +214,7 @@ class Task(TraversableOrderedModel):
         return self.description[:50]
     
     def get_absolute_url(self):
-        return "{}?t={}-{}".format(
+        return u"{}?t={}-{}".format(
             reverse("courses:lesson",
                 kwargs={"course":self.section.lesson.course.slug, "lesson":self.section.lesson.slug}
             ),

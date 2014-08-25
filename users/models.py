@@ -18,7 +18,7 @@ class UserExtraData(models.Model):
     password_forced = models.BooleanField(default=True)
     
     def __str__(self):
-        return "Extra data for {}".format(self.user.username)
+        return u"Extra data for {}".format(self.user.username)
 
 @receiver(post_save, sender=User)
 def _user_created(sender, instance, created, **kwargs):

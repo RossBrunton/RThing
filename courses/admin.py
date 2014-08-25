@@ -9,12 +9,11 @@ from courses.models import Course, Lesson, Section, Task
 from tasks.utils import validate_execute
 
 class _CustomAdmin(admin.ModelAdmin):
-    pass
-    #def response_post_save_change(self, request, obj):
-    #    return HttpResponseRedirect(obj.get_absolute_url())
+    def response_post_save_change(self, request, obj):
+        return HttpResponseRedirect(obj.get_absolute_url())
     
-    #def response_post_save_add(self, request, obj):
-    #    return HttpResponseRedirect(obj.get_absolute_url())
+    def response_post_save_add(self, request, obj):
+        return HttpResponseRedirect(obj.get_absolute_url())
     
 
 class CourseAdmin(_CustomAdmin):
@@ -49,13 +48,14 @@ admin_site.register(Lesson, LessonAdmin)
 
 
 class TaskAdminForm(ModelForm):
+    pass
     def clean(self, *args, **kwargs):
         """Check the task runs"""
         toRet = super(TaskAdminForm, self).clean(*args, **kwargs)
         
         is_error, err = validate_execute(self.cleaned_data, self.instance)
         if is_error:
-            raise ValidationError("Model answer encountered error: {}".format(err))
+            raise ValidationError(u"Model answer encountered error: {}".format(err))
         
         return toRet
 

@@ -3,6 +3,7 @@ from django.template import RequestContext
 from django.core.cache import cache
 
 from tasks.templatetags import fragments
+from courses.models import get_iface
 
 import random
 
@@ -16,6 +17,9 @@ def perform_execute(code, task, user):
     
     is_correct will always be false if the task has automark set to false.
     """
+    # Encode it to ascii
+    code = code.encode("ascii", "ignore")
+    
     # Strip whitespace from both ends
     code = code.strip()
     
@@ -145,6 +149,43 @@ def perform_execute(code, task, user):
             and userOutput.get("media", None) == modelOutput.get("media", None)
         )
     )
+
+
+def validate_execute(task, instance):
+    """Executes the model answer treating the task as if it were a dict and returns (is_error, error)"""
+    # If prior is true this doesn't seem to work
+    if task["takes_prior"]:
+        return (False, "")
+    
+    # Look up prior
+    prior = ""
+    if task["takes_prior"] and instance.previous():
+        prior = instance.previous().as_prior() + get_iface(task["language"]).generic_print(_SPLIT_TOKEN)
+    
+    # Generate a seed
+    seed = random.randint(0, 1 << 30)
+    
+    # Run the model answer
+    modelCode = "".join(filter(lambda x: bool(x), [
+        prior,
+        task["hidden_pre_code"],
+        task["visible_pre_code"],
+        task["model_answer"],
+        task["validate_answer"],
+        task["post_code"]
+    ])).strip()
+    
+    modelInput = {
+        "commands":modelCode, "namespace":task["section"].lesson.pk, "uses_random":True,
+        "uses_image":task["uses_image"], "automark":task["automark"], "seed":seed, "user":0
+    }
+    modelOutput = get_iface(task["language"]).run(modelInput)
+    
+    if modelOutput["is_error"]:
+        return (True, modelOutput["err"])
+    
+    # And return
+    return (False, "")
 
 
 def fragmentate(type, obj, request, content_select=None, content_value=None):

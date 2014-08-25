@@ -8,7 +8,7 @@ register = template.Library()
 
 @register.filter(needs_autoescape=True)
 def lformat(value, arg=None, autoescape=None):
-    """Formatting lecturers text and such"""
+    """Formatting lecturer's text and such"""
     if autoescape:
         esc = conditional_escape
     else:
@@ -17,17 +17,17 @@ def lformat(value, arg=None, autoescape=None):
     value = esc(value)
     
     # New lines
-    value = value.replace("\r", "")
-    value = value.replace("\n\n", "</div><div>")
+    value = value.replace("\r", u"")
+    value = value.replace("\n\n", u"</div><div>")
     
-    value = "<div>{}</div>".format(value)
+    value = u"<div>{}</div>".format(value)
     
     # Boxes
-    value = re.sub(r"\<div\>[Ww]arning:(.+?)\<\/div\>", r"<div class='l-warning'>\1</div>", value)
-    value = re.sub(r"\<div\>[Nn]ote:(.+?)\<\/div\>", r"<div class='l-note'>\1</div>", value)
-    value = re.sub(r"\<div\>[Ii]nfo:(.+?)\<\/div\>", r"<div class='l-info'>\1</div>", value)
+    value = re.sub(r"\<div\>[Ww]arning:(.+?)\<\/div\>", ur"<div class='l-warning'>\1</div>", value)
+    value = re.sub(r"\<div\>[Nn]ote:(.+?)\<\/div\>", ur"<div class='l-note'>\1</div>", value)
+    value = re.sub(r"\<div\>[Ii]nfo:(.+?)\<\/div\>", ur"<div class='l-info'>\1</div>", value)
     
     # Click transfer thing
-    value = re.sub(r"(\s)\#(.+?)\#", r"\1<span class='l-click'>\2</span>", value)
+    value = re.sub(ur"(\s)\#(.+?)\#", r"\1<span class='l-click'>\2</span>", value)
     
     return mark_safe(value)

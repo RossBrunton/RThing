@@ -8,7 +8,7 @@ LINE_END = ""
 def run(data):
     output = {}
     output["out"] = data["commands"].replace("\r", "")\
-        .replace("replace_me", "replaced") # This is done for testing
+        .replace("replace_me", u"replaced") # This is done for testing
     output["err"] = ""
     output["is_error"] = False
     

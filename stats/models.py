@@ -4,7 +4,9 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from courses.models import Task
+from rthing.utils import py2_str
 
+@py2_str
 class UserOnTask(models.Model):
     STATE_NONE = "n"
     STATE_CORRECT = "c"
@@ -21,7 +23,7 @@ class UserOnTask(models.Model):
     last = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return "UserOnTask for {} with {}".format(self.user.username, self.task.__str__())
+        return u"UserOnTask for {} with {}".format(self.user.username, self.task.__str__())
     
     def add_wrong_answer(self, code):
         # After 10 tries don't add a wrong answer
@@ -34,10 +36,11 @@ class UserOnTask(models.Model):
         self.wrong_answers.add(wa)
 
 
+@py2_str
 class WrongAnswer(models.Model):
     uot = models.ForeignKey(UserOnTask, related_name="wrong_answers")
     code = models.TextField(default="", max_length=1000)
     time = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return "WrongAnswer for {}".format(self.uot.__str__())
+        return u"WrongAnswer for {}".format(self.uot.__str__())

@@ -7,8 +7,8 @@ import shlex
 import six
 from base64 import b64encode
 
-PROMPT = ">"
-LINE_END = ";"
+PROMPT = u">"
+LINE_END = u";"
 
 _command = []
 _nsindex = 0
@@ -22,11 +22,11 @@ def run(data):
     output = {}
     
     # Set the namespace and working directory
-    _command[_nsindex] = "-b {}:/{}".format(
+    _command[_nsindex] = u"-b {}:/{}".format(
         os.path.join(settings.NAMESPACE_DIR, str(data["namespace"])),
         str(data["namespace"]),
     )
-    _command[_wdindex] = "-w /{}".format(str(data["namespace"]))
+    _command[_wdindex] = u"-w /{}".format(str(data["namespace"]))
     
     # Seed the RNG if needed
     if data.get("uses_random", False):
@@ -40,7 +40,7 @@ def run(data):
         ).format(data.get("user", 0), width, height) + data["commands"]
     
     # Set the command argument
-    cmd_arg = data["commands"].replace("\n", ";").replace("\r", "")
+    cmd_arg = data["commands"].replace("\n", u";").replace("\r", u"")
     
     _command[_argindex] = cmd_arg
     

@@ -55,8 +55,6 @@ def add_users(request, course):
         
         users = request.POST.get("users", "").split("\n")
         
-        print(users)
-        
         course.users.clear()
         
         for user in users:
@@ -67,7 +65,7 @@ def add_users(request, course):
                 try:
                     user_obj = User.objects.get(username=u)
                 except User.DoesNotExist:
-                    user_obj = User.objects.create_user(u, "{}@{}".format(u, settings.EMAIL_DOMAIN), u)
+                    user_obj = User.objects.create_user(u, u"{}@{}".format(u, settings.EMAIL_DOMAIN), u)
                 
                 course.users.add(user_obj)
             
@@ -76,7 +74,7 @@ def add_users(request, course):
     else:
         ctx = {}
         ctx["course"] = course
-        ctx["users"] = "\n".join([u.username for u in course.users.all()])
+        ctx["users"] = u"\n".join([u.username for u in course.users.all()])
         return render(request, "staff/add_user.html", ctx)
 
 

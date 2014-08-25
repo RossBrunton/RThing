@@ -15,7 +15,7 @@ def index(request):
     
     # Check if the user needs to change their password
     if request.user.extra.password_forced:
-        return HttpResponseRedirect("{}?forced=1".format(reverse("users:edit")))
+        return HttpResponseRedirect(u"{}?forced=1".format(reverse("users:edit")))
     
     return render(request, "courses/index.html", ctx)
 

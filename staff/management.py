@@ -18,7 +18,7 @@ def _post_syncdb(sender, **kwargs):
     group = Group.objects.get_or_create(name="Course Editor")[0]
     
     permissions = [
-        "{}_{}".format(x, y)
+        u"{}_{}".format(x, y)
         for x in ["add", "change", "delete"]
         for y in ["course", "lesson", "section", "task"]
     ]
