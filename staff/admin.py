@@ -7,8 +7,8 @@ class StaffAdminSite(admin.sites.AdminSite):
     def __init__(self, *args, **kwargs):
         super(StaffAdminSite, self).__init__(*args, **kwargs)
         
-        site_title = ugettext_lazy("Rthing Administration")
-        site_header = ugettext_lazy("Rthing Administration")
+        self.site_title = ugettext_lazy("Rthing Administration")
+        self.site_header = ugettext_lazy("Rthing Administration")
 
 
 admin_site = StaffAdminSite()

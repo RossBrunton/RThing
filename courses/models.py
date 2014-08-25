@@ -223,11 +223,7 @@ class Task(TraversableOrderedModel):
     @property
     def iface(self):
         """Returns the iface module that this task uses"""
-        if self.language in _iface_cache:
-            return _iface_cache[self.language]
-        
-        _iface_cache[self.language] = importlib.import_module(settings.IFACES[self.language][1])
-        return _iface_cache[self.language]
+        return get_iface(self.language)
     
     @iface.setter
     def iface(self, value):
@@ -293,6 +289,12 @@ class Task(TraversableOrderedModel):
         else:
             return "complete"
 
+def get_iface(name):
+    if name in _iface_cache:
+        return _iface_cache[name]
+    
+    _iface_cache[name] = importlib.import_module(settings.IFACES[name][1])
+    return _iface_cache[name]
 
 @receiver(post_save, sender=Lesson)
 def _lesson_saved(sender, instance, created, **kwargs):
