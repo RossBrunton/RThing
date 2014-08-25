@@ -20,6 +20,8 @@ def lformat(value, arg=None, autoescape=None):
     value = value.replace("\r", "")
     value = value.replace("\n\n", "</div><div>")
     
+    value = "<div>{}</div>".format(value)
+    
     # Boxes
     value = re.sub(r"\<div\>[Ww]arning:(.+?)\<\/div\>", r"<div class='l-warning'>\1</div>", value)
     value = re.sub(r"\<div\>[Nn]ote:(.+?)\<\/div\>", r"<div class='l-note'>\1</div>", value)
@@ -28,4 +30,4 @@ def lformat(value, arg=None, autoescape=None):
     # Click transfer thing
     value = re.sub(r"(\s)\#(.+?)\#", r"\1<span class='l-click'>\2</span>", value)
     
-    return mark_safe("<div>{}</div>".format(value))
+    return mark_safe(value)
