@@ -16,6 +16,9 @@ def perform_execute(code, task, user):
     
     is_correct will always be false if the task has automark set to false.
     """
+    # Strip whitespace from both ends
+    code = code.strip()
+    
     # Ensure the code ends with ";" or whatever
     if not code.endswith(task.iface.LINE_END):
         code += task.iface.LINE_END
