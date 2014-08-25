@@ -13,6 +13,13 @@
 <div>
     Hello {{ user.username }}! These are the courses you can currently access!
 </div>
+
+{% if user.extra.last_task %}
+<div>
+    You can also <a href='{{ user.extra.last_task.get_absolute_url }}'>continue from the last question you did</a>.
+</div>
+{% endif %}
+
 {% for c in courses %}
     <a href='{% url "courses:course" course=c.slug %}'>
     <div class='course-block {% if not c.published %}unpublished{% endif %}' >

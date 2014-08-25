@@ -86,6 +86,7 @@ def submit(request, task):
     request.user.extra.last_script_output = data["output"]
     request.user.extra.last_script_error = data["isError"]
     request.user.extra.last_script_time = datetime.datetime.now()
+    request.user.extra.last_task = task
     request.user.extra.save()
     
     # Give the client another entry

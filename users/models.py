@@ -3,6 +3,8 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+from courses.models import Task
+
 class UserExtraData(models.Model):
     user = models.OneToOneField(User, related_name="extra")
     
@@ -11,6 +13,7 @@ class UserExtraData(models.Model):
     last_script_code = models.TextField(default="", max_length=1000, blank=True)
     last_script_output = models.TextField(default="", max_length=1000, blank=True)
     last_script_error = models.BooleanField(default=False, blank=True)
+    last_task = models.ForeignKey(Task, null=True, default=None)
     
     password_forced = models.BooleanField(default=True)
     
