@@ -95,14 +95,14 @@ def submit(request, task):
     if task.automark and mode != "revealed":
         if mode == "skipped":
             data["frags"].append(utils.fragmentate("task-content", task, request, ".skip-text", task.skip_text))
-        elif isCorrect:
-            data["frags"].append(utils.fragmentate("task-content", task, request, ".after-text", task.after_text))
-        else:
+        elif not isCorrect:
             data["frags"].append(utils.fragmentate("task-content", task, request, ".wrong-text", task.wrong_text))
     
     
     # If they were correct (or skipped) then load the next task or section
     if mode == "skipped" or mode == "revealed" or isCorrect:
+        data["frags"].append(utils.fragmentate("task-content", task, request, ".after-text", task.after_text))
+        
         n = task.next()
         if n:
             data["frags"].append(utils.fragmentate("task", n, request))
