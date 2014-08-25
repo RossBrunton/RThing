@@ -131,6 +131,28 @@ window.rthing = (function() {
         update();
     };
     
+    // Updates the height of the given textarea
+    var updateTextarea = function(textarea) {
+        var elem = $(textarea);
+        elem.css("height", "5px");
+        elem.css("height", textarea.scrollHeight);
+        elem.siblings(".prompt-indicator").css("height", textarea.scrollHeight);
+        
+        // Now do the left thing
+        var lines = ~~(textarea.scrollHeight/elem.css("font-size").split("px")[0]);
+        
+        var sym = elem.siblings(".prompt-indicator").data("symbol");
+        var rep = sym.length < 3 ? "." : "...";
+        var str = sym + "&nbsp;";
+        
+        // One less because we have first line
+        for(var i = 1; i < lines; i ++) {
+            str += "<br/>"+rep+"&nbsp;";
+        }
+        
+        $(textarea).siblings(".prompt-indicator").html(str);
+    };
+    
     // Called when the document changes to update all listeners
     var update = function() {
         // Erase all curent listeners
@@ -178,6 +200,7 @@ window.rthing = (function() {
                     $(this).parent().prevAll(".prompt-entry-container").children("textarea")
                         [$(this).data("rlPointer")].value
                 );
+                updateTextarea(this);
                 return false;
             }else if(e.which == 40 /* Down */ && getLineNumber(this) == this.value.split("\n").length) {
                 if($(this).data("rlPointer") === undefined) $(this).data("rlPointer", 0);
@@ -189,6 +212,7 @@ window.rthing = (function() {
                 if($(this).data("rlPointer") < 0) {
                     $(this).data("rlPointer", 0);
                     $(this).val("");
+                    updateTextarea(this);
                     return true;
                 }
                 
@@ -201,6 +225,7 @@ window.rthing = (function() {
                     $(this).parent().prevAll(".prompt-entry-container").children("textarea")
                         [$(this).data("rlPointer")].value
                 );
+                updateTextarea(this);
                 return false;
             }else{
                 //$(this).data("rlPointer", -1);
@@ -209,24 +234,7 @@ window.rthing = (function() {
         
         // Listener for textarea input
         $(".prompt textarea").on("input", function(e) {
-            var elem = $(this);
-            elem.css("height", "5px");
-            elem.css("height", this.scrollHeight);
-            elem.siblings(".prompt-indicator").css("height", this.scrollHeight);
-            
-            // Now do the left thing
-            var lines = ~~(this.scrollHeight/elem.css("font-size").split("px")[0]);
-            
-            var sym = elem.siblings(".prompt-indicator").data("symbol");
-            var rep = sym.length < 3 ? "." : "...";
-            var str = sym + "&nbsp;";
-            
-            // One less because we have first line
-            for(var i = 1; i < lines; i ++) {
-                str += "<br/>"+rep+"&nbsp;";
-            }
-            
-            elem.siblings(".prompt-indicator").html(str);
+            updateTextarea(this);
         });
         
         // Skip button
