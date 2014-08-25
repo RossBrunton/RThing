@@ -295,10 +295,12 @@ class Task(TraversableOrderedModel):
 
 
 @receiver(post_save, sender=Lesson)
-def _task_saved(sender, instance, created, **kwargs):
+def _lesson_saved(sender, instance, created, **kwargs):
     # Make namespace folder
     if not path.isdir(path.join(settings.NAMESPACE_DIR, str(instance.pk))):
         os.mkdir(path.join(settings.NAMESPACE_DIR, str(instance.pk)), 0o750)
-    
-    # Remove it's cached version from the cache
+
+@receiver(post_save, sender=Task)
+def _task_saved(sender, instance, created, **kwargs):
+    # Remove its cached version from the cache
     cache.delete("task_model_{}".format(instance.pk))
