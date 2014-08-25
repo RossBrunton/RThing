@@ -25,7 +25,10 @@ def course(request, course):
     ctx = {}
     ctx["all_courses"] = Course.get_courses(request.user);
     ctx["course"] = get_object_or_404(Course, slug=course);
-    ctx["lessons"] = filter(lambda l : l.can_see(request.user), ctx["course"].lessons.all())
+    ctx["lessons"] = [\
+        (l, l.complete_states(request.user))\
+        for l in filter(lambda l : l.can_see(request.user), ctx["course"].lessons.all())
+    ]
     
     if not ctx["course"].can_see(request.user):
         raise Http404

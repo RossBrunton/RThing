@@ -58,6 +58,20 @@ _IFACE_CHOICES = map(lambda k : (k, settings.IFACES[k][0]), settings.IFACES.keys
 # Cache for interface modules
 _iface_cache = {}
 
+def _complete(states):
+    """Returns as per Task.complete depending on whether ALL elements of the given list are at least that state
+    
+    Priority is "none", "skipped", "revealed", "complete"; this returns the lowest priority complete value
+    """
+    toReturn = "complete"
+    for state in states:
+        if state == "none": return "none"
+        if state == "skipped": toReturn = "skipped"
+        if state == "revealed" and toReturn != "skipped": toReturn = "revealed"
+    
+    return toReturn
+
+
 @_autoslug
 class Course(TraversableOrderedModel):
     class Meta:
@@ -88,6 +102,13 @@ class Course(TraversableOrderedModel):
         if user.is_staff: return Course.objects.all()
         
         return Course.objects.filter(published=True, users__pk=user.pk)
+    
+    def complete(self, user):
+        """Returns as per Task.complete depending on whether ALL lessons are at least that state
+        
+        Priority is "none", "skipped", "revealed", "complete"; this returns the lowest priority complete value
+        """
+        return _complete([lesson.complete(user) for lesson in self.lessons.all()])
 
 
 @_autoslug
@@ -117,6 +138,17 @@ class Lesson(TraversableOrderedModel):
         if user.is_staff: return True
         
         return self.course.can_see(user) and self.published
+    
+    def complete(self, user):
+        """Returns as per Task.complete depending on whether ALL tasks are at least that state
+        
+        Priority is "none", "skipped", "revealed", "complete"; this returns the lowest priority complete value
+        """
+        return _complete(self.complete_states(user))
+    
+    def complete_states(self, user):
+        """Returns a list of all the states of each section in this lesson"""
+        return [section.complete(user) for section in self.sections.all()]
 
 
 @_autoslug
@@ -141,6 +173,13 @@ class Section(TraversableOrderedModel):
     def can_see(self, user):
         """Can the given user see this section"""
         return self.lesson.can_see(user)
+    
+    def complete(self, user):
+        """Returns as per Task.complete depending on whether ALL tasks are at least that state
+        
+        Priority is "none", "skipped", "revealed", "complete"; this returns the lowest priority complete value
+        """
+        return _complete([task.complete(user) for task in self.tasks.all()])
 
 
 class Task(TraversableOrderedModel):
@@ -237,6 +276,22 @@ class Task(TraversableOrderedModel):
             return True
         
         return False
+    
+    def complete(self, user):
+        """Returns "complete", "skipped", "revealed" or "none" depending on what the user has done"""
+        from stats.models import UserOnTask
+        
+        uot = self.get_uot(user)
+        
+        if uot.skipped and uot.state == UserOnTask.STATE_NONE:
+            return "skipped"
+        
+        if uot.state == UserOnTask.STATE_NONE:
+            return "none"
+        elif uot.state == UserOnTask.STATE_REVEALED:
+            return "revealed"
+        else:
+            return "complete"
 
 
 @receiver(post_save, sender=Lesson)

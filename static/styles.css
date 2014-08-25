@@ -164,6 +164,18 @@ ul {
     background: linear-gradient(#bb5533, #993300);
 }
 
+.section-state-none {
+    color:#bbbbbb;
+}
+
+.section-state-skipped {
+    color:#ffee00;
+}
+
+.section-state-revealed, .section-state-complete {
+    color:inherit;
+}
+
 /* Prompt */
 .prompt {
     font-family:monospace;
@@ -317,4 +329,8 @@ a {
 
 div:not(.content) > a {
     text-decoration:underline;
+}
+
+.lesson-block.lesson-block a {
+    text-decoration:none;
 }

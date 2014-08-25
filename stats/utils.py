@@ -3,7 +3,7 @@ from stats.models import UserOnTask
 
 def attempts(task):
     """Who has attempted this task"""
-    return UserOnTask.objects.filter(task=task, user__is_staff=False).count()
+    return UserOnTask.objects.filter(task=task, user__is_staff=False, tries__gte=1).count()
 
 def correct(task):
     """How many people have gotten this task correct"""

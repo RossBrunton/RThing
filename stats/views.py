@@ -47,6 +47,5 @@ def wrong(request, task):
     ctx["task"] = get_object_or_404(Task, pk=task)
     ctx["lesson"] = ctx["task"].section.lesson
     ctx["wrong"] = [uot.wrong_answers.all() for uot in ctx["task"].uots.all()]
-    print(ctx["wrong"])
     
     return render(request, "stats/wrong.html", ctx)

@@ -16,13 +16,19 @@
 {{ course.description|lformat }}
 
 {% for l in lessons %}
-    <a href='{% url "courses:lesson" course=course.slug lesson=l.slug %}'>
-        <div class='lesson-block{% if not l.published %} unpublished{% endif %}
-            {% if not l.answers_published %} no-answers{% endif %}
-        '>
-            <div class='title'>{{ l.title }}</div>
+    <div class='lesson-block{% if not l.0.published %} unpublished{% endif %}
+        {% if not l.0.answers_published %} no-answers{% endif %}'>
+        <div class='title'>
+            <a href='{% url "courses:lesson" course=course.slug lesson=l.0.slug %}'>{{ l.0.title }}</a>
         </div>
-    </a>
+        <div class='stretch'></div>
+        <div class='sections'>
+        {% for s in l.1 %}
+        <a href='{% url "courses:lesson" course=course.slug lesson=l.0.slug %}?t={{ forloop.counter }}'
+            class='lesson-section section-state-{{ s }}'>{{ forloop.counter }}</a>
+        {% endfor %}
+        </div>
+    </div>
 {% endfor %}
 
 {{ course.ending|lformat }}

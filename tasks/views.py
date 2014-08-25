@@ -117,8 +117,8 @@ def submit(request, task):
     
     
     # Store statistics on the user
+    uot = UserOnTask.objects.get_or_create(user=request.user, task=task)[0]
     if mode in ["answered", "revealed"] and not request.user.is_staff:
-        uot = UserOnTask.objects.get_or_create(user=request.user, task=task)[0]
         
         if uot.state == UserOnTask.STATE_NONE:
             if mode == "answered" and isCorrect:
@@ -129,7 +129,10 @@ def submit(request, task):
                 uot.add_wrong_answer(request.POST["code"])
             elif mode == "revealed":
                 uot.state = UserOnTask.STATE_REVEALED
-        
-        uot.save()
+    
+    if mode == "skipped":
+        uot.skipped = True
+    
+    uot.save()
     
     return HttpResponse(json.dumps(data), content_type="application/json")
