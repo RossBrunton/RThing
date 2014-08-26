@@ -40,7 +40,7 @@ def run(data):
         ).format(data.get("user", 0), width, height) + data["commands"]
     
     # Set the command argument
-    cmd_arg = data["commands"].replace("\n", u";").replace("\r", u"")
+    cmd_arg = data["commands"].replace("\n", u"").replace("\r", u"")
     
     _command[_argindex] = cmd_arg
     

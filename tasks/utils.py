@@ -17,8 +17,8 @@ def perform_execute(code, task, user):
     
     is_correct will always be false if the task has automark set to false.
     """
-    # Encode it to ascii
-    code = code.encode("ascii", "ignore")
+    # Encode it to ascii to get rid of unicode chars
+    code = code.encode("ascii", "ignore").decode("ascii")
     
     # Strip whitespace from both ends
     code = code.strip()
@@ -43,7 +43,6 @@ def perform_execute(code, task, user):
     
     if task.takes_prior and task.previous():
         seed = task.previous().prior_seed(user)
-        
     
     # Run the user's code, only if the lines of code are not equivalent
     if not equiv:
