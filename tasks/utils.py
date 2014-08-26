@@ -46,7 +46,7 @@ def perform_execute(code, task, user):
     
     # Run the user's code, only if the lines of code are not equivalent
     if not equiv:
-        userCode = "".join(filter(lambda x: bool(x), [
+        user_code = "".join(filter(lambda x: bool(x), [
             prior,
             task.hidden_pre_code,
             task.visible_pre_code,
@@ -56,16 +56,16 @@ def perform_execute(code, task, user):
             task.post_code
         ])).strip()
         
-        userInput = {
-            "commands":userCode, "namespace":task.section.lesson.pk, "uses_random":task.random_poison(),
+        user_input = {
+            "commands":user_code, "namespace":task.section.lesson.pk, "uses_random":task.random_poison(),
             "uses_image":task.uses_image, "automark":task.automark, "seed":seed, "user":user.pk
         }
-        userOutput = task.iface.run(userInput)
+        user_output = task.iface.run(user_input)
         
-        if userOutput["is_error"]:
+        if user_output["is_error"]:
             # If the output has an error, assume it's wrong
             return (
-                userOutput["err"],
+                user_output["err"],
                 None,
                 True,
                 False
@@ -81,7 +81,7 @@ def perform_execute(code, task, user):
         
         if not cache_value:
             # Miss
-            modelCode = "".join(filter(lambda x: bool(x), [
+            model_code = "".join(filter(lambda x: bool(x), [
                 prior,
                 task.hidden_pre_code,
                 task.visible_pre_code,
@@ -91,45 +91,43 @@ def perform_execute(code, task, user):
                 task.post_code
             ])).strip()
             
-            modelInput = {
-                "commands":modelCode, "namespace":task.section.lesson.pk, "uses_random":task.random_poison(),
+            model_input = {
+                "commands":model_code, "namespace":task.section.lesson.pk, "uses_random":task.random_poison(),
                 "uses_image":task.uses_image, "automark":task.automark, "seed":seed, "user":user.pk
             }
-            modelOutput = task.iface.run(modelInput)
+            model_output = task.iface.run(model_input)
             
             if not task.random_poison():
-                cache.set("task_model_{}".format(task.pk), modelOutput)
+                cache.set("task_model_{}".format(task.pk), model_output)
         else:
             # Hit
-            modelOutput = cache_value
+            model_output = cache_value
         
         # If the answers are equivalent, then set the users output to the models output
         if equiv:
-            userOutput = modelOutput
+            user_output = model_output
     
     # Strip all lines after the split token
-    displayedOutput = ""
-    rangeend = 0
-    rangestart = 0
+    displayed_output = ""
+    range_end = 0
+    range_start = 0
     
-    lines = userOutput["out"].split("\n")
+    lines = user_output["out"].split("\n")
     for l in range(len(lines)-1, -1, -1):
         # Loop backwards until we find the token, to see what range of lines we should output
         
         # This is for takes_prior (takes_prior injects another split token before the command) for the start of range
-        if rangeend and _SPLIT_TOKEN in lines[l]:
-            rangestart = -len(lines)+l+1
+        if range_end and _SPLIT_TOKEN in lines[l]:
+            range_start = -len(lines)+l+1
             break
         
         # And this is for the end of the range, to delete post_code and validate_answer
         if _SPLIT_TOKEN in lines[l]:
-            rangeend = -len(lines)+l
+            range_end = -len(lines)+l
             if not task.takes_prior:
                 break
-        
-        
     
-    displayedOutput = "\n".join(lines[rangestart:rangeend])
+    displayed_output = "\n".join(lines[range_start:range_end])
     
     # Store the seed
     if seed:
@@ -139,13 +137,13 @@ def perform_execute(code, task, user):
     
     # And return
     return (
-        displayedOutput,
-        userOutput.get("media", None),
+        displayed_output,
+        user_output.get("media", None),
         False,
         equiv or (
             task.automark
-            and userOutput["out"] == modelOutput["out"]
-            and userOutput.get("media", None) == modelOutput.get("media", None)
+            and user_output["out"] == model_output["out"]
+            and user_output.get("media", None) == model_output.get("media", None)
         )
     )
 
@@ -165,7 +163,7 @@ def validate_execute(task, instance):
     seed = random.randint(0, 1 << 30)
     
     # Run the model answer
-    modelCode = "".join(filter(lambda x: bool(x), [
+    model_code = "".join(filter(lambda x: bool(x), [
         prior,
         task["hidden_pre_code"],
         task["visible_pre_code"],
@@ -174,14 +172,14 @@ def validate_execute(task, instance):
         task["post_code"]
     ])).strip()
     
-    modelInput = {
-        "commands":modelCode, "namespace":task["section"].lesson.pk, "uses_random":True,
+    model_input = {
+        "commands":model_code, "namespace":task["section"].lesson.pk, "uses_random":True,
         "uses_image":task["uses_image"], "automark":task["automark"], "seed":seed, "user":0
     }
-    modelOutput = get_iface(task["language"]).run(modelInput)
+    model_output = get_iface(task["language"]).run(model_input)
     
-    if modelOutput["is_error"]:
-        return (True, modelOutput["err"])
+    if model_output["is_error"]:
+        return (True, model_output["err"])
     
     # And return
     return (False, "")
