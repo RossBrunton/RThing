@@ -23,11 +23,11 @@ def lformat(value, arg=None, autoescape=None):
     value = u"<div>{}</div>".format(value)
     
     # Boxes
-    value = re.sub(r"\<div\>[Ww]arning:(.+?)\<\/div\>", ur"<div class='l-warning'>\1</div>", value)
-    value = re.sub(r"\<div\>[Nn]ote:(.+?)\<\/div\>", ur"<div class='l-note'>\1</div>", value)
-    value = re.sub(r"\<div\>[Ii]nfo:(.+?)\<\/div\>", ur"<div class='l-info'>\1</div>", value)
+    value = re.sub(r"\<div\>[Ww]arning:(.+?)\<\/div\>", r"<div class='l-warning'>\1</div>", value)
+    value = re.sub(r"\<div\>[Nn]ote:(.+?)\<\/div\>", r"<div class='l-note'>\1</div>", value)
+    value = re.sub(r"\<div\>[Ii]nfo:(.+?)\<\/div\>", r"<div class='l-info'>\1</div>", value)
     
     # Click transfer thing
-    value = re.sub(ur"(\s)\#(.+?)\#", r"\1<span class='l-click'>\2</span>", value)
+    value = re.sub(r"(\s)\#(.+?)\#", r"\1<span class='l-click'>\2</span>", value)
     
     return mark_safe(value)
