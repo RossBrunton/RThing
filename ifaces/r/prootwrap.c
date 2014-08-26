@@ -1,9 +1,17 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/resource.h>
 
 int main(int argc, char *argv[]) {
     char* env[] = {"PATH=/:/bin:/usr/bin", NULL};
+    
+    // Memory limit
+    const struct rlimit mlimit = {
+        .rlim_cur = 1024 * 1024 * 150,
+        .rlim_max = 1024 * 1024 * 160
+    };
+    setrlimit(RLIMIT_AS, &mlimit);
     
     // Idiot proofing
     if(geteuid() == 0) {
