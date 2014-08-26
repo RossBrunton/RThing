@@ -23,12 +23,12 @@ def lesson(request, course, lesson):
             "taskdata":[
                 {
                     "task":t,
-                    "attempts":utils.attempts(t),
-                    "correct":utils.correct(t),
-                    "revealed":utils.revealed(t),
-                    "average_tries_correct":utils.average_tries_correct(t),
-                    "average_tries_reveal":utils.average_tries_reveal(t),
-                    "completion":utils.completion(t)
+                    "attempts":utils.attempts(task=t),
+                    "correct":utils.correct(task=t),
+                    "revealed":utils.revealed(task=t),
+                    "average_tries_correct":utils.average_tries_correct(task=t),
+                    "average_tries_reveal":utils.average_tries_reveal(task=t),
+                    "completion":utils.completion(task=t)
                 }
                 for t in s.tasks.all()
             ],
@@ -47,5 +47,14 @@ def wrong(request, task):
     ctx["task"] = get_object_or_404(Task, pk=task)
     ctx["lesson"] = ctx["task"].section.lesson
     ctx["wrong"] = [uot.wrong_answers.all() for uot in ctx["task"].uots.all()]
+    
+    return render(request, "stats/wrong.html", ctx)
+
+
+@login_required
+@user_passes_test(lambda u: u.is_staff)
+def user(request, name, course):
+    ctx = {}
+    ctx["user"] = get_object_or_404(User, username=name)
     
     return render(request, "stats/wrong.html", ctx)
