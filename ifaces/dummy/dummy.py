@@ -8,7 +8,8 @@ LINE_END = ""
 def run(data):
     output = {}
     output["out"] = data["commands"].replace("\r", "")\
-        .replace("replace_me", u"replaced") # This is done for testing
+        .replace("%replace", u"replaced")\
+        .replace("%seed", str(data["seed"])) # This is done for testing
     output["err"] = ""
     output["is_error"] = False
     
@@ -20,4 +21,4 @@ def is_equivalent(a, b):
     return a == b
 
 def generic_print(expr):
-    return "\n"+expr
+    return "\n"+expr+"\n"
