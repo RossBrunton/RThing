@@ -113,6 +113,19 @@ class Course(TraversableOrderedModel):
         Priority is "none", "skipped", "revealed", "complete"; this returns the lowest priority complete value
         """
         return _complete([lesson.complete(user) for lesson in self.lessons.all()])
+    
+    def to_dict(self):
+        output = {}
+        
+        output["title"] = self.title
+        output["code"] = self.code
+        output["description"] = self.description
+        output["ending"] = self.ending
+        output["published"] = self.published
+        output["lessons"] = [l.to_dict() for l in self.lessons.all()]
+        output["users"] = [u.username for u in self.users.all()]
+        
+        return output
 
 
 @_autoslug
@@ -154,6 +167,18 @@ class Lesson(TraversableOrderedModel):
     def complete_states(self, user):
         """Returns a list of all the states of each section in this lesson"""
         return [section.complete(user) for section in self.sections.all()]
+    
+    def to_dict(self):
+        output = {}
+        
+        output["title"] = self.title
+        output["introduction"] = self.introduction
+        output["closing"] = self.closing
+        output["published"] = self.published
+        output["answers_published"] = self.answers_published
+        output["sections"] = [s.to_dict() for s in self.sections.all()]
+        
+        return output
 
 
 @_autoslug
@@ -186,6 +211,16 @@ class Section(TraversableOrderedModel):
         Priority is "none", "skipped", "revealed", "complete"; this returns the lowest priority complete value
         """
         return _complete([task.complete(user) for task in self.tasks.all()])
+    
+    def to_dict(self):
+        output = {}
+        
+        output["title"] = self.title
+        output["introduction"] = self.introduction
+        output["closing" ] = self.closing
+        output["tasks"] = [t.to_dict() for t in self.tasks.all()]
+        
+        return output
 
 @py2_str
 class Task(TraversableOrderedModel):
@@ -294,6 +329,27 @@ class Task(TraversableOrderedModel):
             return "revealed"
         else:
             return "complete"
+    
+    def to_dict(self):
+        out = {}
+        
+        out["description"] = self.description
+        out["after_text"] = self.after_text
+        out["wrong_text"] = self.wrong_text
+        out["skip_text"] = self.skip_text
+        out["commentary"] = self.commentary
+        out["language"] = self.language
+        out["hidden_pre_code"] = self.hidden_pre_code
+        out["visible_pre_code"] = self.visible_pre_code
+        out["model_answer"] = self.model_answer
+        out["validate_answer"] = self.validate_answer
+        out["post_code"] = self.post_code
+        out["uses_random"] = self.uses_random
+        out["uses_image"] = self.uses_image
+        out["automark"] = self.automark
+        out["takes_prior"] = self.takes_prior
+        
+        return out
 
 def get_iface(name):
     if name in _iface_cache:

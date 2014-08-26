@@ -5,6 +5,7 @@ from users.urls import urlpatterns as users
 from tasks.urls import urlpatterns as tasks
 from staff.urls import urlpatterns as staff
 from stats.urls import urlpatterns as stats
+from export.urls import urlpatterns as export
 import rthing.views as views
 
 from staff.admin import admin_site
@@ -20,4 +21,5 @@ urlpatterns = patterns("",
     url(r"^users/", include(users, namespace="users")),
     url(r"^staff/", include(staff, namespace="staff")),
     url(r"^stats/", include(stats, namespace="stats")),
+    url(r"^io/", include(export, namespace="export"))
 )
