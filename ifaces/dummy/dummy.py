@@ -20,4 +20,4 @@ def is_equivalent(a, b):
     return a == b
 
 def generic_print(expr):
-    return expr
+    return "\n"+expr
