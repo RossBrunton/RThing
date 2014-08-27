@@ -12,8 +12,9 @@ import settings
 import os
 from os import path
 import six
+from collections import OrderedDict
 
-from rthing.utils import py2_str
+from rthing.utils import py2_str, rand_str
 
 def _autoslug(c):
     """Given a class, edits its save method to update the slug to the value of the "title" field"""
@@ -115,7 +116,7 @@ class Course(TraversableOrderedModel):
         return _complete([lesson.complete(user) for lesson in self.lessons.all()])
     
     def to_dict(self):
-        output = {}
+        output = OrderedDict()
         
         output["title"] = self.title
         output["code"] = self.code
@@ -169,7 +170,7 @@ class Lesson(TraversableOrderedModel):
         return [section.complete(user) for section in self.sections.all()]
     
     def to_dict(self):
-        output = {}
+        output = OrderedDict()
         
         output["title"] = self.title
         output["introduction"] = self.introduction
@@ -213,7 +214,7 @@ class Section(TraversableOrderedModel):
         return _complete([task.complete(user) for task in self.tasks.all()])
     
     def to_dict(self):
-        output = {}
+        output = OrderedDict()
         
         output["title"] = self.title
         output["introduction"] = self.introduction
@@ -230,6 +231,7 @@ class Task(TraversableOrderedModel):
     skip_text = models.TextField(blank=True)
     commentary = models.TextField(blank=True)
     language = models.CharField(max_length=10, choices=_IFACE_CHOICES)
+    random_id = models.CharField(blank=True, max_length=10)
     
     hidden_pre_code = models.TextField(blank=True)
     visible_pre_code = models.TextField(blank=True)
@@ -331,8 +333,9 @@ class Task(TraversableOrderedModel):
             return "complete"
     
     def to_dict(self):
-        out = {}
+        out = OrderedDict()
         
+        out["random_id"] = self.random_id
         out["description"] = self.description
         out["after_text"] = self.after_text
         out["wrong_text"] = self.wrong_text
@@ -368,3 +371,12 @@ def _lesson_saved(sender, instance, created, **kwargs):
 def _task_saved(sender, instance, created, **kwargs):
     # Remove its cached version from the cache
     cache.delete("task_model_{}".format(instance.pk))
+    
+    if not instance.random_id:
+        # Generate a unique ID
+        rid = rand_str(10)
+        while Task.objects.filter(random_id=rid):
+            rid = rand_str(10)
+        instance.random_id = rid
+        
+        instance.save()
