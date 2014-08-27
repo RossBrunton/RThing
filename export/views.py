@@ -5,9 +5,11 @@ from django.http import Http404, HttpResponse
 from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
 from django.core import serializers
+from django.forms import ValidationError
 
 from courses.models import Course, Lesson, Section, Task
 from export.parse import encode, decode
+from export.forms import ImportForm
 
 from os import path
 import settings
@@ -22,11 +24,29 @@ import json
 def export(request, course):
     data = get_object_or_404(Course, slug=course).to_dict()
     
-    print(decode(encode(data)) == data)
     return HttpResponse(encode(data), "text/plain")
 
 @login_required
 @user_passes_test(lambda u: u.is_staff)
-@require_POST
-def import_(request, course):
-    pass
+def import_(request):
+    ctx = {}
+    if request.method == "GET":
+        ctx["form"] = ImportForm()
+        return render(request, "export/import.html", ctx)
+    else:
+        ctx["form"] = ImportForm(request.POST)
+        
+        if not ctx["form"].is_valid():
+            return render(request, "export/import.html", ctx)
+        
+        try:
+            data = decode(ctx["form"].cleaned_data["text"].replace("\r\n", "\n"))
+            
+            if data is None:
+                raise RuntimeError("No data could be extracted from the import")
+            
+            new = Course.from_dict(data, ctx["form"].cleaned_data["mode"], ctx["form"].cleaned_data["user_mode"])
+            return redirect(new.get_absolute_url())
+        except RuntimeError as e:
+            ctx["import_error"] = "Sorry, that failed to import, the error was: {}".format(e)
+            return render(request, "export/import.html", ctx)

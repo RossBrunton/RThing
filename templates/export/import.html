@@ -1,0 +1,29 @@
+{% extends "base_staff.html" %}
+
+{% block title %}Import Course{% endblock %}
+
+{% block body %}
+<div>
+    Import a course
+</div>
+
+<div>
+    <form method='POST'>
+        {% csrf_token %}
+        {{ form.errors }}
+        {% if import_error %}
+            {{ import_error }}<br/><br/>
+        {% endif %}
+        Paste the code data here:<br/>
+        {{ form.text }}
+        <br/>
+        If a course already exists with the same title (i.e., if you haven't changed it in the file), do the following:
+        <br/>{{ form.mode }}<br/>
+        If a user is to be added to the course but doesn't exist, do the following:
+        <br/>{{ form.user_mode }}<br/>
+        <input type='submit'/>
+    </form>
+</div>
+{% endblock %}
+
+{% block location %}Import Course{% endblock %}

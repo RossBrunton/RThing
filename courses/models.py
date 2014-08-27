@@ -127,6 +127,46 @@ class Course(TraversableOrderedModel):
         output["users"] = [u.username for u in self.users.all()]
         
         return output
+    
+    @staticmethod
+    def from_dict(data, mode, user_mode):
+        """Loads the course from a dict obtained from to_dict
+        
+        mode must be one of "replace" or "update"
+        user_mode must be one of "add", "ignore" or "none"
+        
+        See export.forms.ImportForm for what these mean.
+        """
+        if Course.objects.filter(title=data["title"]).exists() and mode == "replace":
+            Course.objects.filter(title=data["title"]).delete()
+        
+        target = Course.objects.get_or_create(title=data["title"])[0]
+        
+        if "code" in data: target.code = data["code"]
+        if "description" in data: target.description = data["description"]
+        if "ending" in data: target.ending = data["ending"]
+        if "published" in data: target.published = data["published"]
+        target.save()
+        
+        # Load users
+        if user_mode != "none" and "users" in data:
+            for u in data["users"]:
+                user_obj = None
+                try:
+                    user_obj = User.objects.get(username=u)
+                except User.DoesNotExist:
+                    if user_mode == "add":
+                        user_obj = User.objects.create_user(u, u"{}@{}".format(u, settings.EMAIL_DOMAIN), u)
+                
+                if user_obj:
+                    target.users.add(user_obj)
+        
+        # Lessons
+        if "lessons" in data:
+            for l in data["lessons"]:
+                Lesson.from_dict(l, target)
+        
+        return target
 
 
 @_autoslug
@@ -135,8 +175,8 @@ class Lesson(TraversableOrderedModel):
     class Meta:
         ordering = ["course", "order"]
     
-    title = models.CharField(max_length=30, unique=True)
-    slug = models.SlugField(blank=True, max_length=35, unique=True)
+    title = models.CharField(max_length=30)
+    slug = models.SlugField(blank=True, max_length=35)
     introduction = models.TextField()
     closing = models.TextField(blank=True)
     published = models.BooleanField(default=False)
@@ -180,13 +220,30 @@ class Lesson(TraversableOrderedModel):
         output["sections"] = [s.to_dict() for s in self.sections.all()]
         
         return output
+    
+    @staticmethod
+    def from_dict(data, parent):
+        target = Lesson.objects.get_or_create(title=data["title"], course=parent)[0]
+        
+        if "introduction" in data: target.introduction = data["introduction"]
+        if "closing" in data: target.closing = data["closing"]
+        if "published" in data: target.published = data["published"]
+        if "answers_published" in data: target.answers_published = data["answers_published"]
+        target.save()
+        
+        # Sections
+        if "sections" in data:
+            for s in data["sections"]:
+                Section.from_dict(s, target)
+        
+        return target
 
 
 @_autoslug
 @py2_str
 class Section(TraversableOrderedModel):
-    title = models.CharField(max_length=30, unique=True)
-    slug = models.SlugField(blank=True, max_length=35, unique=True)
+    title = models.CharField(max_length=30)
+    slug = models.SlugField(blank=True, max_length=35)
     introduction = models.TextField()
     closing = models.TextField(blank=True)
     
@@ -222,6 +279,21 @@ class Section(TraversableOrderedModel):
         output["tasks"] = [t.to_dict() for t in self.tasks.all()]
         
         return output
+    
+    @staticmethod
+    def from_dict(data, parent):
+        target = Section.objects.get_or_create(title=data["title"], lesson=parent)[0]
+        
+        if "introduction" in data: target.introduction = data["introduction"]
+        if "closing" in data: target.closing = data["closing"]
+        target.save()
+        
+        # Sections
+        if "tasks" in data:
+            for t in data["tasks"]:
+                Task.from_dict(t, target)
+        
+        return target
 
 @py2_str
 class Task(TraversableOrderedModel):
@@ -341,18 +413,46 @@ class Task(TraversableOrderedModel):
         out["wrong_text"] = self.wrong_text
         out["skip_text"] = self.skip_text
         out["commentary"] = self.commentary
+        
         out["language"] = self.language
         out["hidden_pre_code"] = self.hidden_pre_code
         out["visible_pre_code"] = self.visible_pre_code
         out["model_answer"] = self.model_answer
         out["validate_answer"] = self.validate_answer
         out["post_code"] = self.post_code
+        
         out["uses_random"] = self.uses_random
         out["uses_image"] = self.uses_image
         out["automark"] = self.automark
         out["takes_prior"] = self.takes_prior
         
         return out
+    
+    @staticmethod
+    def from_dict(data, parent):
+        target = Task.objects.get_or_create(random_id=data["random_id"], section=parent)[0]
+        
+        if "description" in data: target.description = data["description"]
+        if "after_text" in data: target.after_text = data["after_text"]
+        if "wrong_text" in data: target.wrong_text = data["wrong_text"]
+        if "skip_text" in data: target.skip_text = data["skip_text"]
+        if "commentary" in data: target.commentary = data["commentary"]
+        
+        if "language" in data: target.language = data["language"]
+        if "hidden_pre_code" in data: target.hidden_pre_code = data["hidden_pre_code"]
+        if "visible_pre_code" in data: target.visible_pre_code = data["visible_pre_code"]
+        if "model_answer" in data: target.model_answer = data["model_answer"]
+        if "validate_answer" in data: target.validate_answer = data["validate_answer"]
+        if "post_code" in data: target.post_code = data["post_code"]
+        
+        if "uses_random" in data: target.uses_random = data["uses_random"]
+        if "uses_image" in data: target.uses_image = data["uses_image"]
+        if "automark" in data: target.automark = data["automark"]
+        if "takes_prior" in data: target.takes_prior = data["takes_prior"]
+        target.save()
+        
+        return target
+
 
 def get_iface(name):
     if name in _iface_cache:
