@@ -1,4 +1,5 @@
 import six
+from random import choice
 
 def py2_str(c):
     """Wraps around a class, if running under Python 2 then convert the __str__ method and add __unicode__"""
@@ -11,3 +12,7 @@ def py2_str(c):
         c.__str__ = py2_str_wrap
     
     return c
+
+
+def rand_str(length):
+    return "".join([choice("abcdefghijklmnopqrstuvwxyz") for x in range(length)])

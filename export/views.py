@@ -7,14 +7,14 @@ from django.contrib.auth.models import User
 from django.core import serializers
 
 from courses.models import Course, Lesson, Section, Task
-from export.parse import from_dict
+from export.parse import encode, decode
 
 from os import path
 import settings
 import os
-import yaml
-from dicttoxml import dicttoxml
-from xml.dom.minidom import parseString
+#import yaml
+#from dicttoxml import dicttoxml
+#from xml.dom.minidom import parseString
 import json
 
 @login_required
@@ -22,7 +22,11 @@ import json
 def export(request, course):
     data = get_object_or_404(Course, slug=course).to_dict()
     
-    #return HttpResponse(json.dumps(data, indent=4), "application/json")
-    #return HttpResponse(parseString(dicttoxml(data)).toprettyxml(), "text/xml")
-    #return HttpResponse(yaml.dump(data), "text/x-yaml")
-    return HttpResponse(from_dict(data), "text/plain")
+    print(decode(encode(data)) == data)
+    return HttpResponse(encode(data), "text/plain")
+
+@login_required
+@user_passes_test(lambda u: u.is_staff)
+@require_POST
+def import_(request, course):
+    pass

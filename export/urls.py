@@ -4,4 +4,5 @@ import export.views as views
 
 urlpatterns = patterns('',
     url(r"^(?P<course>[a-z0-9-]+)/export$", views.export, name="export"),
+    url(r"^import$", views.import_, name="import"),
 )

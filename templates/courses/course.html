@@ -9,7 +9,8 @@
         As a staff member, you can do the following with this course:<br/>
         - <a href='{% url "admin:courses_course_change" course.pk %}'>Edit it</a><br/>
         - <a href='{% url "admin:courses_lesson_add" %}?course={{ course.pk }}'>Add a lesson</a><br/>
-        - <a href='{% url "staff:add_users" course=course.slug %}'>Add/Remove students</a>
+        - <a href='{% url "staff:add_users" course=course.slug %}'>Add/Remove students</a><br/>
+        - <a href='{% url "export:export" course=course.slug %}'>Export to text</a>
     </div>
 {% endif %}
 
