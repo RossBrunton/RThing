@@ -21,6 +21,14 @@
             <span id='error-body'></span>
             <img width=16 height=16 alt='Dismiss' title='Dismiss'src='{% static "icons/close.png" %}' id='error-close'/>
         </div>
+        {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+            {% if not forloop.first %}<br/>{% endif %}
+            <span{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</span>
+            {% endfor %}
+        </div>
+        {% endif %}
         {% block body %}&nbsp;{% endblock %}
     </div>
 </div>

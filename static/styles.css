@@ -265,7 +265,7 @@ ul {
 }
 
 /* Lecturer formatting */
-.l-warning, .l-note, .l-info, .staff-options {
+.l-warning, .l-note, .l-info, .staff-options, .messages {
     padding:5px;
     border-radius:3px;
 }
@@ -307,6 +307,10 @@ ul {
 
 .staff-options {
     background-color:#ffffdd;
+}
+
+.messages {
+    background-color:#ddddff;
 }
 
 .staff-options a {
