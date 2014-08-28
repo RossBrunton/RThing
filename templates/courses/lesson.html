@@ -9,12 +9,7 @@
         As a staff member, you can do the following with this lesson:<br/>
         - <a href='{% url "admin:courses_lesson_change" lesson.pk %}'>Edit it</a><br/>
         - <a href='{% url "admin:courses_section_add" %}?lesson={{ lesson.pk }}'>Add a section</a><br/>
-        - <form style='display:inline' enctype='multipart/form-data' method='POST'
-            action='{% url "staff:upload" course=course.slug lesson=lesson.slug %}'>
-            {% csrf_token %}
-            <input type='file' name='file'/>
-            <input type='submit' value='Upload a file'/>
-          </form><br/>
+        - <a href='{% url "staff:files" lesson=lesson.slug course=course.slug %}'>Manage files</a><br/>
         - <a href='{% url "stats:lesson" course=course.slug lesson=lesson.slug %}'>View statistics</a><br/>
     </div>
 {% endif %}

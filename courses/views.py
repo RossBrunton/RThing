@@ -6,8 +6,6 @@ from django.core.urlresolvers import reverse
 
 from courses.models import Course, Lesson, Section, Task
 
-from ifaces.r import r
-
 @login_required
 def index(request):
     ctx = {}

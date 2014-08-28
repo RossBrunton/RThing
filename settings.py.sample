@@ -45,6 +45,10 @@ IFACES = {
 STATIC_ROOT = os.path.join(BASE_DIR, 'collectedstatic')
 STATIC_URL = '/static/'
 
+# And serve files from MEDIA_ROOT with MEDIA_URL
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
 # What files/dirs R needs to see (use ldd)
 # Copy these files
 R_FILES = [

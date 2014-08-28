@@ -1,7 +1,7 @@
 {% load lformat fragments staticfiles %}
 <div class='fragment' data-type='task' data-id='{{ task.pk }}' data-order='{{ task.section.order }}-{{ task.order }}'>
     <hr/>
-    {{ task.description|lformat }}
+    {{ task.description|lformat:task.section.lesson.pk }}
     <form class='prompt' method='POST' action='{% url "tasks:submit" task=task.pk %}'
         {% if multiline %}data-multiline{% endif %}
     >

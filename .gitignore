@@ -18,3 +18,4 @@ __pycache__
 /ifaces/r/proot
 /src
 /sandboxes/*
+/media/*

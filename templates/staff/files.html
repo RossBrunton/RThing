@@ -1,0 +1,40 @@
+{% extends "base_staff.html" %}
+
+{% block title %}File Manager{% endblock %}
+
+{% block body %}
+{{ form.errors }}
+<div>
+    The following files are visible from formatting:
+    {% for f in task_files %}
+        <form action='{% url "staff:delete" lesson=lesson.slug course=course.slug %}' method='POST'>
+            {% csrf_token %}
+            <input type='hidden' name='location' value='t'/>
+            <input type='hidden' name='basename' value='{{ f }}'/>
+            <span class='delete-file'><input type='submit' value='Delete'> - </span>{{ f }}
+        </form>
+    {% endfor %}
+</div>
+
+<div>
+    The following files are visible from code prompts:
+    {% for f in sandbox_files %}
+        <form action='{% url "staff:delete" lesson=lesson.slug course=course.slug %}' method='POST'>
+            {% csrf_token %}
+            <input type='hidden' name='location' value='s'/>
+            <input type='hidden' name='basename' value='{{ f }}'/>
+            <span class='delete-file'><input type='submit' value='Delete'> - </span>{{ f }}
+        </form>
+    {% endfor %}
+</div>
+
+<div><form method='POST' enctype='multipart/form-data'>
+    {% csrf_token %}
+    Upload a file:<br/>
+    {{ form.file }}<br/>
+    So that it is visible from {{ form.location }}<br/>
+    <input type='submit'>
+</form></div>
+{% endblock %}
+
+{% block location %}File Manager{% endblock %}

@@ -1,4 +1,4 @@
 {% load lformat %}
 <div class='fragment' data-type='section-end' data-order='{{ section.order }}'>
-    {{ section.closing|lformat }}
+    {{ section.closing|lformat:section.lesson.pk }}
 </div>
