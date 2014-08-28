@@ -6,3 +6,24 @@
 .sidebar hr {
     border:1px solid #aa66ff;
 }
+
+/* Fancy formatting */
+.fancy.good {
+    color:#119911;
+}
+
+.fancy.okay {
+    color:#999911;
+}
+
+.fancy.bad {
+    color:#991111;
+}
+
+.fancy.no-attempt {
+    color:#111199;
+}
+
+.fancy.attempt {
+    color:#119999;
+}

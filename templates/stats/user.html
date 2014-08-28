@@ -1,0 +1,76 @@
+{% extends "base_staff.html" %}
+{% load lformat fancy staticfiles %}
+
+{% block title %}User stats for {{ target_user.username }} on lesson {{ lesson.title }}{% endblock %}
+{% block location %}User Stats{% endblock %}
+
+{% block body %}
+<div>
+    You are viewing the stats for {{ target_user.username }} on the lesson {{ lesson.title }}
+</div>
+
+<div>
+    Overall:<br/>
+    - {{ overall.attempts|fancy:task_count }} question attempts<br/>
+    - {{ overall.correct|fancy:overall.attempts }} correct answers<br/>
+    - {{ overall.revealed|fancy_low:overall.attempts }} reveals<br/>
+    - {{ overall.average_tries_correct|fancy_float:10 }}
+        is the average number of tries before they got a correct answer<br/>
+    - {{ overall.average_tries_reveal|fancy_float_low:10 }}
+        is the average number of tries before they revealed the answer<br/>
+    - {{ overall.completion|fancy_percent }} is the fraction of questions they attempted that they got correct
+</div>
+
+{% for s in responses %}
+    <div class='section-head'>{{ s.section.order|add:1 }}: {{ s.section.title }}</div>
+    {% for t in s.tasks %}
+        {{ t.task.description|lformat:s.section.lesson.pk }}
+        
+        <div>
+            {% if t.uot.state = "n" %}
+                {% if t.uot.skipped %}
+                    <span class='fancy okay'>Skipped</span>
+                {% elif t.uot.tries %}
+                    <span class='fancy attempt'>Attempted</span>
+                {% else %}
+                    <span class='fancy no-attempt'>Not attempted yet</span>
+                {% endif %}
+            {% endif %}
+            {% if t.uot.state = "c" %}<span class='fancy good'>Correct</span>{% endif %}
+            {% if t.uot.state = "r" %}<span class='fancy bad'>Revealed</span>{% endif %}
+            
+            - {{ t.uot.tries }} attempts:
+        </div>
+        
+        {% for w in t.uot.wrong_answers.all %}
+            <div class='prompt'>{{ w.code }}</div>
+        {% endfor %}
+        <hr/>
+    {% endfor %}
+{% endfor %}
+
+{% endblock %}
+
+{% block sidebar %}
+<ul>
+    <li><a href='{% url "courses:course" course=course.slug %}'>{{ course.title }}</a></li>
+    {% for l in all_lessons %}
+        <li> - <a href='{% url "stats:user" course=course.slug lesson=l.slug name=target_user.username %}'>
+            {{ l.title }}
+        </a>
+        <a href='{% url "stats:lesson" course=course.slug lesson=l.slug %}'>
+            <img src='{% static "icons/skip.png" %}' alt='General Stats' title='General Stats' width=16 height=16/>
+        </a>
+        </li>
+    {% endfor %}
+</ul>
+<hr/>
+<ul>
+    <li><a href='#'>{{ target_user.username }}</a></li>
+    {% for u in all_users %}
+        <li> - <a href='{% url "stats:user" course=course.slug lesson=lesson.slug name=u.username %}'>
+            {{ u.username }}
+        </a></li>
+    {% endfor %}
+</ul>
+{% endblock %}

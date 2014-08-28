@@ -1,31 +1,43 @@
 {% extends "base_staff.html" %}
-{% load lformat fragments %}
+{% load lformat fancy %}
 
 {% block title %}{{ lesson.title }} Statistics{% endblock %}
 
 {% block body %}
 <div>
     You are viewing statistics for this lesson.
-    
-    {% for s in sectiondata %}
-        <div class='section-head'>{{ s.section.order|add:1 }}: {{ s.section.title }}</div>
-        
-        {% for t in s.taskdata %}
-            {% if not forloop.first %}<hr/>{% endif %}
-            
-            <div>For the task starting with "{{ t.task.description|truncatewords:100 }}":<br/>
-                - {{ t.attempts }} people have attempted this question<br/>
-                - {{ t.correct }} got it correct<br/>
-                - {{ t.revealed }} revealed the answer<br/>
-                - {{ t.average_tries_correct }} is the average number of tries before a person got it correct<br/>
-                - {{ t.average_tries_reveal }} is the average number of tries before a person revealed the answer<br/>
-                - {{ t.completion }} is the fraction of people who attempted this question, and got it correct<br/>
-                - <a href='{% url "stats:wrong" task=t.task.pk %}'>View wrong answers</a>
-            </div>
-            
-        {% endfor %}
-    {% endfor %}
 </div>
+
+<div>
+    The following students are enrolled on this course:<br/>
+    {% for u in course.users.all %}{% spaceless %}
+        {% if not forloop.first %}, {% endif %}
+        <a href='{% url "stats:user" course=course.slug lesson=lesson.slug name=u.username %}'>{{ u.username }}</a>
+    {% endspaceless %}{% endfor %}
+</div>
+
+{% for s in sectiondata %}
+    <div class='section-head'>{{ s.section.order|add:1 }}: {{ s.section.title }}</div>
+    
+    {% for t in s.taskdata %}
+        {% if not forloop.first %}<hr/>{% endif %}
+        
+        {{ t.task.description|lformat:s.section.lesson.pk }}
+        
+        <div>
+            - {{ t.attempts|fancy:t.users_on_course }} people have attempted this question<br/>
+            - {{ t.correct|fancy:t.attempts }} got it correct<br/>
+            - {{ t.revealed|fancy_low:t.attempts }} revealed the answer<br/>
+            - {{ t.average_tries_correct|fancy_float_low:10 }}
+                is the average number of tries before a person got it correct<br/>
+            - {{ t.average_tries_reveal|fancy_float:10 }}
+                is the average number of tries before a person revealed the answer<br/>
+            - {{ t.completion|fancy_percent }} of people who attempted this question, and got it correct<br/>
+            - <a href='{% url "stats:wrong" task=t.task.pk %}'>View wrong answers</a>
+        </div>
+        
+    {% endfor %}
+{% endfor %}
 {% endblock %}
 
 {% block location %}Stats: {{ lesson.title }}{% endblock %}

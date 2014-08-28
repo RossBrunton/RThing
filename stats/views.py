@@ -22,6 +22,7 @@ def lesson(request, course, lesson):
         {
             "taskdata":[
                 {
+                    "users_on_course":ctx["course"].users.all().count(),
                     "task":t,
                     "attempts":utils.attempts(task=t),
                     "correct":utils.correct(task=t),
@@ -53,8 +54,42 @@ def wrong(request, task):
 
 @login_required
 @user_passes_test(lambda u: u.is_staff)
-def user(request, name, course):
+def user(request, name, course, lesson):
     ctx = {}
-    ctx["user"] = get_object_or_404(User, username=name)
+    ctx["target_user"] = get_object_or_404(User, username=name)
+    ctx["course"] = get_object_or_404(Course, slug=course)
+    ctx["lesson"] = get_object_or_404(Lesson, slug=lesson, course=ctx["course"])
     
-    return render(request, "stats/wrong.html", ctx)
+    ctx["all_users"] = ctx["course"].users.all()
+    ctx["all_lessons"] = ctx["course"].lessons.all()
+    
+    ctx["overall"] = {
+        "attempts":utils.attempts(user=ctx["target_user"], task__section__lesson=ctx["lesson"]),
+        "correct":utils.correct(user=ctx["target_user"], task__section__lesson=ctx["lesson"]),
+        "revealed":utils.revealed(user=ctx["target_user"], task__section__lesson=ctx["lesson"]),
+        "average_tries_correct":
+            utils.average_tries_correct(user=ctx["target_user"], task__section__lesson=ctx["lesson"]),
+        "average_tries_reveal":utils.average_tries_reveal(user=ctx["target_user"], task__section__lesson=ctx["lesson"]),
+        "completion":utils.completion(user=ctx["target_user"], task__section__lesson=ctx["lesson"])
+    }
+    
+    ctx["responses"] = [
+        {
+            "section":s,
+            "tasks":[
+                {
+                    "task":t,
+                    "uot":t.get_uot(ctx["target_user"])
+                }
+                for t in s.tasks.all()
+            ]
+        }
+        for s in ctx["lesson"].sections.all()
+    ]
+    
+    ctx["task_count"] = 0
+    for s in ctx["lesson"].sections.all():
+        ctx["task_count"] += s.tasks.all().count()
+    
+    
+    return render(request, "stats/user.html", ctx)
