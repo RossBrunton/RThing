@@ -1,3 +1,4 @@
+"""Models for courses, lessons, sections and tasks"""
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from django.db import models
@@ -38,34 +39,36 @@ def _autoslug(c):
 
 
 class TraversableOrderedModel(OrderedModel):
+    """Adds "next" and "previous" fields to OrderedModels"""
     class Meta:
         abstract = True
     
     def previous(self):
-        """Returns the previous object"""
+        """Returns the previous object or None"""
         try:
             return self.get_ordering_queryset().filter(order__lt=self.order).order_by('-order')[0]
         except IndexError:
             return None
     
     def next(self):
-        """Returns the next object"""
+        """Returns the next object or None"""
         try:
             return self.get_ordering_queryset().filter(order__gt=self.order)[0]
         except IndexError:
             return None
 
 
-# Types for database choices
+"""Types for database choices"""
 _IFACE_CHOICES = map(lambda k : (k, settings.IFACES[k][0]), settings.IFACES.keys())
 
-# Cache for interface modules
+"""Cache for interface modules"""
 _iface_cache = {}
 
 def _complete(states):
     """Returns as per Task.complete depending on whether ALL elements of the given list are at least that state
     
-    Priority is "none", "skipped", "revealed", "complete"; this returns the lowest priority complete value
+    Priority is "none", "skipped", "revealed", "complete"; this returns the lowest priority complete value that any
+    list entry has.
     """
     toReturn = "complete"
     for state in states:
@@ -79,6 +82,7 @@ def _complete(states):
 @_autoslug
 @py2_str
 class Course(TraversableOrderedModel):
+    """Courses contain lessons, and are not contained in any larger model"""
     class Meta:
         ordering = ["code"]
     
@@ -89,6 +93,7 @@ class Course(TraversableOrderedModel):
     ending = models.TextField(blank=True)
     published = models.BooleanField(default=False)
     users = models.ManyToManyField(User, blank=True)
+    
     
     def __str__(self):
         return u"{}: {}".format(self.code, self.title)
@@ -116,6 +121,7 @@ class Course(TraversableOrderedModel):
         return _complete([lesson.complete(user) for lesson in self.lessons.all()])
     
     def to_dict(self):
+        """Copies this course's data (including lessons) to a dict, and returns it"""
         output = OrderedDict()
         
         output["title"] = self.title
@@ -130,7 +136,7 @@ class Course(TraversableOrderedModel):
     
     @staticmethod
     def from_dict(data, mode, user_mode):
-        """Loads the course from a dict obtained from to_dict
+        """Creates, updates or replaces a course given by data from Course.to_dict
         
         mode must be one of "replace" or "update"
         user_mode must be one of "add", "ignore" or "none"
@@ -172,6 +178,10 @@ class Course(TraversableOrderedModel):
 @_autoslug
 @py2_str
 class Lesson(TraversableOrderedModel):
+    """Lessons contain sections and are part of courses
+    
+    Each lesson can be independantly published, and they each have their own page.
+    """
     class Meta:
         ordering = ["course", "order"]
     
@@ -210,6 +220,7 @@ class Lesson(TraversableOrderedModel):
         return [section.complete(user) for section in self.sections.all()]
     
     def to_dict(self):
+        """Copies this lesson's data (including sections) to a dict, and returns it"""
         output = OrderedDict()
         
         output["title"] = self.title
@@ -223,6 +234,7 @@ class Lesson(TraversableOrderedModel):
     
     @staticmethod
     def from_dict(data, parent):
+        """Creates or updates a lesson from a dict obtained from to_dict and a parent course"""
         target = Lesson.objects.get_or_create(title=data["title"], course=parent)[0]
         
         if "introduction" in data: target.introduction = data["introduction"]
@@ -242,6 +254,10 @@ class Lesson(TraversableOrderedModel):
 @_autoslug
 @py2_str
 class Section(TraversableOrderedModel):
+    """Sections contain tasks and are part of lessons
+    
+    Each section has a "title" which is displayed when the user progresses to it
+    """
     title = models.CharField(max_length=30)
     slug = models.SlugField(blank=True, max_length=35)
     introduction = models.TextField()
@@ -271,6 +287,7 @@ class Section(TraversableOrderedModel):
         return _complete([task.complete(user) for task in self.tasks.all()])
     
     def to_dict(self):
+        """Copies this sections's data (including tasks) to a dict, and returns it"""
         output = OrderedDict()
         
         output["title"] = self.title
@@ -282,6 +299,7 @@ class Section(TraversableOrderedModel):
     
     @staticmethod
     def from_dict(data, parent):
+        """Creates or updates a section from a dict obtained from to_dict and a parent lesson"""
         target = Section.objects.get_or_create(title=data["title"], lesson=parent)[0]
         
         if "introduction" in data: target.introduction = data["introduction"]
@@ -297,6 +315,7 @@ class Section(TraversableOrderedModel):
 
 @py2_str
 class Task(TraversableOrderedModel):
+    """Tasks are contained in sections and each one represents a single "prompt" that can run code"""
     description = models.TextField()
     after_text = models.TextField(blank=True)
     wrong_text = models.TextField(blank=True)
@@ -369,7 +388,11 @@ class Task(TraversableOrderedModel):
         return UserOnTask.objects.get_or_create(task=self, user=user)[0]
     
     def prior_seed(self, user):
-        """Goes back on the "prior" chain to find a seed to use for this, returns None if there is no seed"""
+        """If this does not have takes_prior, returns the last seed the user used otherwise returns prior_seed() of the
+        previous task
+        
+        Returns None if there is no seed.
+        """
         if self.takes_prior and self.previous():
             return self.previous().prior_seed(user)
         
@@ -379,11 +402,15 @@ class Task(TraversableOrderedModel):
         return None
     
     def random_poison(self):
-        """Returns true if this depends on a random number"""
+        """Returns true if this depends on a random number
+        
+        That is, if either this has "uses_random" as true, or it has "takes_prior" true and the previous task's
+        random_poison() is true
+        """
         if self.uses_random:
             return True
         
-        if self.takes_prior and self.previous() and self.previous().uses_random:
+        if self.takes_prior and self.previous() and self.previous().random_poison():
             return True
         
         return False
@@ -405,6 +432,7 @@ class Task(TraversableOrderedModel):
             return "complete"
     
     def to_dict(self):
+        """Copies this tasks's data to a dict, and returns it"""
         out = OrderedDict()
         
         out["random_id"] = self.random_id
@@ -430,6 +458,7 @@ class Task(TraversableOrderedModel):
     
     @staticmethod
     def from_dict(data, parent):
+        """Creates or updates a task from a dict obtained from to_dict and a parent section"""
         target = Task.objects.get_or_create(random_id=data["random_id"], section=parent)[0]
         
         if "description" in data: target.description = data["description"]
@@ -455,6 +484,7 @@ class Task(TraversableOrderedModel):
 
 
 def get_iface(name):
+    """Given the name of an interface, returns the module of that interface"""
     if name in _iface_cache:
         return _iface_cache[name]
     

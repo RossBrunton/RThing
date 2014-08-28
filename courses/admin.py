@@ -1,3 +1,7 @@
+"""Admin models and such for courses, lessons, sections and tasks
+
+These will automatically be added to staff.admin.admin_site
+"""
 from django.contrib import admin
 from django.forms import ModelForm, ValidationError
 from django.http import Http404, HttpResponseRedirect
@@ -8,15 +12,20 @@ from staff.admin import admin_site
 from courses.models import Course, Lesson, Section, Task
 from tasks.utils import validate_execute
 
+
 class _CustomAdmin(admin.ModelAdmin):
+    """Extends model admin to redirect to the get_absolute_url when the model is updated or added"""
     def response_post_save_change(self, request, obj):
+        """When an object has been saved, redirect to it's absolute url"""
         return HttpResponseRedirect(obj.get_absolute_url())
     
     def response_post_save_add(self, request, obj):
+        """When an object has been added, redirect to it's absolute url"""
         return HttpResponseRedirect(obj.get_absolute_url())
     
 
 class CourseAdmin(_CustomAdmin):
+    """Custom admin for courses"""
     fieldsets = (
         (None, {
             "fields":(("title", "code"), "description")
@@ -31,6 +40,7 @@ admin_site.register(Course, CourseAdmin)
 
 
 class LessonAdmin(OrderedModelAdmin, _CustomAdmin):
+    """Custom admin for lessons"""
     list_display = ("title", "course", "order", "move_up_down_links")
     list_filter = ["course"]
     
@@ -48,9 +58,9 @@ admin_site.register(Lesson, LessonAdmin)
 
 
 class TaskAdminForm(ModelForm):
-    pass
+    """A ModelForm for tasks to allow them to validate themselves"""
     def clean(self, *args, **kwargs):
-        """Check the task runs"""
+        """Check the task runs, and raise a ValidationError if it doesn't"""
         toRet = super(TaskAdminForm, self).clean(*args, **kwargs)
         
         is_error, err = validate_execute(self.cleaned_data, self.instance)
@@ -60,6 +70,7 @@ class TaskAdminForm(ModelForm):
         return toRet
 
 class TaskInline(admin.StackedInline):
+    """Inline for displaying tasks on section pages"""
     model = Task
     extra = 1
     form = TaskAdminForm
@@ -78,6 +89,7 @@ class TaskInline(admin.StackedInline):
     )
 
 class SectionAdmin(OrderedModelAdmin, _CustomAdmin):
+    """Custom admin for sections"""
     list_display = ("title", "lesson", "move_up_down_links")
     list_filter = ["lesson"]
     inlines = [TaskInline]
