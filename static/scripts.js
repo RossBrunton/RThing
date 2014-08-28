@@ -94,7 +94,7 @@ window.rthing = (function() {
             
             case "task-content":
                 // Replace a specific ID
-                $(".fragment[data-type=task][data-id="+frag.id+"]").find(frag.select).html(frag.html)
+                $(".fragment[data-type=task][data-id="+frag.id+"]").find(frag.select).show().html(frag.html)
                 break;
             
             case "section-end":
