@@ -3,8 +3,8 @@
 {% block title %}Goodbye{% endblock %}
 
 {% block content %}
-<div class='no-sidebar-block'>
-<strong>Goodbye!</strong><br/><br/>
-<a href='{% url "users:login" %}'>Click here to go back to the login page</a>.
-</div>
+<main class='no-sidebar-block'>
+    <strong>Goodbye!</strong><br/><br/>
+    <a href='{% url "users:login" %}'>Click here to go back to the login page</a>.
+</main>
 {% endblock %}

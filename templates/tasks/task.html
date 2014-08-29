@@ -1,5 +1,5 @@
 {% load lformat fragments staticfiles %}
-<div class='fragment' data-type='task' data-id='{{ task.pk }}' data-order='{{ task.section.order }}-{{ task.order }}'>
+<section class='fragment' data-type='task' data-id='{{ task.pk }}' data-order='{{ task.section.order }}-{{ task.order }}'>
     <hr/>
     {{ task.description|lformat:task.section.lesson.pk }}
     <form class='prompt' method='POST' action='{% url "tasks:submit" task=task.pk %}'
@@ -24,7 +24,7 @@
         {% endif %}
         
         {% prompt_entry task %}
-        <img class='prompt-button skip' title='Skip' alt='Skip' src='{% static "icons/skip.png" %}' width=16 height=16/>
+        <img class='prompt-button skip' title='Skip' alt='Skip' src='{% static "icons/skip.png"%}' width=16 height=16 />
         <img class='prompt-button reveal' title='Reveal' alt='Reveal' src='{% static "icons/reveal.png" %}'
             width=16 height=16
         />
@@ -38,4 +38,4 @@
     <div class='wrong-text'></div>
     <div class='skip-text'></div>
     <div class='after-text'></div>
-</div>
+</section>

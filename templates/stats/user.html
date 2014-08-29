@@ -5,11 +5,11 @@
 {% block location %}User Stats{% endblock %}
 
 {% block body %}
-<div>
+<header>
     You are viewing the stats for {{ target_user.username }} on the lesson {{ lesson.title }}
-</div>
+</header>
 
-<div>
+<section>
     Overall:<br/>
     - {{ overall.attempts|fancy:task_count }} question attempts<br/>
     - {{ overall.correct|fancy:overall.attempts }} correct answers<br/>
@@ -19,14 +19,14 @@
     - {{ overall.average_tries_reveal|fancy_float_low:10 }}
         is the average number of tries before they revealed the answer<br/>
     - {{ overall.completion|fancy_percent }} is the fraction of questions they attempted that they got correct
-</div>
+</section>
 
 {% for s in responses %}
-    <div class='section-head'>{{ s.section.order|add:1 }}: {{ s.section.title }}</div>
+    <header class='section-head'>{{ s.section.order|add:1 }}: {{ s.section.title }}</header>
     {% for t in s.tasks %}
         {{ t.task.description|lformat:s.section.lesson.pk }}
         
-        <div>
+        <section>
             {% if t.uot.state = "n" %}
                 {% if t.uot.skipped %}
                     <span class='fancy okay'>Skipped</span>
@@ -40,7 +40,7 @@
             {% if t.uot.state = "r" %}<span class='fancy bad'>Revealed</span>{% endif %}
             
             - {{ t.uot.tries }} attempts:
-        </div>
+        </section>
         
         {% for w in t.uot.wrong_answers.all %}
             <div class='prompt'>{{ w.code }}</div>

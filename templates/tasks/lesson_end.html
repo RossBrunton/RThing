@@ -1,6 +1,4 @@
-{% load lformat %}<div class='fragment' data-type='lesson-end'>
+{% load lformat %}<section class='fragment' data-type='lesson-end'>
     {{ lesson.closing|lformat:lesson.pk }}
-    <div>
-        <a href='{{ lesson.course.get_absolute_url }}'>&gt; Return to course overview</a>
-    </div>
-</div>
+    <div><a href='{{ lesson.course.get_absolute_url }}'>&gt; Return to course overview</a></div>
+</section>

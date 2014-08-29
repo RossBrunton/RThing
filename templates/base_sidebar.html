@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class='container'>
-    <div class='sidebar'>
+    <nav class='sidebar'>
         <div class='location'>{% block location %}&nbsp;{% endblock %}<hr/></div>
         <div class='sidebar-contents'>{% block sidebar %}&nbsp;{% endblock %}</div>
         <div class='stretch'></div>
@@ -13,13 +13,13 @@
             {{ user.username }} - <input type='submit' value='Log Out'/>
             <br/><a href='{% url "users:edit" %}'>Change Password</a>
         </form>
-        <img width='16' height='16' src='{% static "icons/close_menu.png" %}' class='expand-img'/>
-    </div>
+        <img width='16' height='16' src='{% static "icons/close_menu.png" %}' class='expand-img' alt='Expand'/>
+    </nav>
     
-    <div class='content'>
+    <main class='content'>
         <div id='error'>
             <span id='error-body'></span>
-            <img width=16 height=16 alt='Dismiss' title='Dismiss'src='{% static "icons/close.png" %}' id='error-close'/>
+        <img width=16 height=16 alt='Dismiss' title='Dismiss' src='{% static "icons/close.png" %}' id='error-close'/>
         </div>
         {% if messages %}
         <div class="messages">
@@ -30,6 +30,6 @@
         </div>
         {% endif %}
         {% block body %}&nbsp;{% endblock %}
-    </div>
+    </main>
 </div>
 {% endblock %}

@@ -3,7 +3,7 @@
 {% block title %}Password Reset Complete{% endblock %}
 
 {% block content %}
-<div class='no-sidebar-block'>
+<main class='no-sidebar-block'>
     {{ form.errors }}<br/>
     {% if forced %}
         Sorry, but because this is the first time you have logged in, you need to set a new password.
@@ -18,5 +18,5 @@
         <br/>{{ form.new_password2 }}
         <br/><input type="submit" value="Set Password" />
     </form>
-</div>
+</main>
 {% endblock %}

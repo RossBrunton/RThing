@@ -4,12 +4,12 @@
 
 {% block body %}
 {% if user.is_staff %}
-    <div class='staff-options'>
+    <nav class='staff-options'>
         As a staff member, you can do the following:<br/>
         - <a href='{% url "admin:courses_course_add" %}'>Add a course</a><br/>
         - <a href='{% url "admin:index" %}'>View the admin interface directly</a><br/>
         - <a href='{% url "export:import" %}'>Import a course</a>
-    </div>
+    </nav>
 {% endif %}
 <div>
     Hello {{ user.username }}! These are the courses you can currently access!
@@ -22,13 +22,11 @@
 {% endif %}
 
 {% for c in courses %}
-    <a href='{% url "courses:course" course=c.slug %}'>
-    <div class='course-block {% if not c.published %}unpublished{% endif %}' >
-        <div class='title'>{{ c.title }}</div>
+    <header class='course-block {% if not c.published %}unpublished{% endif %}' >
+        <div class='title'><a href='{% url "courses:course" course=c.slug %}'>{{ c.title }}</a></div>
         <div class='stretch'></div>
         <div class='code'>{% if not c.published %}Unpublished - {% endif %}{{ c.code }}</div>
-    </div>
-    </a>
+    </header>
 {% endfor %}
 {% endblock %}
 

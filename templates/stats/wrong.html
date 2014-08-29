@@ -4,21 +4,20 @@
 {% block title %}Wrong Answers for task {{ task.pk }}{% endblock %}
 
 {% block body %}
-<div>
+<header>
     You are viewing the wrong answers for the task:
-</div>
+</header>
 
 {{ task.description|lformat:task.section.lesson.pk }}
 
-<div>
+<section>
     The model answer for this question is:
-</div>
-
-<div class='prompt'>
-    {{ task.model_answer }}
-</div>
+    <div class='prompt'>
+        {{ task.model_answer }}
+    </div>
+</section>
     
-<div>
+<section>
     {% for outer in wrong %}
         {% if outer %}
             {% with lesson=task.section.lesson %}
@@ -31,7 +30,7 @@
             {% endfor %}
         {% endif %}
     {% endfor %}
-</div>
+</section>
 {% endblock %}
 
 {% block location %}Wrong Answers{% endblock %}

@@ -4,27 +4,26 @@
 {% block title %}{{ lesson.title }} Statistics{% endblock %}
 
 {% block body %}
-<div>
+<header>
     You are viewing statistics for this lesson. 
-</div>
+</header>
 
-<div>
+<section>
     If you like you can export statistics to CSV:
         <a href='{% url "stats:csv_lesson" course=course.slug lesson=lesson.slug %}'>By task</a> - 
         <a href='{% url "stats:csv_users" course=course.slug lesson=lesson.slug %}'>By user</a>
-    
-</div>
+</section>
 
-<div>
+<section>
     The following students are enrolled on this course:<br/>
     {% for u in course.users.all %}{% spaceless %}
         {% if not forloop.first %}, {% endif %}
         <a href='{% url "stats:user" course=course.slug lesson=lesson.slug name=u.username %}'>{{ u.username }}</a>
     {% endspaceless %}{% endfor %}
-</div>
+</section>
 
 {% for s in sectiondata %}
-    <div class='section-head'>{{ s.section.order|add:1 }}: {{ s.section.title }}</div>
+    <header class='section-head'>{{ s.section.order|add:1 }}: {{ s.section.title }}</header>
     
     {% for t in s.taskdata %}
         {% if not forloop.first %}<hr/>{% endif %}

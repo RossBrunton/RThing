@@ -3,15 +3,15 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<div class='no-sidebar-block'>
-<form method='POST'>
-    {% csrf_token %}
-    <strong>Log In</strong><br/>
-    {{ form.username }}<br/>
-    {{ form.password }}<br/>
-    <input type='submit'/><br/>
-    <br/>
-    <a href='{% url "users:reset" %}'>Forgot Password?</a>
-</form>
-</div>
+<main class='no-sidebar-block'>
+    <form method='POST'>
+        {% csrf_token %}
+        <strong>Log In</strong><br/>
+        {{ form.username }}<br/>
+        {{ form.password }}<br/>
+        <input type='submit'/><br/>
+        <br/>
+        <a href='{% url "users:reset" %}'>Forgot Password?</a>
+    </form>
+</main>
 {% endblock %}

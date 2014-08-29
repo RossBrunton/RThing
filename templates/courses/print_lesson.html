@@ -10,7 +10,7 @@
 {{ lesson.introduction|lformat_print:lesson.pk }}
 
 {% for s in lesson.sections.all %}
-    <h4>{{ s.order|add:1 }}: {{ s.title }}</h4>
+    <header>{{ s.order|add:1 }}: {{ s.title }}</header>
     {{ s.introduction|lformat_print:lesson.pk }}
     
     <ol>

@@ -3,14 +3,14 @@
 {% block title %}Staff{% endblock %}
 
 {% block body %}
-<div><form method='POST'>
+<section><form method='POST'>
     {% csrf_token %}
     Each user must be on their own line, and only the first &quot;word&quot; on each line will be used.<br/>
     <br/>
-    Users:<br/>
-    <textarea name='users'>{{ users }}</textarea><br/><br/>
+    <label>Users:<br/>
+    <textarea name='users'>{{ users }}</textarea></label><br/><br/>
     <input type='submit'>
-</form></div>
+</form></section>
 {% endblock %}
 
 {% block location %}Add/Remove User{% endblock %}

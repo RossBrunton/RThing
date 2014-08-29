@@ -14,6 +14,10 @@ div {
     margin-bottom:15px;
 }
 
+h4 {
+    font-weight:bold;
+}
+
 .l-warning, .l-note, .l-info {
     background-color:#dddddd;
 }

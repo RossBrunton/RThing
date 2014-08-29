@@ -3,7 +3,7 @@
 {% block title %}Password Reset{% endblock %}
 
 {% block content %}
-<div class='no-sidebar-block'>
+<main class='no-sidebar-block'>
     {% if validlink %}
         {{ form.errors }}<br/>
         Just enter a new password twice, and then you can log in.
@@ -16,5 +16,5 @@
     {% else %}
         That code is invalid; maybe it expired
     {% endif %}
-</div>
+</main>
 {% endblock %}

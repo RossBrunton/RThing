@@ -17,6 +17,14 @@ ul {
     list-style-type:none;
 }
 
+header, section, nav, main { 
+    display: block; 
+}
+
+h4 {
+    font-weight:normal;
+}
+
 
 /* Sidebar and general layout */
 .container {
@@ -97,7 +105,7 @@ ul {
     flex:1 1 auto;
 }
 
-.content > div, .content > a > div, .content > .fragment > div, div > .errorlist {
+.content > * {
     margin:5px;
     margin-top:15px;
     margin-bottom:5px;
@@ -105,8 +113,9 @@ ul {
     margin-right:15px;
 }
 
-.content > .fragment {
-    margin:0px;
+.fragment > div, .fragment > nav {
+    margin-top:15px;
+    margin-bottom:5px;
 }
 
 .no-sidebar-block {
@@ -156,7 +165,10 @@ div > .errorlist {
     color: #eeeeee;
     border-radius: 3px;
     background: linear-gradient(#5555ee, #3333cc);
-    margin:5px;
+}
+
+.course-block div, .lesson-block div, .section-head div {
+    margin:0px !important;
 }
 
 .lesson-block.no-answers {
@@ -195,6 +207,10 @@ div > .errorlist {
     color:#eeeeee;
     border-radius:5px;
     position:relative;
+}
+
+.prompt * {
+    margin:0px;
 }
 
 [data-type=task] hr {
@@ -354,6 +370,10 @@ div:not(.content) > a {
     text-decoration:underline;
 }
 
-.lesson-block.lesson-block a {
-    text-decoration:none;
+section a {
+    text-decoration:underline;
+}
+
+header a {
+    text-decoration:none !important;
 }

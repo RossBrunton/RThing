@@ -1,7 +1,7 @@
 {% load staticfiles %}
 <!DOCTYPE html>
 
-<html>
+<html lang='en-GB'>
     <head>
         {% block first-head %}{% endblock %}
         <title>{% block title %}No title given{% endblock %}</title>
@@ -29,7 +29,7 @@
     
     <body>
         {% block content %}
-        This document defines no content.
+        <main>This document defines no content.</main>
         {% endblock %}
         <div style='display:none' id='csrf'>{{ csrf_token }}</div>
     </body>

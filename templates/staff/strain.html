@@ -6,13 +6,13 @@
     </head>
     
     <body>
-        <div>This page will submit a random number to the task {{ task.pk }} every 1 to 10 seconds.</div>
+        <header>This page will submit a random number to the task {{ task.pk }} every 1 to 10 seconds.</header>
         
-        <div>
+        <section>
             Requests: <span id='requests'>0</span>,
             Success: <span id='success'>0</span>,
             Failure: <span id='failure'>0</span>
-        </div>
+        </section>
         
         <form class='prompt' method='POST' action='{% url "tasks:submit" task=task.pk %}' >
             {% csrf_token %}

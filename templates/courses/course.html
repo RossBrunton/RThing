@@ -5,19 +5,21 @@
 
 {% block body %}
 {% if user.is_staff %}
-    <div class='staff-options'>
+    <nav class='staff-options'>
         As a staff member, you can do the following with this course:<br/>
         - <a href='{% url "admin:courses_course_change" course.pk %}'>Edit it</a><br/>
         - <a href='{% url "admin:courses_lesson_add" %}?course={{ course.pk }}'>Add a lesson</a><br/>
         - <a href='{% url "staff:add_users" course=course.slug %}'>Add/Remove students</a><br/>
         - <a href='{% url "export:export" course=course.slug %}'>Export to text</a>
-    </div>
+    </nav>
 {% endif %}
 
+<header>
 {{ course.description|lformat }}
+</header>
 
 {% for l in lessons %}
-    <div class='lesson-block{% if not l.0.published %} unpublished{% endif %}
+    <header class='lesson-block{% if not l.0.published %} unpublished{% endif %}
         {% if not l.0.answers_published %} no-answers{% endif %}'>
         <div class='title'>
             <a href='{% url "courses:lesson" course=course.slug lesson=l.0.slug %}'>{{ l.0.title }}</a>
@@ -32,7 +34,7 @@
             <img src='{% static "icons/print.png" %}' alt='Print' title='Print View' style='vertical-align:middle'/>
         </a>
         </div>
-    </div>
+    </header>
 {% endfor %}
 
 {{ course.ending|lformat }}

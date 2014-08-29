@@ -1,11 +1,11 @@
 {% load lformat %}
-<div class='fragment' data-type='section-start' data-order='{{ section.order }}'>
-    <div class='section-head'>{{ section.order|add:1 }}: {{ section.title }}</div>
+<section class='fragment' data-type='section-start' data-order='{{ section.order }}'>
+    <header class='section-head'>{{ section.order|add:1 }}: {{ section.title }}</header>
     {% if staff %}
-        <div class='staff-options'>
+        <nav class='staff-options'>
             As a staff member, you can do the following with this section:<br/>
             - <a href='{% url "admin:courses_section_change" section.pk %}'>Edit it</a><br/>
-        </div>
+        </nav>
     {% endif %}
     {{ section.introduction|lformat:section.lesson.pk }}
-</div>
+</section>
