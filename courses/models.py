@@ -89,7 +89,7 @@ class Course(TraversableOrderedModel):
     title = models.CharField(max_length=30, unique=True)
     slug = models.SlugField(blank=True, max_length=35, unique=True)
     code = models.CharField(max_length=10, blank=True)
-    description = models.TextField()
+    description = models.TextField(help_text="See <a href='/staff/help/formatting'>here</a> for formatting help")
     ending = models.TextField(blank=True)
     published = models.BooleanField(default=False)
     users = models.ManyToManyField(User, blank=True)
@@ -121,7 +121,7 @@ class Course(TraversableOrderedModel):
         return _complete([lesson.complete(user) for lesson in self.lessons.all()])
     
     def to_dict(self):
-        """Copies this course's data (including lessons) to a dict, and returns it"""
+        """Copies this course's data (including lessons and usernames of users) to a dict, and returns it"""
         output = OrderedDict()
         
         output["title"] = self.title
@@ -187,7 +187,7 @@ class Lesson(TraversableOrderedModel):
     
     title = models.CharField(max_length=30)
     slug = models.SlugField(blank=True, max_length=35)
-    introduction = models.TextField()
+    introduction = models.TextField(help_text="See <a href='/staff/help/formatting'>here</a> for formatting help")
     closing = models.TextField(blank=True)
     published = models.BooleanField(default=False)
     answers_published = models.BooleanField(default=False)
@@ -260,7 +260,7 @@ class Section(TraversableOrderedModel):
     """
     title = models.CharField(max_length=30)
     slug = models.SlugField(blank=True, max_length=35)
-    introduction = models.TextField()
+    introduction = models.TextField(help_text="See <a href='/staff/help/formatting'>here</a> for formatting help")
     closing = models.TextField(blank=True)
     
     lesson = models.ForeignKey(Lesson, related_name="sections")
@@ -316,7 +316,7 @@ class Section(TraversableOrderedModel):
 @py2_str
 class Task(TraversableOrderedModel):
     """Tasks are contained in sections and each one represents a single "prompt" that can run code"""
-    description = models.TextField()
+    description = models.TextField(help_text="See <a href='/staff/help/formatting'>here</a> for formatting help")
     after_text = models.TextField(blank=True)
     wrong_text = models.TextField(blank=True)
     skip_text = models.TextField(blank=True)

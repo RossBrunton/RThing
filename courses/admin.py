@@ -3,7 +3,8 @@
 These will automatically be added to staff.admin.admin_site
 """
 from django.contrib import admin
-from django.forms import ModelForm, ValidationError
+from django.forms import ModelForm, ValidationError, widgets
+from django import forms
 from django.http import Http404, HttpResponseRedirect
 
 from ordered_model.admin import OrderedModelAdmin
@@ -68,6 +69,28 @@ class TaskAdminForm(ModelForm):
             raise ValidationError(u"Model answer encountered error: {}".format(err))
         
         return toRet
+    
+    _TEXTAREA_SMALL = {
+        "style":"",
+        "rows":1
+    }
+    
+    _TEXTAREA_MED = {
+        "style":"",
+        "rows":3
+    }
+    
+    hidden_pre_code = forms.CharField(widget=widgets.Textarea(attrs=_TEXTAREA_SMALL), required=False)
+    visible_pre_code = forms.CharField(widget=widgets.Textarea(attrs=_TEXTAREA_SMALL), required=False)
+    model_answer = forms.CharField(widget=widgets.Textarea(attrs=_TEXTAREA_SMALL))
+    validate_answer = forms.CharField(widget=widgets.Textarea(attrs=_TEXTAREA_SMALL), required=False)
+    post_code = forms.CharField(widget=widgets.Textarea(attrs=_TEXTAREA_SMALL), required=False)
+    
+    after_text = forms.CharField(widget=widgets.Textarea(attrs=_TEXTAREA_MED), required=False)
+    wrong_text = forms.CharField(widget=widgets.Textarea(attrs=_TEXTAREA_MED), required=False)
+    skip_text = forms.CharField(widget=widgets.Textarea(attrs=_TEXTAREA_MED), required=False)
+    commentary = forms.CharField(widget=widgets.Textarea(attrs=_TEXTAREA_MED), required=False)
+    
 
 class TaskInline(admin.StackedInline):
     """Inline for displaying tasks on section pages"""
@@ -84,7 +107,7 @@ class TaskInline(admin.StackedInline):
                 ("model_answer"),
                 ("validate_answer", "post_code"),
                 ("language", "uses_random", "uses_image", "automark", "takes_prior")
-            )
+            ),
         }),
     )
 

@@ -1,0 +1,80 @@
+{% extends "base_staff.html" %}
+{% load lformat %}
+
+{% block title %}Formatting Help{% endblock %}
+{% block location %}Formatting Help{% endblock %}
+
+{% block body %}
+<div>
+    The following is all the formatting available, and what they result in.
+    <br/><br/>
+    <table style='border-spacing:15px'>
+        <tr>
+            <th>Code</th>
+            <th>Description</th>
+        </tr>
+        
+        <tr>
+            <td class="tex2jax_ignore">$a^2 = b^2 + c^2$</td>
+            <td>Inline LaTeX</td>
+        </tr>
+        
+        <tr>
+            <td class="tex2jax_ignore">$$a^2 = b^2 + c^2$$</td>
+            <td>Block (centred) LaTeX</td>
+        </tr>
+        
+        <tr>
+            <td>[url]http://example.com[/url]</td>
+            <td>Displays a link to the given URL</td>
+        </tr>
+        
+        <tr>
+            <td>[url http://example.com]Example[/url]</td>
+            <td>Displays a link to the given URL with the text "Example"</td>
+        </tr>
+        
+        <tr>
+            <td>[img]1.png[/img]</td>
+            <td>Displays the image that was uploaded by the manage files page named 1.png</td>
+        </tr>
+        
+        <tr>
+            <td>[img]http://example.com/1.png[/img]</td>
+            <td>Displays the image that is at that URL</td>
+        </tr>
+        
+        <tr>
+            <td>[youtube]1234567[/youtube]</td>
+            <td>Displays the Youtube video with that ID</td>
+        </tr>
+        
+        <tr>
+            <td>
+                {{ "[html]<strong>This</strong> <em>is</em> <span='text-decoration:underline'>HTML</span>[/html]" }}
+            </td>
+            <td>Inserts raw HTML</td>
+        </tr>
+        
+        <tr>
+            <td>#1 + 1#</td>
+            <td>Displays the text such that the user can click it to enter it into a prompt</td>
+        </tr>
+        
+        <tr>
+            <td>Note:</td>
+            <td>If it is the first word in a paragraph, that paragraph will be displayed as a note</td>
+        </tr>
+        
+        <tr>
+            <td>Warning:</td>
+            <td>If it is the first word in a paragraph, that paragraph will be displayed as a warning</td>
+        </tr>
+        
+        <tr>
+            <td>Info:</td>
+            <td>If it is the first word in a paragraph, that paragraph will be displayed as extra information</td>
+        </tr>
+    </table>
+</div>
+{% endblock %}

@@ -24,6 +24,12 @@ def index(request):
 
 @login_required
 @user_passes_test(lambda u: u.is_staff)
+def help_formatting(request):
+    return render(request, "staff/help_formatting.html", {})
+
+
+@login_required
+@user_passes_test(lambda u: u.is_staff)
 def add_users(request, course):
     course = get_object_or_404(Course, slug=course)
     
