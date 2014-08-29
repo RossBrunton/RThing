@@ -1,0 +1,33 @@
+{% extends "base_print.html" %}
+{% load lformat %}
+
+{% block title %}Print: {{ lesson.title }}{% endblock %}
+
+{% block content %}
+
+<h3>{{ lesson.title }} - {% if lesson.course.code %}{{ lesson.course.code }}: {% endif %}{{ lesson.course.title }}</h3>
+
+{{ lesson.introduction|lformat_print:lesson.pk }}
+
+{% for s in lesson.sections.all %}
+    <h4>{{ s.order|add:1 }}: {{ s.title }}</h4>
+    {{ s.introduction|lformat_print:lesson.pk }}
+    
+    <ol>
+    {% for t in s.tasks.all %}
+        <li>
+            {{ t.description|lformat_print:lesson.pk }}
+            {% if t.visible_pre_code %}
+                <div class='prompt'>
+                    {{ t.visible_pre_code }}<br/>
+                </div>
+            {% endif %}
+        </li>
+    {% endfor %}
+    </ol>
+    
+    {{ s.closing|lformat_print:lesson.pk }}
+{% endfor %}
+
+
+{% endblock %}

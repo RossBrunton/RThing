@@ -23,8 +23,8 @@ def index(request):
 def course(request, course):
     """Course page; displays a description and list of lessons that the user can see"""
     ctx = {}
-    ctx["all_courses"] = Course.get_courses(request.user);
-    ctx["course"] = get_object_or_404(Course, slug=course);
+    ctx["all_courses"] = Course.get_courses(request.user)
+    ctx["course"] = get_object_or_404(Course, slug=course)
     ctx["lessons"] = [\
         (l, l.complete_states(request.user))\
         for l in filter(lambda l : l.can_see(request.user), ctx["course"].lessons.all())
@@ -87,3 +87,17 @@ def lesson(request, course, lesson):
             
     
     return render(request, "courses/lesson.html", ctx)
+
+
+@login_required
+def print_lesson(request, course, lesson):
+    """Lesson page for print view, displays all sections and tasks in a print friendly format"""
+    ctx = {}
+    ctx["course"] = get_object_or_404(Course, slug=course)
+    ctx["lesson"] = get_object_or_404(Lesson, slug=lesson, course=ctx["course"])
+    
+    # Check user has permission
+    if not ctx["lesson"].can_see(request.user):
+        raise Http404
+    
+    return render(request, "courses/print_lesson.html", ctx)

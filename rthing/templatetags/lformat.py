@@ -20,10 +20,10 @@ sandbox="allow-scripts allow-same-origin" class='youtube-iframe'
 def _reverse_escape(match):
     """Undos the escaping"""
     return (HTMLParser()).unescape(match.group(1))
-    
+
 
 @register.filter(needs_autoescape=True)
-def lformat(value, arg=None, autoescape=None):
+def lformat(value, arg=None, autoescape=None, print_=False):
     """Formatting lecturer's text and such
     
     Arg should be the lesson's PK if it exists.
@@ -62,11 +62,18 @@ def lformat(value, arg=None, autoescape=None):
     value = re.sub(r"\[html\](.*?)\[\/html\]", _reverse_escape, value)
     
     # Youtube
-    value = re.sub(r"\[youtube\](.+?)\[\/youtube\]", _YOUTUBE_IFRAME, value)
+    if print_:
+        value = re.sub(r"\[youtube\](.+?)\[\/youtube\]", r"https://www.youtube.com/watch?v=\1", value)
+    else:
+        value = re.sub(r"\[youtube\](.+?)\[\/youtube\]", _YOUTUBE_IFRAME, value)
     
     # Links
-    value = re.sub(r"\[url\](.*?)\[/url\]", r"<a href='\1'>\1</a>", value)
-    value = re.sub(r"\[url\s*(.*?)\](.*?)\[/url\]", r"<a href='\1'>\2</a>", value)
+    if print_:
+        value = re.sub(r"\[url\](.*?)\[/url\]", r"\1", value)
+        value = re.sub(r"\[url\s*(.*?)\](.*?)\[/url\]", r"\2 (\1)", value)
+    else:
+        value = re.sub(r"\[url\](.*?)\[/url\]", r"<a href='\1'>\1</a>", value)
+        value = re.sub(r"\[url\s*(.*?)\](.*?)\[/url\]", r"<a href='\1'>\2</a>", value)
     
     # Boxes
     value = re.sub(r"\<div\>[Ww]arning:(.+?)\<\/div\>", r"<div class='l-warning'>\1</div>", value)
@@ -77,3 +84,8 @@ def lformat(value, arg=None, autoescape=None):
     value = re.sub(r"(\s)\#(.+?)\#", r"\1<span class='l-click'>\2</span>", value)
     
     return mark_safe(value)
+
+
+@register.filter(needs_autoescape=True)
+def lformat_print(value, arg=None, autoescape=None):
+    return lformat(value, arg, autoescape, print_=True)

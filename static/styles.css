@@ -307,9 +307,11 @@ div > .errorlist {
 .l-click {
     font-family:mono;
     background-color:#dddddd;
-    padding:2px;
+    padding:1px;
     border-radius:2px;
     cursor:pointer;
+    font-size:80%;
+    border:1px solid #999999;
 }
 
 .wrong-text {

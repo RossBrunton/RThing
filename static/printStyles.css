@@ -1,0 +1,39 @@
+body {
+    padding:30px;
+    background-color:#ffffff;
+    color:#000000;
+}
+
+li {
+    margin-top: 15px;
+    margin-bottom:15px;
+}
+
+div {
+    margin-top: 15px;
+    margin-bottom:15px;
+}
+
+.l-warning, .l-note, .l-info {
+    background-color:#dddddd;
+}
+
+.l-warning::before, .l-note::before, .l-info::before {
+    color:#000000;
+    font-weight:bold;
+}
+
+.l-click {
+    background-color:inherit;
+    padding:inherit;
+    font-size:inherit;
+    border:inherit;
+    cursor:inherit;
+}
+
+.prompt {
+    background-color:#ffffff;
+    border:1px solid #000000;
+    color:inherit;
+}
+
