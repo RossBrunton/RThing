@@ -5,7 +5,14 @@
 
 {% block body %}
 <div>
-    You are viewing statistics for this lesson.
+    You are viewing statistics for this lesson. 
+</div>
+
+<div>
+    If you like you can export statistics to CSV:
+        <a href='{% url "stats:csv_lesson" course=course.slug lesson=lesson.slug %}'>By task</a> - 
+        <a href='{% url "stats:csv_users" course=course.slug lesson=lesson.slug %}'>By user</a>
+    
 </div>
 
 <div>
@@ -32,7 +39,7 @@
                 is the average number of tries before a person got it correct<br/>
             - {{ t.average_tries_reveal|fancy_float:10 }}
                 is the average number of tries before a person revealed the answer<br/>
-            - {{ t.completion|fancy_percent }} of people who attempted this question, and got it correct<br/>
+            - {{ t.completion|fancy_percent }} of people who attempted this question got it correct<br/>
             - <a href='{% url "stats:wrong" task=t.task.pk %}'>View wrong answers</a>
         </div>
         
