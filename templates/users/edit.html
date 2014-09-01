@@ -1,10 +1,11 @@
 {% extends "base.html" %}
+{% load form_errors %}
 
 {% block title %}Password Reset Complete{% endblock %}
 
 {% block content %}
 <main class='no-sidebar-block'>
-    {{ form.errors }}<br/>
+    {% form_errors form %}
     {% if forced %}
         Sorry, but because this is the first time you have logged in, you need to set a new password.
     {% endif %}

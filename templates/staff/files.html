@@ -1,9 +1,10 @@
 {% extends "base_staff.html" %}
+{% load form_errors %}
 
 {% block title %}File Manager{% endblock %}
 
 {% block body %}
-{{ form.errors }}
+{% form_errors form %}
 <section>
     The following files are visible from formatting:
     {% for f in task_files %}

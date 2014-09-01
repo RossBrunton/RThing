@@ -1,11 +1,12 @@
 {% extends "base.html" %}
+{% load form_errors %}
 
 {% block title %}Password Reset{% endblock %}
 
 {% block content %}
 <main class='no-sidebar-block'>
+    {% form_errors form %}
     {% if validlink %}
-        {{ form.errors }}<br/>
         Just enter a new password twice, and then you can log in.
         <form method="post">
             {% csrf_token %}

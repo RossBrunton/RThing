@@ -1,8 +1,10 @@
 {% extends "base_staff.html" %}
+{% load form_errors %}
 
 {% block title %}Staff{% endblock %}
 
 {% block body %}
+{% form_errors form %}
 <section><form method='POST'>
     {% csrf_token %}
     Each user must be on their own line, and only the first &quot;word&quot; on each line will be used.<br/>

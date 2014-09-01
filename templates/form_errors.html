@@ -1,0 +1,9 @@
+{% if form.errors %}
+    <div class='form-errors'>
+        {% for ek, e in form.errors.items %}
+            {% for ee in e %}
+                {{ ek|title }}: {{ ee }}<br/>
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endif %}

@@ -148,7 +148,7 @@ h4 {
     cursor:pointer;
 }
 
-div > .errorlist {
+.form-errors {
     background-color:#eecccc;
     border-radius:3px;
     padding:5px;

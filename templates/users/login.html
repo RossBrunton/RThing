@@ -1,9 +1,11 @@
 {% extends "base.html" %}
+{% load form_errors %}
 
 {% block title %}Login{% endblock %}
 
 {% block content %}
 <main class='no-sidebar-block'>
+    {% form_errors form %}
     <form method='POST'>
         {% csrf_token %}
         <strong>Log In</strong><br/>
