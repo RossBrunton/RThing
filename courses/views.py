@@ -5,6 +5,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
 from courses.models import Course, Lesson, Section, Task
+from django.conf import settings
 
 @login_required
 def index(request):
@@ -13,7 +14,7 @@ def index(request):
     ctx["courses"] = Course.get_courses(request.user);
     
     # Check if the user needs to change their password
-    if request.user.extra.password_forced:
+    if request.user.extra.password_forced and not settings.USE_REMOTE_USER:
         return HttpResponseRedirect(u"{}?forced=1".format(reverse("users:edit")))
     
     return render(request, "courses/index.html", ctx)
