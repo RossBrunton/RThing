@@ -87,8 +87,83 @@ def run(data):
     
     return output
 
+
+def _is_a_number(str, p):
+    """Takes a string and a pointer and returns whether the current pointer is just after the e+ part of 1e+10"""
+    if str[p-1] in "-+" and str[p-2] in "eE":
+        return True
+    
+    if str[p-1] in "eE":
+        return True
+    
+    return False
+
+# These characters must not have whitespace between them. Called "alphanumeric" because I forgot about .
+_an = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789."
+# Whitespace
+_ws = " \t\n"
+# Quotes
+_quotes = "\"'`"
+# And escape codes
+_esc = "\\"
 def is_equivalent(a, b):
-    return a == b
+    # String pointers
+    ap = 0
+    bp = 0
+    ps = 0
+    
+    an_comp = False
+    while ap < len(a) and bp < len(b):
+        # If none of the current chars are alphanumeric or the last character match is not alphanumeric then skip
+        # whitespace forward
+        if (a[ap] not in _an and b[bp] not in _an) or not an_comp:
+            while ap < len(a) and a[ap] in _ws and not _is_a_number(a, ap):
+                ap += 1
+            while bp < len(b) and b[bp] in _ws and not _is_a_number(b, bp):
+                bp += 1
+        
+        if ap >= len(a) or bp >= len(b):
+            # Reached end of string
+            break
+        
+        an_comp = False
+        
+        if a[ap] != b[bp]:
+            # They must be equal
+            # print("Failed {}:{} / {}:{}".format(a, ap, b, bp))
+            return False
+        
+        if a[ap] in _an:
+            # This is comparing two alphanumeric values
+            an_comp = True
+        
+        if a[ap] in _quotes:
+            opener = a[ap]
+            # String; must match exactly
+            ap += 1
+            bp += 1
+            while ap < len(a) and bp < len(b) and a[ap] == b[bp]:
+                if a[ap] == opener and a[ap-1] not in _esc:
+                    break
+                ap += 1
+                bp += 1
+            else:
+                # print("Failed {}:{} / {}:{} in string".format(a, ap, b, bp))
+                return False
+        
+        ap += 1
+        bp += 1
+    
+    # Clean up ending whitespace
+    while ap < len(a) and a[ap] in _ws:
+        ap += 1
+    while bp < len(b) and b[bp] in _ws:
+        bp += 1
+    
+    if ap >= len(a) and bp >= len(b):
+        return True
+    else:
+        return False
 
 def generic_print(expr):
     return "print(\"{}\");".format(expr)

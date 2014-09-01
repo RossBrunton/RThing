@@ -52,7 +52,8 @@ def submit(request, task):
         return create_error("That script is too long.")
     
     # Or the same script twice if the task has no random elements
-    if request.user.extra.last_script_code == request.POST["code"] and mode == "answered" and not task.uses_random:
+    if task.iface.is_equivalent(request.user.extra.last_script_code, request.POST["code"])\
+    and mode == "answered" and not task.uses_random:
         return HttpResponse(json.dumps(
             {"output":request.user.extra.last_script_output,
             "isError":request.user.extra.last_script_error,
