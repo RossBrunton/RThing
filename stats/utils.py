@@ -8,15 +8,19 @@ def attempts(**kwargs):
 
 def correct(**kwargs):
     """How many people have gotten this task correct"""
-    return UserOnTask.objects.filter(state=UserOnTask.STATE_CORRECT, user__is_staff=False, **kwargs).count()
+    return UserOnTask.objects.filter(\
+        state=UserOnTask.STATE_CORRECT, user__is_staff=False, task__automark=True, **kwargs\
+    ).count()
 
 def revealed(**kwargs):
     """How many people have revealed the answer to this question"""
-    return UserOnTask.objects.filter(state=UserOnTask.STATE_REVEALED, user__is_staff=False, **kwargs).count()
+    return UserOnTask.objects.filter(\
+        state=UserOnTask.STATE_REVEALED, user__is_staff=False, task__automark=True, **kwargs
+    ).count()
 
 def average_tries_correct(**kwargs):
     """For the people that got it correct, what is the average number of tries"""
-    q = UserOnTask.objects.filter(state=UserOnTask.STATE_CORRECT, user__is_staff=False, **kwargs)
+    q = UserOnTask.objects.filter(state=UserOnTask.STATE_CORRECT, user__is_staff=False, task__automark=True, **kwargs)
     try:
         return reduce(lambda a, v: a + v.tries, q, 0) / q.count()
     except ZeroDivisionError:
@@ -24,7 +28,7 @@ def average_tries_correct(**kwargs):
 
 def average_tries_reveal(**kwargs):
     """For the people that revealed the answer, what is the average number of tries"""
-    q = UserOnTask.objects.filter(state=UserOnTask.STATE_REVEALED, user__is_staff=False, **kwargs)
+    q = UserOnTask.objects.filter(state=UserOnTask.STATE_REVEALED, user__is_staff=False, task__automark=True, **kwargs)
     try:
         return reduce(lambda a, v: a + v.tries, q, 0) / q.count()
     except ZeroDivisionError:

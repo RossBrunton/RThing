@@ -1,11 +1,15 @@
 {% extends "base_staff.html" %}
 {% load lformat %}
 
-{% block title %}Wrong Answers for task {{ task.pk }}{% endblock %}
+{% block title %}Answers for task {{ task.pk }}{% endblock %}
 
 {% block body %}
 <header>
-    You are viewing the wrong answers for the task:
+    {% if task.automark %}
+        You are viewing the wrong answers for the task:
+    {% else %}
+        You are viewing the answers for the task:
+    {% endif %}
 </header>
 
 {{ task.description|lformat:task.section.lesson.pk }}
@@ -33,7 +37,7 @@
 </section>
 {% endblock %}
 
-{% block location %}Wrong Answers{% endblock %}
+{% block location %}{% if task.automark %}Wrong Answers{% else %}Answers{% endif %}{% endblock %}
 
 {% block sidebar %}
 

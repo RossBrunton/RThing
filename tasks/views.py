@@ -72,7 +72,10 @@ def submit(request, task):
         data["isCorrect"] = isCorrect
         data["revealed"] = False
     elif mode == "skipped":
-        data["output"] = "[skipped]"
+        if task.automark:
+            data["output"] = "[skipped]"
+        else:
+            data["output"] = "[continued]"
         data["isError"] = False
         data["isCorrect"] = False
         data["revealed"] = False

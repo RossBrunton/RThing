@@ -269,11 +269,11 @@ h4 {
 }
 
 .prompt-button.skip {
-    right:31px;
+    right:10px;
 }
 
 .prompt-button.reveal {
-    right:10px;
+    right:31px;
 }
 
 .prompt-button.run {
