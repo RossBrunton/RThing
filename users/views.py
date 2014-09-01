@@ -4,6 +4,8 @@ from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
+import settings
+
 def login(request):
     if request.method == "POST":
         # User has submitted credentials
@@ -22,8 +24,11 @@ def login(request):
         # Logged the user in, now go where they wanted to go
         return redirect(request.GET.get("next", "/"))
     else:
-        # User did not submit credentials
-        return render(request, "users/login.html", {"form":AuthenticationForm(request)})
+        # User did not submit credentials, use a template based on whether we are using remote user auth
+        if settings.USE_REMOTE_USER:
+            return render(request, "users/denied.html", {"message":settings.REMOTE_DENIED_MESSAGE})
+        else:
+            return render(request, "users/login.html", {"form":AuthenticationForm(request)})
     
 
 @require_POST
