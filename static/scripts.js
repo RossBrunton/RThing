@@ -21,12 +21,17 @@ window.rthing = (function() {
         return textarea.value.substr(0, textarea.selectionStart).split("\n").length;
     }
     
-    // Escapes html, not 100% secure, also replaces \n with <br/>
+    // Escapes html, not 100% secure, also replaces \n with <br/> and tries to format underline
     var escape = function(str, noLines) {
         str = str.replace(/\&/g, "&amp;");
         str = str.replace(/\>/g, "&gt;");
         str = str.replace(/\</g, "&lt;");
         if(!noLines) str = str.replace(/\n/g, "<br/>");
+        
+        // Underline formatting is _L_i_k_e _t_h_i_s, with an optional backspace between _ and the char
+        // Replace _L with <..>L</..> and then replace <..>L</..><..>i</..> with <..>Li</..>
+        str = str.replace(/_\x08?(.| +)/g, "<span style='text-decoration:underline'>\$1</span>");
+        str = str.replace(/<\/span>(\s*)<span style='text-decoration:underline'>/g, "\$1");
         
         return str;
     };
