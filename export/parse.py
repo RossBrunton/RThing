@@ -1,12 +1,18 @@
+"""Converts to and from the text format
+
+Remember, described in doc/export_format.md
+"""
 from collections import OrderedDict
 import six
 
 from rthing.utils import rand_str
 import re
 
+""" The indentation of the output text"""
 indentation = 4
 
 def _wrap(type_, name, text, indent, rstr=""):
+    """Given a string, name and type, returns the "type name {random{\\ntext\\n}random}" thing"""
     while rstr in text:
         rstr = rand_str(10)
     
@@ -14,6 +20,7 @@ def _wrap(type_, name, text, indent, rstr=""):
         .format(type=type_, name=name, text=text, rstr=rstr, indent=" "*indent)
 
 def _wrap_list(name, list_, indent):
+    """Similar to _wrap, but for wrapping lists instead"""
     outs = ""
     for e in list_:
         outs += "\n"+encode(e, "{}-entry".format(name), indent+indentation)
@@ -22,6 +29,7 @@ def _wrap_list(name, list_, indent):
     
 
 def encode(value, key="root", indent=0):
+    """Takes a python dict (as value) and optional root object name and indent, and returns the text representing it"""
     if isinstance(value, six.string_types) and "\n" in value:
         return _wrap("str", key, value, indent)
     elif isinstance(value, six.string_types):
@@ -50,11 +58,15 @@ def encode(value, key="root", indent=0):
                 raise RuntimeError("{} is not a type that can be set to a text file".format(six.text_type(value)))
 
 
+# int mynum: 7
 _single_expr = re.compile(r"^\s*(str|bool|int|float|none|comment)\s+([a-zA-Z0-9_-]+):\s*(.*)\s*$")
-_block_open = re.compile(r"^\s*(str|list|dict|comment)\s+([a-zA-Z0-9_-]+)\s*?\{([a-z]+)\{\s*?$")
-_block_close = re.compile(r"^\s*\}([a-z]+)\}\s*$")
+# str bigstr {aetuhsateu{
+_block_open = re.compile(r"^\s*(str|list|dict|comment)\s+([a-zA-Z0-9_-]+)\s*?\{([a-zA-Z0-9]*)\{\s*?$")
+# }saotehu}
+_block_close = re.compile(r"^\s*\}([a-zA-Z0-9]*)\}\s*$")
 
 def _cast(type_, value):
+    """Given a type and a value, converts the value to that type"""
     if type_ == "str":
         return six.text_type(value)
     if type_ == "bool":
@@ -75,6 +87,7 @@ def _cast(type_, value):
 
 
 def _handle_child(parent_type, parent, child_type, child_name, child_value):
+    """Called when decoding decodes a child of a list or dict, so they can add the child"""
     if parent_type == "dict":
         parent[child_name] = _cast(child_type, child_value)
         return
@@ -86,12 +99,14 @@ def _handle_child(parent_type, parent, child_type, child_name, child_value):
 
 
 def decode(text):
+    """Takes in a string from decode and outputs a copy of the dictionary that encoded it"""
     # Stack entries are in the format [obj, type, match, random string, name]
     stack = []
     
     lines = text.split("\n")
     
     for l in lines:
+        # Loop through each line
         close = _block_close.match(l)
         if close and close.group(1) == stack[-1][3]:
             # Block ended, pop it from the stack and attach it to its parent
@@ -126,6 +141,7 @@ def decode(text):
             if open.group(1) == "comment":
                 continue
             
+            # Create an object to add to the stack
             obj = None
             if open.group(1) == "str":
                 obj = ""

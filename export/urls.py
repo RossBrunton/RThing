@@ -1,3 +1,4 @@
+"""Urls for the export system, this should be the namespace "export" """
 from django.conf.urls import patterns, include, url
 
 import export.views as views

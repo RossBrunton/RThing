@@ -1,6 +1,22 @@
+"""Forms used for POST requests and displaying in pages"""
 from django import forms
 
 class ImportForm(forms.Form):
+    """Form representing an upload to the import page
+    
+    Has three fields, text, mode and user_mode.
+    
+    text is the text that will be imported as a course.
+    
+    mode is one of:
+    - "update" - If the uploaded course exists, change all the values in the upload.
+    - "replace" - If the uploaded course exists, delete it and create a new one.
+    
+    user_mode is one of:
+    - "add" - If a user on the course doesn't exist, create that user.
+    - "ignore" - If they don't exist, don't add them.
+    - "none" - Don't add any users, even if they already exist in the system.
+    """
     MODE_UPDATE = "update"
     MODE_REPLACE = "replace"
     
