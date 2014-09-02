@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from ifaces.r import r
+from ifaces import r
 
 class RTestCase(TestCase):
     def test_equivalence(self):

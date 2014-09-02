@@ -37,8 +37,8 @@ EMAIL_DOMAIN = "localhost"
 
 # Languages and their packages
 IFACES = {
-    "dummy":("Dummy Interface", "ifaces.dummy.dummy"),
-    "r":("R", "ifaces.r.r"),
+    "dummy":("Dummy Interface", "ifaces.dummy"),
+    "r":("R", "ifaces.r"),
 }
 
 # Set your web server to serve the files in STATIC_ROOT from STATIC_URL
