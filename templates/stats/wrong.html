@@ -27,7 +27,7 @@
             {% with lesson=task.section.lesson %}
                 For the user <a href='
                     {% url "stats:user" name=outer.0.uot.user.username course=lesson.course.slug lesson=lesson.slug %}
-                '>{{ outer.0.uot.user.username }}</a>:
+                '>{{ outer.0.uot.user.username }}</a> (Status: {{ outer.0.uot.status_span|safe }}):
             {% endwith %}
             {% for inner in outer %}
                 <div class='prompt'>{{ inner.code }}</div>

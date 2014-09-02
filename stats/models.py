@@ -34,6 +34,53 @@ class UserOnTask(models.Model):
         wa.save()
         
         self.wrong_answers.add(wa)
+    
+    @property
+    def status(self):
+        """Returns one of the following with increasing priority:
+        
+        "Not attempted yet" if the user hasn't yet tried the question.
+        "Attempted" if the user has attempted the question.
+        "Skipped" if the user has skipped the question.
+        "Skipped with no attempt" if the user has skipped the question with no attempts.
+        "Correct" if the user has attempted the question and got it correct.
+        "Revealed" if the user has revealed the answer before getting it correct.
+        "Revealed with no attempt" if the user has revealed the question without attempting it.
+        
+        "Revealed", "Correct" and "Skiped" are ignored if the task is not automark.
+        """
+        if self.tries == 0 and self.state == UserOnTask.STATE_REVEALED: return "Revealed with no attempt"
+        if self.state == UserOnTask.STATE_REVEALED and self.task.automark: return "Revealed"
+        if self.state == UserOnTask.STATE_CORRECT and self.task.automark: return "Correct"
+        if self.skipped and self.tries == 0: return "Skipped with no attempt"
+        if self.skipped and self.task.automark: return "Skipped"
+        if self.tries > 0: return "Attempted"
+        return "Not attempted yet"
+    
+    @property
+    def status_colour(self):
+        """Returns a class name for fancy text based on the status as follows:
+        
+        "Not attempted yet" - "no-attempt"
+        "Attempted" - "attempt"
+        "Skipped" - "okay"
+        "Skipped with no attempt" - "bad"
+        "Correct" - "good"
+        "Revealed" - "okay"
+        "Revealed with no attempt" - "bad"
+        """
+        if self.status == "Not attempted yet": return "no-attempt"
+        if self.status == "Attempted": return "attempt"
+        if self.status == "Skipped": return "okay"
+        if self.status == "Skipped with no attempt": return "bad"
+        if self.status == "Correct": return "good"
+        if self.status == "Revealed": return "okay"
+        if self.status == "Revealed with no attempt": return "bad"
+    
+    @property
+    def status_span(self):
+        """Returns a string containing a HTML span element with the state and it's style"""
+        return "<span class='fancy {}'>{}</span>".format(self.status_colour, self.status)
 
 
 @py2_str

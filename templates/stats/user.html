@@ -31,29 +31,8 @@
         {% endif %}
         
         <section>
-            {% if not t.task.automark %}
-                {% if not t.uot.tries and t.uot.skipped %}
-                    <span class='fancy bad'>Continued with no attempt</span>
-                {% elif t.uot.tries %}
-                    <span class='fancy attempt'>Attempted</span>
-                {% else %}
-                    <span class='fancy no-attempt'>Not attempted yet</span>
-                {% endif %}
-            {% else %}
-                {% if t.uot.state = "n" %}
-                    {% if t.uot.skipped %}
-                        <span class='fancy okay'>Skipped</span>
-                    {% elif t.uot.tries %}
-                        <span class='fancy attempt'>Attempted</span>
-                    {% else %}
-                        <span class='fancy no-attempt'>Not attempted yet</span>
-                    {% endif %}
-                {% endif %}
-                {% if t.uot.state = "c" %}<span class='fancy good'>Correct</span>{% endif %}
-                {% if t.uot.state = "r" %}<span class='fancy bad'>Revealed</span>{% endif %}
-            {% endif %}
-            
-            - {{ t.uot.tries }} attempts:
+            {{ t.uot.status_span|safe }} - {{ t.uot.tries }} attempts{% if t.task.automark %}, here are their incorrect
+            answers{% endif %}:
         </section>
         
         {% for w in t.uot.wrong_answers.all %}
