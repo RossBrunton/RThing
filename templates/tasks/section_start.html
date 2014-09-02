@@ -5,6 +5,9 @@
         <nav class='staff-options'>
             As a staff member, you can do the following with this section:<br/>
             - <a href='{% url "admin:courses_section_change" section.pk %}'>Edit it</a><br/>
+            - <a href='{% url "admin:courses_task_changelist" %}?section__id__exact={{ section.pk }}'>
+            Manage tasks
+        </a><br/>
         </nav>
     {% endif %}
     {{ section.introduction|lformat:section.lesson.pk }}

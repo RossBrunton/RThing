@@ -258,6 +258,9 @@ class Section(TraversableOrderedModel):
     
     Each section has a "title" which is displayed when the user progresses to it
     """
+    class Meta:
+        ordering = ["lesson", "order"]
+    
     title = models.CharField(max_length=30)
     slug = models.SlugField(blank=True, max_length=35)
     introduction = models.TextField(help_text="See <a href='/staff/help/formatting'>here</a> for formatting help")
@@ -278,6 +281,11 @@ class Section(TraversableOrderedModel):
     def can_see(self, user):
         """Can the given user see this section"""
         return self.lesson.can_see(user)
+    
+    @property
+    def course(self):
+        """The course this lesson is in"""
+        return self.lesson.course
     
     def complete(self, user):
         """Returns as per Task.complete depending on whether ALL tasks are at least that state
@@ -316,6 +324,8 @@ class Section(TraversableOrderedModel):
 @py2_str
 class Task(TraversableOrderedModel):
     """Tasks are contained in sections and each one represents a single "prompt" that can run code"""
+    class Meta:
+        ordering = ["section", "order"]
     description = models.TextField(help_text="See <a href='/staff/help/formatting'>here</a> for formatting help")
     after_text = models.TextField(blank=True)
     wrong_text = models.TextField(blank=True)
@@ -353,6 +363,16 @@ class Task(TraversableOrderedModel):
     def can_see(self, user):
         """Can the given user see this task"""
         return self.section.can_see(user)
+    
+    @property
+    def lesson(self):
+        """The lesson this course is in"""
+        return self.section.lesson
+    
+    @property
+    def course(self):
+        """The course this lesson is in"""
+        return self.section.course
     
     @property
     def iface(self):
@@ -481,6 +501,11 @@ class Task(TraversableOrderedModel):
         target.save()
         
         return target
+    
+    @property
+    def preview(self):
+        """The first 10 words; as a preivew"""
+        return defaultfilters.truncatewords_html(self.description, 10)
 
 
 def get_iface(name):

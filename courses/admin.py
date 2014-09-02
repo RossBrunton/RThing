@@ -42,7 +42,7 @@ admin_site.register(Course, CourseAdmin)
 
 class LessonAdmin(OrderedModelAdmin, _CustomAdmin):
     """Custom admin for lessons"""
-    list_display = ("title", "course", "order", "move_up_down_links")
+    list_display = ("course", "title", "move_up_down_links")
     list_filter = ["course"]
     
     fieldsets = (
@@ -113,8 +113,8 @@ class TaskInline(admin.StackedInline):
 
 class SectionAdmin(OrderedModelAdmin, _CustomAdmin):
     """Custom admin for sections"""
-    list_display = ("title", "lesson", "move_up_down_links")
-    list_filter = ["lesson"]
+    list_display = ("course", "lesson", "title", "move_up_down_links")
+    list_filter = ["lesson__course", "lesson"]
     inlines = [TaskInline]
     
     fieldsets = (
@@ -128,4 +128,14 @@ class SectionAdmin(OrderedModelAdmin, _CustomAdmin):
     )
 
 admin_site.register(Section, SectionAdmin)
-admin_site.register(Task)
+
+
+class TaskAdmin(OrderedModelAdmin, _CustomAdmin):
+    """Custom admin for sections"""
+    list_display = ("course", "lesson", "section", "preview", "move_up_down_links")
+    list_filter = ["section__lesson__course", "section"]
+    
+    fieldsets = TaskInline.fieldsets
+    form = TaskAdminForm
+
+admin_site.register(Task, TaskAdmin)
