@@ -1,3 +1,4 @@
+"""URL patterns for courses, this should be the namespace "courses" """
 from django.conf.urls import patterns, include, url
 
 import courses.views as views

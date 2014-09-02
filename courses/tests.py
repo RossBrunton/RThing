@@ -1,9 +1,11 @@
+"""Course unit tests"""
 from django.contrib.auth.models import User, Permission
 from django.test import TestCase, Client
 
 from courses.models import Course, Lesson, Section, Task
 
 class CoursesTestCase(TestCase):
+    """Tests for courses"""
     def test_autoslug(self):
         """Is the slug field set correctly"""
         # Courses...
