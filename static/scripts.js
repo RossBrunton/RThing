@@ -168,10 +168,12 @@ window.rthing = (function() {
         
         // l-click click listener
         $(".l-click").on("click", function(e) {
-            var ta = $(this).parent().nextAll("form").first().find("textarea:not([disabled])")
-            ta.val($(this).text());
-            ta.focus();
-            updateTextarea(ta[0]);
+            var ta = $(this).parent().nextAll("form").first().find("textarea:not([disabled])");
+            if(ta.length) {
+                ta.val($(this).text());
+                ta.focus();
+                updateTextarea(ta[0]);
+            }
         });
         
         // Listener for "enter" on textarea
