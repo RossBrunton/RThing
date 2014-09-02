@@ -186,7 +186,7 @@ window.rthing = (function() {
             }
         });
         
-        // And "up" on keypress
+        // And "up" and "down"on keypress
         $(".prompt textarea").on("keydown", function(e) {
             if(e.which == 38 /* Up */ && getLineNumber(this) == 1) {
                 if($(this).data("rlPointer") === undefined) $(this).data("rlPointer", -1);
@@ -204,6 +204,11 @@ window.rthing = (function() {
                     return true;
                 }
                 
+                // If appropriate, store the current value in rlCurrent
+                if($(this).data("rlPointer") == 0) {
+                    $(this).data("rlCurrent", $(this).val());
+                }
+                
                 $(this).val(
                     $(this).parent().prevAll(".prompt-entry-container").children("textarea")
                         [$(this).data("rlPointer")].value
@@ -216,10 +221,14 @@ window.rthing = (function() {
                 // Increment it
                 $(this).data("rlPointer", $(this).data("rlPointer") - 1);
                 
-                // If less than zero, clear the input and set it to zero
+                // If less than zero, clear or load the input and set rlPoniter to -1
                 if($(this).data("rlPointer") < 0) {
-                    $(this).data("rlPointer", 0);
-                    $(this).val("");
+                    $(this).data("rlPointer", -1);
+                    if($(this).data("rlCurrent")) {
+                        $(this).val($(this).data("rlCurrent"));
+                    }else{
+                        $(this).val("");
+                    }
                     updateTextarea(this);
                     return true;
                 }
