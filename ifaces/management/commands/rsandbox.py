@@ -82,9 +82,6 @@ class Command(BaseCommand):
         
         os.mkdir(basedir, 0o750)
         
-        self.stdout.write("Making /tmp")
-        os.mkdir(path.join(basedir, "tmp"), 0o770)
-        
         # Library list
         llist = settings.R_FILES[:]
         

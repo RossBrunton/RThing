@@ -4,6 +4,7 @@ import subprocess
 import os
 import settings
 import shlex
+import shutil
 import six
 from base64 import b64encode
 
@@ -28,62 +29,70 @@ def run(data):
     )
     _command[_wdindex] = u"-w /{}".format(str(data["namespace"]))
     
-    # Seed the RNG if needed
-    if data.get("uses_random", False):
-        data["commands"] = "set.seed({});".format(data["seed"]) + data["commands"]
+    try:
+        # Create and bind a tmp directory
+        os.mkdir(os.path.join(settings.SANDBOX_DIR, "tmps", str(data.get("user", 0))), 0o770)
+        _command[_tmpindex] = u"-b {}:/tmp".format(os.path.join(settings.SANDBOX_DIR, "tmps", str(data.get("user", 0))))
+        
+        # Seed the RNG if needed
+        if data.get("uses_random", False):
+            data["commands"] = "set.seed({});".format(data["seed"]) + data["commands"]
+        
+        # And also the image
+        if data.get("uses_image", False):
+            data["commands"] = ('postscript(file="/tmp/plot.ps", '
+                'width={}, height={}'
+                ', paper="special", horizontal=FALSE);'
+            ).format(width, height) + data["commands"]
+        
+        # Set the command argument
+        cmd_arg = data["commands"].replace("\n", u"").replace("\r", u"")
+        
+        _command[_argindex] = cmd_arg
+        
+        # Create the process
+        stdout, stderr = "", ""
+        
+        proc = subprocess.Popen(
+            _command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            universal_newlines=True
+        )
+        
+        # print(" ".join(_command))
+        
+        stdout, stderr = proc.communicate()
+        
+        # Timeout sets return to 124 on timeout
+        if proc.returncode == 124:
+            stderr = "Timeout expired; check to see if you have any infinite loops"
+        
+        output["out"] = stdout
+        output["err"] = stderr.replace("Execution halted\n", "")
+        
+        output["is_error"] = output["err"] != ""
+        
+        if data.get("uses_image", False):
+            # Read the image to media URL
+            path = os.path.join(settings.BASE_DIR, "sandboxes", "tmps", str(data.get("user", 0)), "plot.ps")
+            if os.path.isfile(path):
+                image = subprocess.Popen(
+                    [
+                        "gs", "-q", "-sDEVICE=png16", "-sOutputFile=-", "-DPARANOIDSAFER", "-dBATCH", "-dQUIET",
+                        "-dNOPROMPT", "-dNOPAUSE", "-dDEVICEWIDTHPOINTS={}".format(width*72),
+                        "-dDEVICEHEIGHTPOINTS={}".format(height*72), path
+                    ],
+                    stdout=subprocess.PIPE,
+                ).communicate()[0]
+                
+                output["media"] = "data:image/png;base64,{}".format(b64encode(image))
+                if output["media"] == _empty_plot:
+                    output["media"] = None
     
-    # And also the image
-    if data.get("uses_image", False):
-        data["commands"] = ('postscript(file="/tmp/plot_{}.ps", '
-            'width={}, height={}'
-            ', paper="special", horizontal=FALSE);'
-        ).format(data.get("user", 0), width, height) + data["commands"]
-    
-    # Set the command argument
-    cmd_arg = data["commands"].replace("\n", u"").replace("\r", u"")
-    
-    _command[_argindex] = cmd_arg
-    
-    # Create the process
-    stdout, stderr = "", ""
-    
-    proc = subprocess.Popen(
-        _command,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        universal_newlines=True
-    )
-    
-    # print(" ".join(_command))
-    
-    stdout, stderr = proc.communicate()
-    
-    if proc.returncode == 124:
-        stderr = "Timeout expired; check to see if you have any infinite loops"
-    
-    output["out"] = stdout
-    output["err"] = stderr.replace("Execution halted\n", "")
-    
-    output["is_error"] = output["err"] != ""
-    
-    if data.get("uses_image", False):
-        # Read the image to media
-        path = os.path.join(settings.BASE_DIR, "sandboxes", "r", "tmp", "plot_{}.ps".format(data.get("user", 0)))
-        if os.path.isfile(path):
-            image = subprocess.Popen(
-                [
-                    "gs", "-q", "-sDEVICE=png16", "-sOutputFile=-", "-DPARANOIDSAFER", "-dBATCH", "-dQUIET",
-                    "-dNOPROMPT", "-dNOPAUSE", "-dDEVICEWIDTHPOINTS={}".format(width*72),
-                    "-dDEVICEHEIGHTPOINTS={}".format(height*72), path
-                ],
-                stdout=subprocess.PIPE,
-            ).communicate()[0]
-            
-            output["media"] = "data:image/png;base64,{}".format(b64encode(image))
-            if output["media"] == _empty_plot:
-                output["media"] = None
-            
-            os.remove(path)
+    finally:
+        # Remove tmp dir
+        shutil.rmtree(os.path.join(settings.BASE_DIR, "sandboxes", "tmps", str(data.get("user", 0))))
     
     return output
 
@@ -186,6 +195,8 @@ for f in settings.R_BOUND:
 _nsindex = len(_command)
 _command.append("")
 _wdindex = len(_command)
+_command.append("")
+_tmpindex = len(_command)
 _command.append("")
 
 _command.append("-r {}".format(os.path.join(settings.SANDBOX_DIR, "r")))
