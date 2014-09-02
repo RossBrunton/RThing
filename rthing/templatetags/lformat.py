@@ -11,7 +11,7 @@ import re
 register = template.Library()
 
 _YOUTUBE_IFRAME = r"""
-<iframe type='text/html' width='640' height='385' src='http://www.youtube.com/embed/\1' allowfullscreen frameborder='0'
+<iframe width='640' height='385' src='http://www.youtube.com/embed/\1' allowfullscreen
 sandbox="allow-scripts allow-same-origin" class='youtube-iframe'
 >
 </iframe>
