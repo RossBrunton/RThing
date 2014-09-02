@@ -1,6 +1,8 @@
 ## RThing ##
 
 ### Requirements ###
+This application only runs on Linux.
+
 This application runs on Python 3.3 or greater or Python 2.7 or greater, so one of those is required, as is virtualenv
 to install dependancies.
 
@@ -10,7 +12,7 @@ supports (PostgreSQL, Sqlite or Oracle), but you'll need to set it up yourself.
 When using mysql, you need to install the development libraries for python3 and mysql (python3-dev and
 libmysqlclient-dev possibly) for the python package "mysqlclient".
 
-Memcached and gcc is also required.
+Memcached, ghostscript and gcc is also required.
 
 For Debian; the packages (`python2.7` or `python3`), `python-virtualenv`, (`python2.7-dev` or `python3-dev`),
 `libmysqlclient-dev`, `memcached`, `gcc`
