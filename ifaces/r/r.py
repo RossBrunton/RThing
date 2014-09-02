@@ -6,6 +6,7 @@ import settings
 import shlex
 import shutil
 import six
+import stat
 from base64 import b64encode
 
 PROMPT = u">"
@@ -92,7 +93,12 @@ def run(data):
     
     finally:
         # Remove tmp dir
-        shutil.rmtree(os.path.join(settings.BASE_DIR, "sandboxes", "tmps", str(data.get("user", 0))))
+        subprocess.call(
+            [
+                os.path.join(os.path.dirname(__file__), "rmwrap"), "-rf",
+                os.path.join(settings.BASE_DIR, "sandboxes", "tmps", str(data.get("user", 0)))
+            ]
+        )
     
     return output
 
@@ -181,7 +187,7 @@ def generic_print(expr):
 # Generate command
 
 # Prootwrap
-_command.append(os.path.join(os.path.dirname(__file__), "prootwrap"))
+_command.append(os.path.join(os.path.dirname(__file__), "timeoutwrap"))
 
 # Timeout
 _command.append("1s")

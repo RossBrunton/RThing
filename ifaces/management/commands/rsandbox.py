@@ -121,9 +121,11 @@ class Command(BaseCommand):
         bindir = path.join(settings.BASE_DIR, "ifaces", "r")
         
         # Make binaries
-        self.stdout.write("Compiling prootwrap")
-        os.system("gcc -o {bin} {bin}.c".format(bin=path.join(bindir, "prootwrap")))
-        os.chmod(path.join(bindir, "prootwrap"), 0o750)
+        self.stdout.write("Compiling binaries")
+        binaries = ["timeoutwrap", "rmwrap"]
+        for b in binaries:
+            os.system("gcc -o {bin} {bin}.c".format(bin=path.join(bindir, b)))
+            os.chmod(path.join(bindir, b), 0o750)
         
         # Download proot
         if not options["no-download"]:
@@ -136,8 +138,10 @@ class Command(BaseCommand):
             "chgrp -R {webuser} '{base}'".format(base=settings.BASE_DIR, webuser="{webuser}"),
             "chmod -R g+rx '{}'".format(settings.BASE_DIR),
             "find {} -type d -print0 | xargs -0 chmod g+w".format(settings.BASE_DIR),
-            "chown {nobody} '{prootwrap}'".format(prootwrap = path.join(bindir, "prootwrap"), nobody="{nobody}"),
-            "chmod u+s '{}'".format(path.join(bindir, "prootwrap"))
+            "chown {nobody} '{prootwrap}'"\
+                .format(prootwrap="' '".join([path.join(bindir, b) for b in binaries]), nobody="{nobody}"),
+            "chmod u+s '{}'"\
+                .format("' '".join([path.join(bindir, b) for b in binaries]))
         ]
         
         if not options["suid"] and not options["no-suid"]:
