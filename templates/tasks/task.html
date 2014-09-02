@@ -25,17 +25,17 @@
         
         {% prompt_entry task %}
         
-        {% if task.automark %}
+        {% if task.lesson.answers_published %}
             <img class='prompt-button reveal' title='Reveal' alt='Reveal' src='{% static "icons/reveal.png" %}'
                 width=16 height=16
             />
+        {% endif %}
+        
+        {% if task.automark %}
             <img class='prompt-button skip' title='Skip' alt='Skip' src='{% static "icons/skip.png"%}'
                 width=16 height=16
             />
         {% else %}
-            <img class='prompt-button reveal' title='Reveal' alt='Reveal' src='{% static "icons/reveal.png"%}'
-                width=16 height=16
-            />
             <img class='prompt-button skip' title='Continue' alt='Continue' src='{% static "icons/continue.png"%}'
                 width=16 height=16
             />

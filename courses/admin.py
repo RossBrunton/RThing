@@ -51,7 +51,7 @@ class LessonAdmin(OrderedModelAdmin, _CustomAdmin):
         }),
         
         (None, {
-            "fields":("closing", "published", "course")
+            "fields":("closing", "published", "answers_published", "course")
         })
     )
 

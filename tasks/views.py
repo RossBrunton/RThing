@@ -80,7 +80,10 @@ def submit(request, task):
         data["isCorrect"] = False
         data["revealed"] = False
     elif mode == "revealed":
-        data["output"] = task.model_answer
+        if task.lesson.answers_published:
+            data["output"] = task.model_answer
+        else:
+            data["output"] = "Stop that"
         data["isError"] = False
         data["isCorrect"] = False
         data["revealed"] = True
@@ -126,6 +129,7 @@ def submit(request, task):
     if mode in ["answered", "revealed"] and not request.user.is_staff:
         
         if uot.state == UserOnTask.STATE_NONE:
+            # Only set state if the user has no state
             if mode == "answered" and isCorrect:
                 uot.tries += 1
                 uot.state = UserOnTask.STATE_CORRECT
