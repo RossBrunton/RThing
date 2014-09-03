@@ -7,6 +7,10 @@ from django.views.decorators.http import require_POST
 import settings
 
 def login(request):
+    if request.user.is_authenticated():
+        # User is already logged in; redirect them somewhere else
+        return redirect(request.GET.get("next", "/"))
+    
     if request.method == "POST":
         # User has submitted credentials
         form = AuthenticationForm(request, data=request.POST)
