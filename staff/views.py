@@ -30,6 +30,11 @@ def help_formatting(request):
     """Formatting help renders a template (staff/help_formatting.html)"""
     return render(request, "staff/help_formatting.html", {})
 
+@login_required
+@user_passes_test(lambda u: u.is_staff)
+def help_general(request):
+    return render(request, "staff/help_general.html", {})
+
 
 @login_required
 @user_passes_test(lambda u: u.is_staff)

@@ -11,4 +11,5 @@ urlpatterns = patterns('',
     url(r"~strain/(?P<task>[0-9]+)$", views.strain, name="strain"),
     
     url(r"help/formatting$", views.help_formatting, name="help_formatting"),
+    url(r"help/general$", views.help_general, name="help_general"),
 )
