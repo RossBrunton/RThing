@@ -103,3 +103,17 @@ def print_lesson(request, course, lesson):
         raise Http404
     
     return render(request, "courses/print_lesson.html", ctx)
+
+
+@login_required
+def print_lesson_answers(request, course, lesson):
+    """Lesson answer page for print view, displays everything along with answers in a print friendly format"""
+    ctx = {}
+    ctx["course"] = get_object_or_404(Course, slug=course)
+    ctx["lesson"] = get_object_or_404(Lesson, slug=lesson, course=ctx["course"])
+    
+    # Check user has permission
+    if not ctx["lesson"].can_see(request.user) or not (request.user.is_staff or ctx["lesson"].answers_published):
+        raise Http404
+    
+    return render(request, "courses/print_lesson_answers.html", ctx)

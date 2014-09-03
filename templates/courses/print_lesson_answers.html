@@ -1,11 +1,12 @@
 {% extends "base_print.html" %}
 {% load lformat %}
 
-{% block title %}Print: {{ lesson.title }}{% endblock %}
+{% block title %}Print Answers: {{ lesson.title }}{% endblock %}
 
 {% block content %}
 
-<h3>{{ lesson.title }} - {% if lesson.course.code %}{{ lesson.course.code }}: {% endif %}{{ lesson.course.title }}</h3>
+<h3>{{ lesson.title }} - {% if lesson.course.code %}{{ lesson.course.code }}: {% endif %}{{ lesson.course.title }}
+(Answers)</h3>
 
 {{ lesson.introduction|lformat_print:lesson.pk }}
 
@@ -17,9 +18,12 @@
     {% for t in s.tasks.all %}
         <li>
             {{ t.description|lformat_print:lesson.pk }}
-            {% if t.visible_pre_code %}
-                <div class='prompt'>{{ t.visible_pre_code }}<br/></div>
-            {% endif %}
+            <div class='prompt'>{% spaceless %}
+                {% if t.visible_pre_code %}
+                {{ t.visible_pre_code }}<br/>{% endif %}
+                {{ t.model_answer }}<br/>
+            {% endspaceless %}</div>
+            {{ t.commentary }}
         </li>
     {% endfor %}
     </ol>

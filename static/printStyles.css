@@ -19,7 +19,7 @@ h4 {
 }
 
 .l-warning, .l-note, .l-info {
-    background-color:#dddddd;
+    background-color:#f0f0f0;
 }
 
 .l-warning::before, .l-note::before, .l-info::before {
@@ -39,5 +39,6 @@ h4 {
     background-color:#ffffff;
     border:1px solid #000000;
     color:inherit;
+    white-space:pre;
 }
 

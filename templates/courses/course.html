@@ -34,6 +34,11 @@
         <a href='{% url "courses:print_lesson" course=course.slug lesson=l.0.slug %}'>
             <img src='{% static "icons/print.png" %}' alt='Print' title='Print View' style='vertical-align:middle'/>
         </a>
+        {% if user.is_staff or l.0.answers_published %}
+        <a href='{% url "courses:print_lesson_answers" course=course.slug lesson=l.0.slug %}'>
+            <img src='{% static "icons/answers.png" %}' alt='Answers' title='Answers' style='vertical-align:middle'/>
+        </a>
+        {% endif %}
         </div>
     </header>
 {% endfor %}
