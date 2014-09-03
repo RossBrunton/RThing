@@ -57,6 +57,17 @@ class LessonAdmin(OrderedModelAdmin, _CustomAdmin):
 
 admin_site.register(Lesson, LessonAdmin)
 
+def _task_field(attrs, field, required=False):
+    """Returns a CharField form with the specified attrs, required and with the help text of the field on Task"""
+    
+    # This uses the private meta attribute of the model, but there seems to be no other way
+    try:
+        return forms.CharField(
+            widget=widgets.Textarea(attrs=attrs), required=False,
+            help_text=Task._meta.get_field_by_name(field)[0].help_text
+        )
+    except:
+        return forms.CharField(widget=widgets.Textarea(attrs=attrs), required=False)
 
 class TaskAdminForm(ModelForm):
     """A ModelForm for tasks to allow them to validate themselves"""
@@ -82,16 +93,16 @@ class TaskAdminForm(ModelForm):
         "rows":3
     }
     
-    hidden_pre_code = forms.CharField(widget=widgets.Textarea(attrs=_TEXTAREA_SMALL), required=False)
-    visible_pre_code = forms.CharField(widget=widgets.Textarea(attrs=_TEXTAREA_SMALL), required=False)
-    model_answer = forms.CharField(widget=widgets.Textarea(attrs=_TEXTAREA_SMALL))
-    validate_answer = forms.CharField(widget=widgets.Textarea(attrs=_TEXTAREA_SMALL), required=False)
-    post_code = forms.CharField(widget=widgets.Textarea(attrs=_TEXTAREA_SMALL), required=False)
+    hidden_pre_code = _task_field(_TEXTAREA_SMALL, "hidden_pre_code")
+    visible_pre_code = _task_field(_TEXTAREA_SMALL, "visible_pre_code")
+    model_answer = _task_field(_TEXTAREA_SMALL, "model_answer", True)
+    validate_answer = _task_field(_TEXTAREA_SMALL, "validate_answer")
+    post_code = _task_field(_TEXTAREA_SMALL, "post_code")
     
-    after_text = forms.CharField(widget=widgets.Textarea(attrs=_TEXTAREA_MED), required=False)
-    wrong_text = forms.CharField(widget=widgets.Textarea(attrs=_TEXTAREA_MED), required=False)
-    skip_text = forms.CharField(widget=widgets.Textarea(attrs=_TEXTAREA_MED), required=False)
-    commentary = forms.CharField(widget=widgets.Textarea(attrs=_TEXTAREA_MED), required=False)
+    after_text = _task_field(_TEXTAREA_MED, "after_text")
+    wrong_text = _task_field(_TEXTAREA_MED, "wrong_text")
+    skip_text = _task_field(_TEXTAREA_MED, "skip_text")
+    commentary = _task_field(_TEXTAREA_MED, "commentary")
     
 
 class TaskInline(admin.StackedInline):
