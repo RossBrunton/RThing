@@ -1,8 +1,10 @@
+"""Unit tests for R interface"""
 from django.test import TestCase
 
 from ifaces import r
 
 class RTestCase(TestCase):
+    """Test case for R interface"""
     def test_equivalence(self):
         """Test that is_equivilant works"""
         self.assertTrue(r.is_equivalent("", ""))

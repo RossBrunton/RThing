@@ -19,7 +19,7 @@ def run(data):
     return output
 
 def is_equivalent(a, b):
-    """Checks if two strings are equivilent
+    """Checks if two strings are equivalent
     
     This only does a == b, and will not replace anything. For testing.
     """

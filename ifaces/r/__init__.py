@@ -1,3 +1,46 @@
+"""R interface
+
+For this to work, `manage.py rsandbox` must have been ran.
+
+On first import it builds a command like the following:
+/path/to/timeoutwrap 1s proot -b bound_file... -r /path/to/sandbox -w /path/to/namespace /usr/bin/R --slave --vanilla
+--no-readline -e code
+
+In order:
+- Invoke timeoutwrap: a wrapper around /usr/bin/timeout, drop privileges and restrict memory usage
+- Set the timeout to 1 second
+- Invoke proot to chroot to the sandbox
+- Bind all the files (given by settings.R_BOUND) into the chroot
+- Set the root directory to the sandbox
+- Set the working directory to the right namespace in settings.NAMESPACE_DIR so it can see files folders in
+NAMESPACE_DIR are named with the primary key of the lesson they are associated with.
+- Invoke R with the appropriate arguments (--slave --vanilla --no-readline)
+- Execute a single command and exit
+- This is the code which will be ran
+
+It creates four variables, _nsindex, _wdindex, _tmpindex and _argindex. These are locations in the command list that the
+namespace binding, working dictionary, tmp dir binding and code to run are. This is so that the run function can
+directly change them without having to rebuild it.
+
+It also uses the run function to generat a blank plot which it stores in _empty_plot.
+
+When it executes code, it does the following:
+- Sets the command so the namespace is bound and set to the working directory.
+- Create a /tmp directory in the sandbox for the user executing the command.
+- If needed, add code to seed the RNG before the code.
+- If needed, set up R so that it outputs the image to /tmp/plot.ps.
+- Set the code argument.
+- Create the process with the command, run it and get stderr and stdout.
+- If the process had the return code 124, it timed out, so set stderr to a suitable message.
+- Remove "Execution halted" from stderr, which isn't really usefull.
+- Add stderr and stdout to the object to return as "err" and "out".
+- If stderr is not an empty string, set "is_error" to true on the object to be returned.
+- If media is expected, invoke ghostscript to convert R's outputed file to a png file and collect it in a Python 
+variable via stdout.
+- base64 encode the plot so it's suitable for displaying in a browser.
+- If the plot is equal to _empty_plot, remove it since there was no plot drawn this time (R outputs an empty image).
+- Remove the /tmp directory using rmwrap (files are created by nobody, which the webuser can't remove).
+"""
 import subprocess
 import os
 import settings
@@ -10,15 +53,27 @@ from base64 import b64encode
 PROMPT = u">"
 LINE_END = u";"
 
+# The command to run
 _command = []
+# The index in the command where the namespace is bound
 _nsindex = 0
+# The index in the command where the namespace is set to the current directory
 _wdindex = 0
+# The index in the command where /tmp is bound
+_tmpindex = 0
+# The index in the command where the argument (code to run) is stored
 _argindex = 0
 
+"""The width in inches of plots"""
 width = 13
+"""The height in inches of plots"""
 height = 5
 
 def run(data):
+    """Runs the code
+    
+    See doc/adding_languages.md for the interface
+    """
     output = {}
     
     # Set the namespace and working directory
@@ -122,6 +177,13 @@ _quotes = "\"'`"
 # And escape codes
 _esc = "\\"
 def is_equivalent(a, b):
+    """Compares two strings and returns whether they are the same R code
+    
+    This is unable to determine if a and b are different code, however. If this returns True you may assume that they
+    are the same, but if this returns False you must not assume that they are different.
+    
+    is_equivalent("0 + 1", "1") is False, for example, even though those two commands do the same thing.
+    """
     # String pointers
     ap = 0
     bp = 0
@@ -181,12 +243,16 @@ def is_equivalent(a, b):
         return False
 
 def generic_print(expr):
+    """Returns an R print statement for expr
+    
+    print("expr");
+    """
     return "print(\"{}\");".format(expr)
 
 
 # Generate command
 
-# Prootwrap
+# Timeoutwrap
 _command.append(os.path.join(os.path.dirname(__file__), "timeoutwrap"))
 
 # Timeout

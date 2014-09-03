@@ -1,3 +1,21 @@
+"""rsandbox manage.py command
+
+Creates the sandbox for R by doing the following:
+
+- Check if it already exists; if it does, delete it or abort.
+- Creates a new folder sandboxes/r
+- Calculates libraries needed (commented out, this doesn't seem reliable)
+- Copy the files in settings.R_FILES into the sandbox, creating any directories that are needed.
+- Compiles 2 binaries; rmwrap and timeoutwrap in BASE_DIR/ifaces/r
+- Downloads proot (http://proot.me)
+- Checks and asks to see if can gain priviliges.
+- If it can't, then exit now.
+- Change the group of all the files in the project to the web user
+- Grant group read and execute for all files to the web user
+- Give group write for directories to the web user (so files can be created)
+- Change the owner of rmwrap and timeoutwrap to a sandbox user
+- Add the setuid bit to rmwrap and timeoutwrap
+"""
 from django.core.management.base import BaseCommand, CommandError
 
 from optparse import make_option
@@ -50,10 +68,7 @@ class Command(BaseCommand):
             help='Do not download proot',
         )
     )
-
-    def add_arguments(self, parser):
-        pass
-
+    
     def handle(self, *args, **options):
         if options["replace"] and options["no-replace"]:
             raise CommandError("--replace and --no-replace given")
@@ -86,6 +101,7 @@ class Command(BaseCommand):
         llist = settings.R_FILES[:]
         
         # Get libraries for R
+        """
         def addLib(lib):
             ldd = subprocess.Popen(
                 "ldd {}".format(lib),
@@ -103,6 +119,7 @@ class Command(BaseCommand):
         for lib in settings.R_LDD + settings.R_FILES:
             self.stdout.write("Calculating libraries for {}".format(lib))
             addLib(lib)
+        """
         
         # Copy files
         llist.sort()
@@ -146,10 +163,12 @@ class Command(BaseCommand):
         
         if not options["suid"] and not options["no-suid"]:
             self.stdout.write("I need to do the following, but I need permission to do so:")
-            self.stdout.write("- Change the group of all the files in the sandbox to the web user")
-            self.stdout.write("- Change the owner of prootwrap to a sandbox user")
-            self.stdout.write("- Add the setuid bit to prootwrap")
-            self.stdout.write("The source of prootwrap is in ifaces/r/prootwrap.c if you are worried")
+            self.stdout.write("- Change the group of all the files in {} to the web user".format(settings.BASE_DIR))
+            self.stdout.write("- Grant group read and execute for all files to the web user")
+            self.stdout.write("- Give group write for directories to the web user (so files can be created)")
+            self.stdout.write("- Change the owner of rmwrap and timeoutwrap to a sandbox user")
+            self.stdout.write("- Add the setuid bit to rmwrap and timeoutwrap")
+            self.stdout.write("The source of these files are in ifaces/r if you are worried")
         
         
         def write_help(webuser, nobody):
@@ -186,6 +205,5 @@ class Command(BaseCommand):
                 )
                 write_help(webuser, nobody)
         else:
-            self.stdout.write(
-                "The system should still run but it will not be sandboxed; people WILL try to delete files"
-            )
+            self.stdout.write("The system should still run but it will not be sandboxed.")
+            self.stdout.write("If someone escapes the sandbox, they can wreck havoc as the webuser.")

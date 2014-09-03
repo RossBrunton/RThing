@@ -12,7 +12,9 @@ supports (PostgreSQL, Sqlite or Oracle), but you'll need to set it up yourself.
 When using mysql, you need to install the development libraries for python3 and mysql (python3-dev and
 libmysqlclient-dev possibly) for the python package "mysqlclient".
 
-Memcached, ghostscript and gcc is also required.
+Memcached is used as a cache, and should be running.
+
+ghostscript, R and gcc are also required for R.
 
 For Debian; the packages (`python2.7` or `python3`), `python-virtualenv`, (`python2.7-dev` or `python3-dev`),
 `libmysqlclient-dev`, `memcached`, `gcc`
