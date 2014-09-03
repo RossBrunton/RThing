@@ -121,7 +121,7 @@ def submit(request, task):
                 data["frags"].append(utils.fragmentate("section-start", new_sect, request))
                 data["frags"].append(utils.fragmentate("task", new_sect.tasks.all()[0], request))
             else:
-                data["frags"].append(utils.fragmentate("lesson-end", task.section.lesson, request))
+                data["frags"].append(utils.fragmentate("lesson-end", task.lesson, request))
     
     
     # Store statistics on the user

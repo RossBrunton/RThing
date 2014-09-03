@@ -12,7 +12,7 @@
     {% endif %}
 </header>
 
-{{ task.description|lformat:task.section.lesson.pk }}
+{{ task.description|lformat:task.lesson.pk }}
 
 <section>
     The model answer for this question is:
@@ -24,7 +24,7 @@
 <section>
     {% for outer in wrong %}
         {% if outer %}
-            {% with lesson=task.section.lesson %}
+            {% with lesson=task.lesson %}
                 For the user <a href='
                     {% url "stats:user" name=outer.0.uot.user.username course=lesson.course.slug lesson=lesson.slug %}
                 '>{{ outer.0.uot.user.username }}</a> (Status: {{ outer.0.uot.status_span|safe }}):

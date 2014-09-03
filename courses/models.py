@@ -354,7 +354,7 @@ class Task(TraversableOrderedModel):
     def get_absolute_url(self):
         return u"{}?t={}-{}".format(
             reverse("courses:lesson",
-                kwargs={"course":self.section.lesson.course.slug, "lesson":self.section.lesson.slug}
+                kwargs={"course":self.course.slug, "lesson":self.lesson.slug}
             ),
             self.section.order+1,
             self.order+1

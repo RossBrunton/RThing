@@ -57,7 +57,7 @@ def perform_execute(code, task, user):
         ])).strip()
         
         user_input = {
-            "commands":user_code, "namespace":task.section.lesson.pk, "uses_random":task.random_poison(),
+            "commands":user_code, "namespace":task.lesson.pk, "uses_random":task.random_poison(),
             "uses_image":task.uses_image, "automark":task.automark, "seed":seed, "user":user.pk
         }
         user_output = task.iface.run(user_input)
@@ -92,7 +92,7 @@ def perform_execute(code, task, user):
             ])).strip()
             
             model_input = {
-                "commands":model_code, "namespace":task.section.lesson.pk, "uses_random":task.random_poison(),
+                "commands":model_code, "namespace":task.lesson.pk, "uses_random":task.random_poison(),
                 "uses_image":task.uses_image, "automark":task.automark, "seed":seed, "user":user.pk
             }
             model_output = task.iface.run(model_input)
