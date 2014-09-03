@@ -6,6 +6,22 @@
 
 {% block body %}
 <section>
-    
+    <strong name='what'>What are Courses, Lessons, Sections and Tasks?</strong><br/>
+    Courses contain Lessons which contain Sections which contain Tasks.<br/>
+    <br/>
+    A task is a single prompt with associated text such as instructions on what to do.<br/>
+    <br/>
+    A section contains a number of tasks, and generally serves to group them under a single heading.<br/>
+    <br/>
+    A lesson contains a group sections. Each lesson has its own page, and can be independently published.<br/>
+    <br/>
+    A course contains group of lessons, and contains information on what students can access the course.
+</section>
+
+<section>
+    <strong name='admin'>Admin Interface</strong><br/>
+    The admin interface allows you to directly change courses, lessons, sections and tasks. You can access the admin
+    interface at <a href='{% url "admin:index" %}'>{% url "admin:index" %}</a> or through any "add", "edit" or "manage"
+    links.
 </section>
 {% endblock %}
