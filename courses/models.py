@@ -87,7 +87,7 @@ class Course(TraversableOrderedModel):
         ordering = ["code"]
     
     title = models.CharField(max_length=30, unique=True)
-    slug = models.SlugField(blank=True, max_length=35, unique=True)
+    slug = models.SlugField(blank=True, max_length=35, unique=True, db_index=True)
     code = models.CharField(max_length=10, blank=True)
     description = models.TextField(help_text="See <a href='/staff/help/formatting'>here</a> for formatting help")
     ending = models.TextField(blank=True)
@@ -186,7 +186,7 @@ class Lesson(TraversableOrderedModel):
         ordering = ["course", "order"]
     
     title = models.CharField(max_length=30)
-    slug = models.SlugField(blank=True, max_length=35)
+    slug = models.SlugField(blank=True, max_length=35, db_index=True)
     introduction = models.TextField(help_text="See <a href='/staff/help/formatting'>here</a> for formatting help")
     closing = models.TextField(blank=True)
     published = models.BooleanField(default=False)
@@ -262,7 +262,7 @@ class Section(TraversableOrderedModel):
         ordering = ["lesson", "order"]
     
     title = models.CharField(max_length=30)
-    slug = models.SlugField(blank=True, max_length=35)
+    slug = models.SlugField(blank=True, max_length=35, db_index=True)
     introduction = models.TextField(help_text="See <a href='/staff/help/formatting'>here</a> for formatting help")
     closing = models.TextField(blank=True)
     
