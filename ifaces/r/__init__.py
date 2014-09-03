@@ -31,6 +31,8 @@ def run(data):
     try:
         # Create and bind a tmp directory
         os.mkdir(os.path.join(settings.SANDBOX_DIR, "tmps", str(data.get("user", 0))), 0o770)
+        # My server seems to ignore the mode set by os.mkdir
+        os.chmod(os.path.join(settings.SANDBOX_DIR, "tmps", str(data.get("user", 0))), 0o770)
         _command[_tmpindex] = u"-b {}:/tmp".format(os.path.join(settings.SANDBOX_DIR, "tmps", str(data.get("user", 0))))
         
         # Seed the RNG if needed
