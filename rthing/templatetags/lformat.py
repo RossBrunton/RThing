@@ -1,3 +1,4 @@
+"""Lecturer formatting tags"""
 from django import template
 from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
@@ -27,6 +28,7 @@ def lformat(value, arg=None, autoescape=None, print_=False):
     """Formatting lecturer's text and such
     
     Arg should be the lesson's PK if it exists.
+    If the page is on a print view, print_ should be set to true to hide youtube and not make links.
     """
     if autoescape:
         esc = conditional_escape
@@ -88,4 +90,5 @@ def lformat(value, arg=None, autoescape=None, print_=False):
 
 @register.filter(needs_autoescape=True)
 def lformat_print(value, arg=None, autoescape=None):
+    """Like lformat, but sets print_ to true"""
     return lformat(value, arg, autoescape, print_=True)

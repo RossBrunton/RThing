@@ -1,3 +1,17 @@
+"""Root URL config
+
+It defines the following namespaces:
+
+- courses: courses.urls
+- tasks: tasks.urls
+- users: users.urls
+- staff: staff.urls
+- stats: stats.urls
+- export: export.urls
+
+The admin site from staff.admin is set at "admin/" and instead of "export/" the export namespace is served at "io"
+so the URLs aren't confusing.
+"""
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 from django.conf.urls.static import static

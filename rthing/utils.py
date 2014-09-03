@@ -1,8 +1,12 @@
+"""General utility functions"""
 import six
 from random import choice
 
 def py2_str(c):
-    """Wraps around a class, if running under Python 2 then convert the __str__ method and add __unicode__"""
+    """Wraps around a class, adding python2 support to __str__
+    
+    If running under Python 2 then __str__ will discard non-ascii characters and __unicode__ will be added
+    """
     if six.PY2:
         old_str = c.__str__
         def py2_str_wrap(self):
@@ -15,4 +19,5 @@ def py2_str(c):
 
 
 def rand_str(length):
+    """Generates a random string of the given length containing only lowercase letters"""
     return "".join([choice("abcdefghijklmnopqrstuvwxyz") for x in range(length)])
