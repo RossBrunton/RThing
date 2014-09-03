@@ -76,7 +76,6 @@ R_FILES = [
 R_BOUND = [
     '/usr/lib64/R', '/usr/lib64/', '/lib64'
 ]
-R_LDD = []#['/usr/lib64/R/bin/exec/R', '/bin/sed', '/bin/ls', '/usr/lib64/R/library/stats/libs/stats.so']
 
 #####
 #####
