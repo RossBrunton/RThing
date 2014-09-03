@@ -9,7 +9,7 @@ from django.core.cache import cache
 from ordered_model.models import OrderedModel
 
 import importlib
-import settings
+from django.conf import settings
 import os
 from os import path
 import six

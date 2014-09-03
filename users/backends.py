@@ -1,6 +1,6 @@
 from django.contrib.auth.backends import RemoteUserBackend
 
-import settings
+from django.conf import settings
 
 class CustomRemoteUserBackend(RemoteUserBackend):
     create_unknown_user = False

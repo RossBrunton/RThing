@@ -28,7 +28,7 @@ import subprocess
 from distutils.spawn import find_executable
 from six.moves import input
 
-import settings
+from django.conf import settings
 
 class Command(BaseCommand):
     help = 'Sets up the sandbox for R'

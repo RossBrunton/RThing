@@ -13,7 +13,7 @@ from export.parse import encode, decode
 from export.forms import ImportForm
 
 from os import path
-import settings
+from django.conf import settings
 import os
 import json
 

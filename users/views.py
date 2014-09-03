@@ -4,7 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
 
-import settings
+from django.conf import settings
 
 def login(request):
     if request.user.is_authenticated():

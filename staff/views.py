@@ -9,7 +9,7 @@ from courses.models import Course, Lesson, Section, Task
 from staff.forms import NamespaceUploadForm, DeleteForm
 
 from os import path
-import settings
+from django.conf import settings
 import os
 import re
 

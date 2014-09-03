@@ -12,7 +12,7 @@ import rthing.views as views
 
 from staff.admin import admin_site
 
-import settings
+from django.conf import settings
 
 admin.autodiscover()
 

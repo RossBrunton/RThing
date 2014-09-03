@@ -43,7 +43,7 @@ variable via stdout.
 """
 import subprocess
 import os
-import settings
+from django.conf import settings
 import shlex
 import shutil
 import six

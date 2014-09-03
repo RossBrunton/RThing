@@ -3,7 +3,7 @@ from django.utils.html import conditional_escape
 from django.utils.safestring import mark_safe
 
 from courses.models import Lesson
-import settings
+from django.conf import settings
 from six.moves.html_parser import HTMLParser
 
 import re

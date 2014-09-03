@@ -4,7 +4,7 @@ from django.test.utils import override_settings
 
 from users import views
 
-import settings
+from django.conf import settings
 
 class UsersTestCase(TestCase):
     remote_settings = {
