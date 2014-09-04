@@ -1,3 +1,4 @@
+"""Unit tests for the users app"""
 from django.contrib.auth.models import User
 from django.test import TestCase, Client
 from django.test.utils import override_settings
@@ -7,6 +8,7 @@ from users import views
 from django.conf import settings
 
 class UsersTestCase(TestCase):
+    """Test case for the users app"""
     remote_settings = {
         "USE_REMOTE_USER":True,
         "AUTHENTICATION_BACKENDS":('users.backends.CustomRemoteUserBackend',),

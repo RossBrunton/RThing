@@ -1,3 +1,4 @@
+"""View functions for users app"""
 from django.contrib.auth import logout as alogout, login as alogin, authenticate
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
@@ -7,6 +8,11 @@ from django.views.decorators.http import require_POST
 from django.conf import settings
 
 def login(request):
+    """Handles a log in request
+    
+    This will accept either "GET" (in which case it displays a form) or "POST" (in which case it tries to log in the
+    user). If the user is logged in succesfully, they are redirected to the value of the get var "next" or to "/".
+    """
     if request.user.is_authenticated():
         # User is already logged in; redirect them somewhere else
         return redirect(request.GET.get("next", "/"))
@@ -38,17 +44,23 @@ def login(request):
 @require_POST
 @login_required
 def logout(request):
+    """Logs out the user and redirects them to the goodbye page"""
     alogout(request)
     return render(request, "users/goodbye.html", {})
 
 
 @login_required
 def password_changed(request):
+    """The user is redirected here when their password is changed"""
     return render(request, "users/password_changed.html", {})
 
 
 @login_required
 def edit(request):
+    """Edits the user's password
+    
+    Accepts GET or POST which will make a form or try to change the password, respectively
+    """
     if request.method == "GET":
         return render(request, "users/edit.html",
             {"form":PasswordChangeForm(request.user), "area":"users", "forced":request.GET.get("forced", False)}
