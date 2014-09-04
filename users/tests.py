@@ -42,7 +42,25 @@ class UsersTestCase(TestCase):
         resp = c.post("/users/login", {"username":"Fido", "password":"meow"})
         self.assertTrue("_auth_user_id" not in c.session)
         self.assertTrue("users/login.html" in map(lambda t : t.name, resp.templates))
-    
+
+    def test_password_force(self):
+        """Does forcing their user to check their password work"""
+        c = Client()
+        self.u.extra.password_forced = True
+        
+        
+        resp = c.post("/users/login", {"username":"Mittens", "password":"meow"}, follow=True)
+        self.assertTrue("users/edit.html" in map(lambda t : t.name, resp.templates))
+        
+        resp = c.post(
+            "/users/edit", {"old_password":"meow", "new_password1":"meow2", "new_password2":"meow2"},
+            follow=True
+        )
+        self.assertTrue("users/password_changed.html" in map(lambda t : t.name, resp.templates))
+        
+        resp = c.get("/", follow=True)
+        self.assertTrue("courses/index.html" in map(lambda t : t.name, resp.templates))
+        
     
     @override_settings(**remote_settings)
     def test_remote_reject(self):
