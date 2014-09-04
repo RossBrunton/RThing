@@ -17,6 +17,15 @@ window.rthing = (function() {
         animationPointer = (animationPointer + 1) % loadAnimation.length;
     }, 100);
     
+    // Scrolling
+    var scrollTimer = 0;
+    setInterval(function() {
+        if(scrollTimer) {
+            $("main")[0].scrollTop +=2;
+            scrollTimer --;
+        }        
+    }, 10);
+    
     var getLineNumber = function(textarea) {
         return textarea.value.substr(0, textarea.selectionStart).split("\n").length;
     }
@@ -127,6 +136,7 @@ window.rthing = (function() {
                 
                 // Otherwise just add it to the end
                 if(!added) $(".content").append(frag.html);
+                scrollTimer = 100;
                 break;
             
             default:
