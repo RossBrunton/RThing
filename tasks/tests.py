@@ -1,3 +1,4 @@
+"""Unit tests for tasks app"""
 from django.test import TestCase
 
 from django.contrib.auth.models import User
@@ -5,11 +6,13 @@ from courses.models import Course, Lesson, Section, Task
 from tasks import utils
 
 class TasksTestCase(TestCase):
+    """Test case for tasks"""
     lang = "dummy"
     s = None
     u = None
     
     def setUp(self):
+        """Sets up the test case by creating a sample text and user"""
         self.u = User.objects.create_user("Mittens", "mittensthekitten@gmail.com", "meow")
         self.u.save()
         
@@ -51,7 +54,7 @@ class TasksTestCase(TestCase):
         t = Task(section=self.s, model_answer="replaced", language=self.lang, automark=False)
         t.save()
         
-        # Remember dummy replaces "replace_me" with "replaced"
+        # Remember dummy replaces "%replace" with "replaced"
         
         (out, media, is_error, is_correct) = utils.perform_execute("replaced", t, self.u)
         

@@ -1,3 +1,4 @@
+"""Utility functions for the tasks app"""
 from django.template.loader import render_to_string
 from django.template import RequestContext
 from django.core.cache import cache
@@ -13,9 +14,14 @@ import random
 _SPLIT_TOKEN = "QPZMWOXN_SPLIT_TOKEN_QPZMWOXN"
 
 def perform_execute(code, task, user):
-    """Executes code (or reads it from a cache) and returns (output, media, is_error, is_correct)
+    """Executes provided code (a string) and the model answer and returns (output, media, is_error, is_correct)
+    
+    It compares it to the model answer, that's what is_correct means.
     
     is_correct will always be false if the task has automark set to false.
+    
+    This will try to do as little work as possible by storing the model answer in a cache, and by trying is_equivilant
+    on the interface.
     """
     # Encode it to ascii to get rid of unicode chars
     code = code.encode("ascii", "ignore").decode("ascii")
@@ -149,8 +155,11 @@ def perform_execute(code, task, user):
 
 
 def validate_execute(task, instance):
-    """Executes the model answer treating the task as if it were a dict and returns (is_error, error)"""
-    # If prior is true this doesn't seem to work
+    """Executes the model answer treating the task as if it were a dict and returns (is_error, error)
+    
+    This is used when validating the contents of the model when saving it.
+    """
+    # If prior is true this method doesn't seem to work
     if task["takes_prior"]:
         return (False, "")
     
@@ -186,7 +195,10 @@ def validate_execute(task, instance):
 
 
 def fragmentate(type, obj, request, content_select=None, content_value=None):
-    """Generates a fragment for the given type and returns it as a python dict"""
+    """Generates a fragment for the given type and returns it as a python dict
+    
+    See doc/task_submit_interface.md for details.
+    """
     frag = {"type":type}
     
     if type == "task":

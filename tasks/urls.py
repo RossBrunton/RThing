@@ -1,3 +1,4 @@
+"""URLs for the "tasks" app which should be the namespace "tasks" """
 from django.conf.urls import patterns, include, url
 
 import tasks.views as views

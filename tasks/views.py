@@ -18,6 +18,10 @@ import datetime
 @login_required
 @require_POST
 def submit(request, task):
+    """Takes a task and executes it
+    
+    See doc/task_submit_interface.md for details on the interface.
+    """
     def create_error(reason):
         """Creates a simple return value representing an error"""
         return HttpResponse(json.dumps(
