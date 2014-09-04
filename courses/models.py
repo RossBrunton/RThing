@@ -59,7 +59,7 @@ class TraversableOrderedModel(OrderedModel):
 
 
 """Types for database choices"""
-_IFACE_CHOICES = map(lambda k : (k, settings.IFACES[k][0]), settings.IFACES.keys())
+_IFACE_CHOICES = [(k, settings.IFACES[k][0]) for k in settings.IFACES.keys()]
 
 """Cache for interface modules"""
 _iface_cache = {}
@@ -331,7 +331,7 @@ class Task(TraversableOrderedModel):
     wrong_text = models.TextField(blank=True)
     skip_text = models.TextField(blank=True)
     commentary = models.TextField(blank=True)
-    language = models.CharField(max_length=10, choices=_IFACE_CHOICES)
+    language = models.CharField(max_length=10, choices=_IFACE_CHOICES, default=settings.IFACE_DEF)
     random_id = models.CharField(blank=True, max_length=10)
     
     hidden_pre_code = models.TextField(blank=True)

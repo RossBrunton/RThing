@@ -44,6 +44,9 @@ IFACES = {
     "r":("R", "ifaces.r"),
 }
 
+# Default interface name
+IFACE_DEF = "r"
+
 # Set your web server to serve the files in STATIC_ROOT from STATIC_URL
 STATIC_ROOT = os.path.join(BASE_DIR, 'collectedstatic')
 STATIC_URL = '/static/'
