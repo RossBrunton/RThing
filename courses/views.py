@@ -40,7 +40,7 @@ def course(request, course):
 
 @login_required
 def lesson(request, course, lesson):
-    """Lesson page; displays a lesson with an introduction and (usuall) the first section and task)
+    """Lesson page; displays a lesson with an introduction and (usually) the first section and task)
     
     If a GET variable t exists like t=1, lesson 1 will be displayed
     If a GET variable t exists like t=1-1, task 1 of lesson 1 will be displayed
@@ -78,7 +78,10 @@ def lesson(request, course, lesson):
         try:
             ctx["task"] = ctx["section"].tasks.get(order=int(task)-1)
         except Task.DoesNotExist:
-            ctx["task"] = ctx["section"].tasks.get(order=0)
+            try:
+                ctx["task"] = ctx["section"].tasks.get(order=0)
+            except:
+                ctx["task"] = None
     except Section.DoesNotExist:
         try:
             ctx["section"] = ctx["lesson"].sections.get(order=0)
