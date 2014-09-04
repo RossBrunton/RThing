@@ -36,8 +36,8 @@ class RthingTestCase(TestCase):
     
     def test_lformat(self):
         """Test lecturer formatting"""
-        self.assertEquals("<div>Hello</div><div>World!</div>", lformat("Hello\n\nWorld!"))
-        self.assertEquals("<div>Hello\nWorld!</div>", lformat("Hello\nWorld!"))
+        self.assertEqual("<div>Hello</div><div>World!</div>", lformat("Hello\n\nWorld!"))
+        self.assertEqual("<div>Hello\nWorld!</div>", lformat("Hello\nWorld!"))
         
         self.assertTrue("<img" in lformat("[img]test.png[/img]", 0))
         self.assertFalse("<img" in lformat("[img]test.png[/img]"))
