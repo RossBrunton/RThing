@@ -6,10 +6,9 @@ from django.views.decorators.http import require_POST
 from django.db.models import F
 
 from courses.models import Task
-
 from tasks import utils
-
 from stats.models import UserOnTask
+from django.conf import settings
 
 import json
 import time
@@ -100,8 +99,11 @@ def submit(request, task):
     request.user.extra.last_task = task
     request.user.extra.save()
     
-    # Give the client another entry
-    data["frags"] = [utils.fragmentate("prompt-entry", task, request)]
+    # Give the client another entry if enabled
+    if (not data["isCorrect"] and mode == "answered") or not settings.ANSWER_LOCK:
+        data["frags"] = [utils.fragmentate("prompt-entry", task, request)]
+    else:
+        data["frags"] = []
     
     # Custom fragments
     if task.automark and mode != "revealed":
