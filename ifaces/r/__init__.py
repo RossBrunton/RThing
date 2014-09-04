@@ -142,7 +142,7 @@ def run(data):
                     stdout=subprocess.PIPE,
                 ).communicate()[0]
                 
-                output["media"] = "data:image/png;base64,{}".format(b64encode(image))
+                output["media"] = "data:image/png;base64,{}".format(b64encode(image).decode("ascii"))
                 if output["media"] == _empty_plot:
                     output["media"] = None
     
