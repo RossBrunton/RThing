@@ -4,7 +4,8 @@
 {% block content %}
 <div class='container'>
     <nav class='sidebar'>
-        <div class='location'>{% block location %}&nbsp;{% endblock %}<hr/></div>
+        <div class='location'>{% block location %}&nbsp;{% endblock %}</div>
+        <div><hr/></div>
         <div class='sidebar-contents'>{% block sidebar %}&nbsp;{% endblock %}</div>
         <div class='stretch'></div>
         {% if not use_remote_user %}
