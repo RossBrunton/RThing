@@ -64,9 +64,11 @@ class TaskAdminForm(ModelForm):
         """Check the task runs, and raise a ValidationError if it doesn't"""
         toRet = super(TaskAdminForm, self).clean(*args, **kwargs)
         
-        is_error, err = validate_execute(self.cleaned_data, self.instance)
-        if is_error:
-            raise ValidationError(u"Model answer encountered error: {}".format(err))
+        # If there is no model answer, don't bother evaluating it
+        if "model_answer" in self.cleaned_data:
+            is_error, err = validate_execute(self.cleaned_data, self.instance)
+            if is_error:
+                raise ValidationError(u"Model answer encountered error: {}".format(err))
         
         return toRet
     
