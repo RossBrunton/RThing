@@ -5,7 +5,7 @@ from django.http import Http404, HttpResponse
 from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
 
-from StringIO import StringIO
+from six.moves import cStringIO
 import csv
 
 from courses.models import Course, Lesson, Section, Task
