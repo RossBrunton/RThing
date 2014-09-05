@@ -8,6 +8,7 @@
 /testingdb.sqlite3
 /db.sqlite
 *.pyc
+*.pyo
 __pycache__
 *~
 /site-packages

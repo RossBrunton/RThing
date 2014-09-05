@@ -84,10 +84,13 @@ def run(data):
     _command[_wdindex] = u"-w /{}".format(str(data["namespace"]))
     
     try:
-        # Create and bind a tmp directory
-        os.mkdir(os.path.join(settings.SANDBOX_DIR, "tmps", str(data.get("user", 0))), 0o770)
+        # Create and bind a tmp directory if it doesn't exist
+        tmp_path = os.path.join(settings.SANDBOX_DIR, "tmps", str(data.get("user", 0)))
+        if not os.path.isdir(tmp_path):
+            os.mkdir(tmp_path, 0o770)
         # My server seems to ignore the mode set by os.mkdir
-        os.chmod(os.path.join(settings.SANDBOX_DIR, "tmps", str(data.get("user", 0))), 0o770)
+        os.chmod(tmp_path, 0o770)
+        
         _command[_tmpindex] = u"-b {}:/tmp".format(os.path.join(settings.SANDBOX_DIR, "tmps", str(data.get("user", 0))))
         
         # Seed the RNG if needed

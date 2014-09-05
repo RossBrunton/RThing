@@ -150,11 +150,15 @@ class Command(BaseCommand):
             os.system("wget -q -O '{}' http://static.proot.me/proot-`uname -m`".format(path.join(bindir, "proot")))
             os.chmod(path.join(bindir, "proot"), 0o750)
         
+        # Python compile
+        self.stdout.write("Compiling/optimising Python files")
+        # Dropping to a shell so I can optimise
+        os.system("python -OO -m compileall '{}' >> /dev/null".format(settings.BASE_DIR))
+        
         # Priviliged stuff
         root_commands = [
             "chgrp -R {webuser} '{base}'".format(base=settings.BASE_DIR, webuser="{webuser}"),
-            "chmod -R g+rx '{}'".format(settings.BASE_DIR),
-            "find {} -type d -print0 | xargs -0 chmod g+w".format(settings.BASE_DIR),
+            "chmod -R g=rx '{}'".format(settings.BASE_DIR),
             "chown {nobody} '{prootwrap}'"\
                 .format(prootwrap="' '".join([path.join(bindir, b) for b in binaries]), nobody="{nobody}"),
             "chmod u+s '{}'"\
@@ -165,7 +169,7 @@ class Command(BaseCommand):
             self.stdout.write("I need to do the following, but I need permission to do so:")
             self.stdout.write("- Change the group of all the files in {} to the web user".format(settings.BASE_DIR))
             self.stdout.write("- Grant group read and execute for all files to the web user")
-            self.stdout.write("- Give group write for directories to the web user (so files can be created)")
+            self.stdout.write("- Revoke group write for all files to the web user")
             self.stdout.write("- Change the owner of rmwrap and timeoutwrap to a sandbox user")
             self.stdout.write("- Add the setuid bit to rmwrap and timeoutwrap")
             self.stdout.write("The source of these files are in ifaces/r if you are worried")
