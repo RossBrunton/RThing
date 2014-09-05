@@ -338,7 +338,10 @@ class Task(TraversableOrderedModel):
         ordering = ["section__lesson__course", "section__lesson", "section", "order"]
     
     description = models.TextField(
-        help_text="Displayed before the prompt. See <a href='/staff/help/formatting'>here</a> for formatting help"
+        help_text=(
+            "Displayed before the prompt. See <a href='/staff/help/formatting'>here</a> for formatting help<br/>"+\
+            "Please ensure that all code boxes end in a line ending character (usually &quot;;&quot;)"
+        )
     )
     after_text = models.TextField(blank=True, help_text="Displayed after the task before the next one")
     wrong_text = models.TextField(blank=True, help_text="Displayed on wrong answer")
