@@ -64,6 +64,12 @@ class TaskAdminForm(ModelForm):
         """Check the task runs, and raise a ValidationError if it doesn't"""
         toRet = super(TaskAdminForm, self).clean(*args, **kwargs)
         
+        # First append semicolons if they don't already have semicolons at the end
+        for field in ["hidden_pre_code", "visible_pre_code", "model_answer", "validate_answer", "post_code"]:
+            if field in self.cleaned_data and self.cleaned_data[field]:
+                if not self.cleaned_data[field].endswith(";"):
+                    self.cleaned_data[field] += ";"
+        
         # If there is no model answer, don't bother evaluating it
         if "model_answer" in self.cleaned_data:
             is_error, err = validate_execute(self.cleaned_data, self.instance)
