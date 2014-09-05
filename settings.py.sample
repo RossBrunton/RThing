@@ -27,7 +27,7 @@ SECRET_KEY = ''
 DEBUG = False
 
 # Should the user be forbidden from using the prompt after they answer or skip the question
-ANSWER_LOCK = False
+ANSWER_LOCK = True
 
 # A list of the allowed hosts this can run on
 ALLOWED_HOSTS = []
