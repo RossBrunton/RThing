@@ -135,8 +135,8 @@ window.rthing = (function() {
                     }
                 });
                 
-                // Otherwise just add it to the end
-                if(!added) $(".content").append(frag.html);
+                // Otherwise just add it before the footer element
+                if(!added) $("footer").before(frag.html);
                 scrollTimer = 100;
                 break;
             

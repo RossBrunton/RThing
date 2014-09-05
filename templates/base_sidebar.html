@@ -33,6 +33,9 @@
         </div>
         {% endif %}
         {% block body %}&nbsp;{% endblock %}
+        <footer>
+            {{ footer|safe }}
+        </footer>
     </main>
 </div>
 {% endblock %}
