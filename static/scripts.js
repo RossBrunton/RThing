@@ -289,6 +289,7 @@ window.rthing = (function() {
             var form = $(this);
             var formData = form.serialize();
             formData += "&csrfmiddlewaretoken="+$("#csrf").text();
+            if(formData.indexOf("code=&") == -1) return false;
             
             $.ajax(form.attr("action"), {"method":"POST", "data":formData, "dataType":"json",
             "success":function(data) {
