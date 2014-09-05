@@ -1,3 +1,4 @@
+"""Views for staff functions, most of these are only visible to staff members"""
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import SuspiciousOperation
@@ -16,6 +17,7 @@ import re
 @login_required
 @user_passes_test(lambda u: u.is_staff)
 def index(request):
+    """Index page, simply render a template (staff/index.html) with all the courses"""
     ctx = {}
     ctx["courses"] = Course.get_courses(request.user)
     
@@ -25,12 +27,17 @@ def index(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff)
 def help_formatting(request):
+    """Formatting help renders a template (staff/help_formatting.html)"""
     return render(request, "staff/help_formatting.html", {})
 
 
 @login_required
 @user_passes_test(lambda u: u.is_staff)
 def add_users(request, course):
+    """Handles adding or removing users
+    
+    Will display a form if GET or incomplete POST, and will erase and re-add all users on a valid POST.
+    """
     course = get_object_or_404(Course, slug=course)
     
     if request.method == "POST":
@@ -65,13 +72,15 @@ def add_users(request, course):
 @login_required
 @user_passes_test(lambda u: u.is_staff)
 def strain(request, task):
+    """Renders a template (staff/strain.html) which will make requests every 10 seconds or so"""
     ctx = {}
     ctx["task"] = get_object_or_404(Task, pk=task);
     
     return render(request, "staff/strain.html", ctx)
 
+
 def _get_path(location, basename, lesson):
-    """Takes a location context and a basename and returns the file path that it points to
+    """Takes a location (from NamespaceUploadForm) and a basename and returns the file path that it points to
     
     Also replaces any whitespace in the name with underscores.
     """
@@ -89,6 +98,10 @@ def _get_path(location, basename, lesson):
 @login_required
 @user_passes_test(lambda u: u.is_staff)
 def files(request, course, lesson):
+    """File manager view, handles uploading of files
+    
+    Will display a form (staff/files.html) on GET or invalid POST, or add an uploaded file on valid POST.
+    """
     course = get_object_or_404(Course, slug=course)
     lesson = get_object_or_404(Lesson, slug=lesson, course=course)
     
@@ -96,6 +109,7 @@ def files(request, course, lesson):
     if not path.isdir(path.join(settings.MEDIA_ROOT, str(lesson.pk))):
         os.mkdir(path.join(settings.MEDIA_ROOT, str(lesson.pk)), 0o750)
     
+    # Create context for template
     ctx = {}
     ctx["course"] = course
     ctx["lesson"] = lesson
@@ -107,11 +121,13 @@ def files(request, course, lesson):
         ctx["form"] = NamespaceUploadForm(request.POST, request.FILES)
         
         if not ctx["form"].is_valid():
+            # Form invalid
             return render(request, "staff/files.html", ctx)
         
         basename = path.basename(request.FILES["file"].name)
         filename = _get_path(ctx["form"].cleaned_data["location"], basename, lesson)
-    
+        
+        # Copy the file
         with open(filename, "wb+") as dest:
             for chunk in request.FILES["file"].chunks():
                 dest.write(chunk)
@@ -130,6 +146,7 @@ def files(request, course, lesson):
 @user_passes_test(lambda u: u.is_staff)
 @require_POST
 def delete(request, course, lesson):
+    """Deletes an uploaded file using DeleteForm"""
     course = get_object_or_404(Course, slug=course)
     lesson = get_object_or_404(Lesson, slug=lesson, course=course)
     

@@ -1,3 +1,4 @@
+"""Management features for the staff app"""
 from django.contrib.auth.models import User, Group, Permission
 from django.db.models import signals
 from django.dispatch import receiver

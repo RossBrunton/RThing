@@ -1,3 +1,4 @@
+"""URLs for the staff app, should be the namespace "staff" """
 from django.conf.urls import patterns, include, url
 
 import staff.views as views

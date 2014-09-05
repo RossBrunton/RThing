@@ -1,3 +1,4 @@
+"""Forms used in views"""
 from django import forms
 
 class NamespaceUploadForm(forms.Form):
@@ -19,6 +20,6 @@ class NamespaceUploadForm(forms.Form):
 
 
 class DeleteForm(forms.Form):
-    """For deleting those same uploads"""
+    """For deleting the files uploaded by NamespaceUploadForm"""
     basename = forms.CharField()
     location = forms.ChoiceField(choices = NamespaceUploadForm.LOC_CHOICES)
