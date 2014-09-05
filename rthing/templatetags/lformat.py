@@ -63,6 +63,9 @@ def lformat(value, arg=None, autoescape=None, print_=False):
     # Raw HTML
     value = re.sub(r"\[html\](.*?)\[\/html\]", _reverse_escape, value)
     
+    # Monospace
+    value = re.sub(r"\[mono\](.*?)\[\/mono\]", r"<span class='l-mono'>\1</span>", value)
+    
     # Youtube
     if print_:
         value = re.sub(r"\[youtube\](.+?)\[\/youtube\]", r"https://www.youtube.com/watch?v=\1", value)
