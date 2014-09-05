@@ -354,7 +354,7 @@ class Task(TraversableOrderedModel):
     visible_pre_code = models.TextField(blank=True, help_text="Ran second; shown to user")
     model_answer = models.TextField(help_text="The \"correct\" answer that the user's code will compare to")
     validate_answer = models.TextField(blank=True, help_text="Ran after the model answer")
-    post_code = models.TextField(blank=True, help_text="Ran last, not counted in checking correct answer")
+    post_code = models.TextField(blank=True, help_text="Ran last")
     
     uses_random = models.BooleanField(default=False, help_text="Does the code use random numbers?")
     uses_image = models.BooleanField(default=False, help_text="Does the code expect plots?")
