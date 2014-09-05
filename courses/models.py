@@ -265,7 +265,7 @@ class Section(TraversableOrderedModel):
     Each section has a "title" which is displayed when the user progresses to it
     """
     class Meta:
-        ordering = ["lesson", "order"]
+        ordering = ["lesson__course", "lesson", "order"]
     
     title = models.CharField(max_length=30, help_text="The title of this section")
     slug = models.SlugField(blank=True, max_length=35)
@@ -335,7 +335,7 @@ class Section(TraversableOrderedModel):
 class Task(TraversableOrderedModel):
     """Tasks are contained in sections and each one represents a single "prompt" that can run code"""
     class Meta:
-        ordering = ["section", "order"]
+        ordering = ["section__lesson__course", "section__lesson", "section", "order"]
     
     description = models.TextField(
         help_text="Displayed before the prompt. See <a href='/staff/help/formatting'>here</a> for formatting help"

@@ -148,7 +148,19 @@ class TaskAdmin(OrderedModelAdmin, _CustomAdmin):
     list_display = ("course", "lesson", "section", "preview", "move_up_down_links")
     list_filter = ["section__lesson__course", "section"]
     
-    fieldsets = TaskInline.fieldsets
+    fieldsets = (
+        (None, {
+            "fields":(
+                "description",
+                ("after_text", "wrong_text", "skip_text", "commentary"),
+                ("hidden_pre_code", "visible_pre_code"),
+                ("model_answer"),
+                ("validate_answer", "post_code"),
+                ("language", "section", "uses_random", "uses_image", "automark", "takes_prior")
+            ),
+        }),
+    )
+    
     form = TaskAdminForm
 
 admin_site.register(Task, TaskAdmin)
