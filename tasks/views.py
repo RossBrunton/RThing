@@ -108,9 +108,17 @@ def submit(request, task):
     # Custom fragments
     if task.automark and mode != "revealed":
         if mode == "skipped":
-            data["frags"].append(utils.fragmentate("task-content", task, request, ".skip-text", task.skip_text))
+            if task.skip_text:
+                data["frags"].append(utils.fragmentate("task-content", task, request, ".skip-text", task.skip_text))
         elif not isCorrect:
-            data["frags"].append(utils.fragmentate("task-content", task, request, ".wrong-text", task.wrong_text))
+            if task.wrong_text:
+                data["frags"].append(utils.fragmentate("task-content", task, request, ".wrong-text", task.wrong_text))
+            else:
+                data["frags"].append(
+                    utils.fragmentate("task-content", task, request, ".wrong-text",
+                        "Sorry, that is incorrect. Please try again"
+                    )
+                )
     
     
     # If they were correct (or skipped) then load the next task or section
