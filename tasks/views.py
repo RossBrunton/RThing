@@ -56,7 +56,7 @@ def submit(request, task):
     
     # Or the same script twice if the task has no random elements
     if task.iface.is_equivalent(request.user.extra.last_script_code, request.POST["code"])\
-    and mode == "answered" and not task.uses_random:
+    and mode == "answered" and not task.uses_random and request.user.extra.last_task == task:
         return HttpResponse(json.dumps(
             {"output":request.user.extra.last_script_output,
             "isError":request.user.extra.last_script_error,
