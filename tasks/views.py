@@ -9,6 +9,7 @@ from courses.models import Task
 from tasks import utils
 from stats.models import UserOnTask
 from django.conf import settings
+from rthing.templatetags.lformat import lformat
 
 import json
 import time
@@ -109,10 +110,16 @@ def submit(request, task):
     if task.automark and mode != "revealed":
         if mode == "skipped":
             if task.skip_text:
-                data["frags"].append(utils.fragmentate("task-content", task, request, ".skip-text", task.skip_text))
+                data["frags"].append(
+                    utils.fragmentate("task-content", task, request, ".skip-text", lformat(task.skip_text, task.lesson))
+                )
         elif not isCorrect:
             if task.wrong_text:
-                data["frags"].append(utils.fragmentate("task-content", task, request, ".wrong-text", task.wrong_text))
+                data["frags"].append(
+                    utils.fragmentate(
+                        "task-content", task, request, ".wrong-text", lformat(task.wrong_text, task.lesson)
+                    )
+                )
             else:
                 data["frags"].append(
                     utils.fragmentate("task-content", task, request, ".wrong-text",
@@ -123,7 +130,9 @@ def submit(request, task):
     
     # If they were correct (or skipped) then load the next task or section
     if mode == "skipped" or mode == "revealed" or isCorrect:
-        data["frags"].append(utils.fragmentate("task-content", task, request, ".after-text", task.after_text))
+        data["frags"].append(
+            utils.fragmentate("task-content", task, request, ".after-text", lformat(task.after_text, task.lesson))
+        )
         
         n = task.next()
         if n:
