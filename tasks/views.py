@@ -56,15 +56,18 @@ def submit(request, task):
         return create_error("That script is too long.")
     
     # Or the same script twice if the task has no random elements
-    if task.iface.is_equivalent(request.user.extra.last_script_code, request.POST["code"])\
-    and mode == "answered" and not task.uses_random and request.user.extra.last_task == task:
-        return HttpResponse(json.dumps(
-            {"output":request.user.extra.last_script_output,
-            "isError":request.user.extra.last_script_error,
-            "isCorrect":False,
-            "revealed":False,
-            "frags":[utils.fragmentate("prompt-entry", task, request)]}
-        ), content_type="application/json")
+    #if task.iface.is_equivalent(request.user.extra.last_script_code, request.POST["code"])\
+    #and mode == "answered" and not task.uses_random and request.user.extra.last_task == task:
+    #    return HttpResponse(json.dumps(
+    #        {
+    #            "output":request.user.extra.last_script_output,
+    #            "isError":request.user.extra.last_script_error,
+    #            "isCorrect":False,
+    #            "revealed":False,
+    #            "frags":[utils.fragmentate("prompt-entry", task, request)],
+    #            "media":request.user.extra.last_script_media
+    #        }
+    #    ), content_type="application/json")
     
     # Run the code
     if mode == "answered":
@@ -97,6 +100,7 @@ def submit(request, task):
     request.user.extra.last_script_output = data["output"]
     request.user.extra.last_script_error = data["isError"]
     request.user.extra.last_script_time = datetime.datetime.now()
+    request.user.extra.last_script_media = data["media"] if data["media"] else ""
     request.user.extra.last_task = task
     request.user.extra.save()
     
