@@ -36,6 +36,10 @@
     So that it is visible from {{ form.location }}<br/>
     <input type='submit'>
 </form></section>
+
+<section>
+    <a href='{% url "courses:lesson" course=course.slug lesson=lesson.slug %}'>Return to lesson</a>
+</section>
 {% endblock %}
 
 {% block location %}File Manager{% endblock %}

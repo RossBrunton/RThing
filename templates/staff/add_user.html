@@ -4,6 +4,11 @@
 {% block title %}Staff{% endblock %}
 
 {% block body %}
+<section>
+    Add users to the course
+        <a href='{% url "courses:course" course=course.slug %}'>{{ course.title }}</a>
+</section>
+
 {% form_errors form %}
 <section><form method='POST'>
     {% csrf_token %}

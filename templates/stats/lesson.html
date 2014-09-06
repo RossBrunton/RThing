@@ -4,9 +4,10 @@
 {% block title %}{{ lesson.title }} Statistics{% endblock %}
 
 {% block body %}
-<header>
-    You are viewing statistics for this lesson. 
-</header>
+<section>
+    You are viewing statistics for the lesson
+        <a href='{% url "courses:lesson" course=course.slug lesson=lesson.slug %}'>{{ lesson.title }}</a>. 
+</section>
 
 <section>
     If you like you can export statistics to CSV:

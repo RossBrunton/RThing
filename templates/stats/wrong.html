@@ -15,6 +15,11 @@
 {{ task.description|lformat:task.lesson.pk }}
 
 <section>
+    This task is in the lesson
+        <a href='{% url "stats:lesson" course=task.course.slug lesson=task.lesson.slug %}'>{{ lesson.title }}</a>.
+</section>
+
+<section>
     The model answer for this question is:
     <div class='prompt'>
         {{ task.model_answer }}
