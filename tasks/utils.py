@@ -99,7 +99,7 @@ def perform_execute(code, task, user):
             
             model_input = {
                 "commands":model_code, "namespace":task.lesson.pk, "uses_random":task.random_poison(),
-                "uses_image":task.uses_image, "automark":task.automark, "seed":seed, "user":user.pk
+                "uses_image":task.uses_image, "automark":task.automark, "seed":seed, "user":user.pk, "model":True
             }
             model_output = task.iface.run(model_input)
             

@@ -76,6 +76,10 @@ def run(data):
     """
     output = {}
     
+    # Check if namespace exists (it should)
+    if "namespace" not in data:
+        raise RuntimeError("'namespace' not in provided data: {}".format(str(data)))
+    
     # Set the namespace and working directory
     _command[_nsindex] = u"-b {}:/{}".format(
         os.path.join(settings.NAMESPACE_DIR, str(data["namespace"])),
@@ -106,7 +110,6 @@ def run(data):
         
         # Set the command argument
         cmd_arg = data["commands"].replace("\n", u"").replace("\r", u"")
-        
         _command[_argindex] = cmd_arg
         
         # Create the process
@@ -129,6 +132,10 @@ def run(data):
         
         output["out"] = stdout
         output["err"] = stderr.replace("Execution halted\n", "")
+        
+        # Check if the error is likley due to plotting when use_image is false
+        if "cannot open file 'Rplots.pdf'" in output["err"]:
+            output["err"] = "[Maybe this task has uses image turned off?]\n" + output["err"]
         
         output["is_error"] = output["err"] != ""
         
@@ -259,7 +266,7 @@ def generic_print(expr):
 _command.append(os.path.join(os.path.dirname(__file__), "timeoutwrap"))
 
 # Timeout
-_command.append("1s")
+_command.append("5s")
 
 # Proot
 _command.append(os.path.join(os.path.dirname(__file__), "proot"))
