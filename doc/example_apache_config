@@ -1,0 +1,25 @@
+<VirtualHost *:80>
+    ServerAdmin admin@example.com
+    ServerName rthing.example.com
+    
+    Alias /static /var/www/rthing/collectedstatic/
+    <Directory /var/www/rthing/collectedstatic>
+           order deny,allow
+           allow from all
+    </Directory>
+    
+    Alias /media /var/www/rthing/media
+    <Directory /var/www/rthing/media>
+        order deny,allow
+        allow from all
+    </Directory>
+    
+    WSGIScriptAlias / /var/www/rthing/wsgi.py
+    
+    WSGIDaemonProcess rthing python-path=/var/www/rthing/:/var/www/rthing/lib/python2.7/site-packages
+    WSGIProcessGroup rthing
+
+    LogLevel warn
+    CustomLog /var/www/rthing/access.log combined
+    ErrorLog /var/www/rthing/error.log
+</VirtualHost>
