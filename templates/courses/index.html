@@ -37,4 +37,12 @@
 {% endfor %}
 {% endblock %}
 
+{% block sidebar %}
+<ul>
+    {% for c in courses %}
+        <li><a href='{% url "courses:course" course=c.slug %}'>{{ c.title }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}
+
 {% block location %}Courses{% endblock %}

@@ -59,6 +59,7 @@ def lesson(request, course, lesson):
     ctx["course"] = get_object_or_404(Course, slug=course)
     ctx["lesson"] = get_object_or_404(Lesson, slug=lesson, course=ctx["course"])
     ctx["all_lessons"] = filter(lambda l : l.can_see(request.user), ctx["course"].lessons.all())
+    ctx["all_courses"] = filter(lambda l : l.can_see(request.user), Course.objects.all())
     
     # Check user has permission
     if not ctx["lesson"].can_see(request.user):

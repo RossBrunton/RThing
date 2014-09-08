@@ -57,9 +57,17 @@
 
 {% block sidebar %}
 <ul>
-    <li><a href='{% url "courses:index" %}'>Courses</a></li>
+    <li><a href='{% url "courses:index" %}'>All Courses</a></li>
+    <br/>
+    <li><a href='{% url "courses:course" course=course.slug %}'>{{ course.title }}</a></li>
+    {% for l in lessons %}
+            <li> - <a href='{% url "courses:lesson" course=course.slug lesson=l.0.slug %}'>{{ l.0.title }}</a></li>
+    {% endfor %}
+    <br/>
     {% for c in all_courses %}
-        <li> - <a href='{% url "courses:course" course=c.slug %}'>{{ c.title }}</a></li>
+        {% if c != course %}
+            <li><a href='{% url "courses:course" course=c.slug %}'>{{ c.title }}</a></li>
+        {% endif %}
     {% endfor %}
 </ul>
 {% endblock %}
