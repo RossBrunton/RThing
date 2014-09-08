@@ -23,5 +23,18 @@
     The admin interface allows you to directly change courses, lessons, sections and tasks. You can access the admin
     interface at <a href='{% url "admin:index" %}'>{% url "admin:index" %}</a> or through any "add", "edit" or "manage"
     links.
+    <br/>
+    You can use the admin to change things, if you have followed an &quot;edit&quot; link, you will see a form that
+    allows you to change the thing you followed the link for. Simply make your modifications and click "save" to save
+    the object.
+    <br/>
+    If you select save and continue, you will be able to add another thing of the same type, for example, if you added a
+    lesson, save and add another would allow you to add another lesson.
+    <br/>
+    Field names in <strong>bold</strong> are required, everything else is optional.
+    <br/>
+    If you reach the admin page from a &quot;manage&quot; link, you will be presented with a list of objects. Simply
+    click on the object you wish to edit to change it. You can also use the "move" arrows to change the order of the
+    objects if it is appropriate.
 </section>
 {% endblock %}
