@@ -27,6 +27,13 @@
         <div class='stretch'></div>
         <div class='code'>{% if not c.published %}Unpublished - {% endif %}{{ c.code }}</div>
     </header>
+{% empty %}
+    {% if user.is_staff %}
+        <nav class='staff-options'>
+            There are no courses yet; maybe you want to 
+            <a href='{% url "admin:courses_course_add" %}'>add a course</a>?
+        </nav>
+    {% endif %}
 {% endfor %}
 {% endblock %}
 

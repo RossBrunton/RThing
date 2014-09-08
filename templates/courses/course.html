@@ -41,6 +41,13 @@
         {% endif %}
         </div>
     </header>
+{% empty %}
+    {% if user.is_staff %}
+        <nav class='staff-options'>
+            There are no lessons in this course; maybe you want to 
+            <a href='{% url "admin:courses_lesson_add" %}?course={{ course.pk }}'>add a lesson</a>?
+        </nav>
+    {% endif %}
 {% endfor %}
 
 {{ course.ending|lformat }}
