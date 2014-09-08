@@ -1,6 +1,6 @@
 """Admin models and such for courses, lessons, sections and tasks
 
-These will automatically be added to staff.admin.admin_site
+These will be added to staff.admin.admin_site automatically using this module.
 """
 from django.contrib import admin
 from django.forms import ModelForm, ValidationError, widgets

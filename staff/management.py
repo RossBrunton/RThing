@@ -8,9 +8,9 @@ import courses.models as models
 
 @receiver(signals.post_syncdb)
 def _post_syncdb(sender, **kwargs):
-    """Creates the "Course Editor" group.
+    """Creates the "Course Editor" group after syncdb
     
-    sender is the model that was created
+    sender is the model that was created.
     """
     
     if sender != models:

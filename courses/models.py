@@ -82,7 +82,17 @@ def _complete(states):
 @_autoslug
 @py2_str
 class Course(TraversableOrderedModel):
-    """Courses contain lessons, and are not contained in any larger model"""
+    """Courses contain lessons, and are not contained in any larger model
+    
+    This model has the following fields:
+    - title: The title of the course
+    - slug: The unique, sluggified title (used in links)
+    - code: The course code
+    - description: The description of the course
+    - ending: The text displayed after the lesson list
+    - published: Whether the course is published or not
+    - users: All the users on the course
+    """
     class Meta:
         ordering = ["code"]
     
@@ -99,6 +109,7 @@ class Course(TraversableOrderedModel):
         return u"{}: {}".format(self.code, self.title)
     
     def get_absolute_url(self):
+        """Returns a link to the course page for this course"""
         return reverse("courses:course", kwargs={"course":self.slug})
     
     def can_see(self, user):
@@ -180,7 +191,16 @@ class Course(TraversableOrderedModel):
 class Lesson(TraversableOrderedModel):
     """Lessons contain sections and are part of courses
     
-    Each lesson can be independantly published, and they each have their own page.
+    Each lesson can be independently published, and they each have their own page.
+    
+    This model has the following fields:
+    - title: The title of the lesson
+    - slug: The slug of the lesson (used in links)
+    - introduction: The introductory text
+    - closing: The text displayed at the end of the lesson
+    - published: Whether the lesson is published or not
+    - answers_published: Whether answers are published
+    - course: The course this lesson is on
     """
     class Meta:
         ordering = ["course", "order"]
@@ -200,6 +220,7 @@ class Lesson(TraversableOrderedModel):
         return u"{}: {}".format(self.course.code, self.title)
     
     def get_absolute_url(self):
+        """Returns a link to the lesson page for this lesson"""
         return reverse("courses:lesson", kwargs={"course":self.course.slug, "lesson":self.slug})
     
     def can_see(self, user):
@@ -256,7 +277,14 @@ class Lesson(TraversableOrderedModel):
 class Section(TraversableOrderedModel):
     """Sections contain tasks and are part of lessons
     
-    Each section has a "title" which is displayed when the user progresses to it
+    Each section has a "title" which is displayed when the user progresses to it.
+    
+    This model has the following fields:
+    - title: The title of the lesson
+    - slug: The slug of the section (not used anywhere, it seems)
+    - introduction: The introductory text
+    - closing: The text displayed at the end of the section
+    - lesson: The lesson this section is in
     """
     class Meta:
         ordering = ["lesson", "order"]
@@ -273,6 +301,7 @@ class Section(TraversableOrderedModel):
         return self.title
     
     def get_absolute_url(self):
+        """Returns the link for this course as the leson page with the appropriate get var"""
         return u"{}?t={}".format(
             reverse("courses:lesson", kwargs={"course":self.lesson.course.slug, "lesson":self.lesson.slug}),
             self.order+1
@@ -323,7 +352,26 @@ class Section(TraversableOrderedModel):
 
 @py2_str
 class Task(TraversableOrderedModel):
-    """Tasks are contained in sections and each one represents a single "prompt" that can run code"""
+    """Tasks are contained in sections and each one represents a single "prompt" that can run code
+    
+    This model has the following fields:
+    - description: Text displayed before the prompt.
+    - after_text: Text displayed after the prompt.
+    - wrong_text: Text displayed on a wrong answer.
+    - skip_text: Text displayed on skip.
+    - commentary: Text displayed only on the answer page.
+    - language: Language, these are defined in settings.py.
+    - random_id: A random unique alphanumeric string for the task. Used to check if it is the same task when importing.
+    - hidden_pre_code: Before the model answer, hidden.
+    - visible_pre_code: Before the model answer, visible.
+    - model_answer: The model answer.
+    - validate_answer: Ran after the model_answer.
+    - post_code: Ran after the validate answer.
+    - uses_random: Task uses random numbers.
+    - uses_image: Task uses media (graphs, etc).
+    - automark: Should the task be automatically marked.
+    - takes_prior: When running, the output of as_prior from the previous task should be ran.
+    """
     class Meta:
         ordering = ["section", "order"]
     description = models.TextField(help_text="See <a href='/staff/help/formatting'>here</a> for formatting help")
@@ -352,6 +400,7 @@ class Task(TraversableOrderedModel):
         return self.description[:50]
     
     def get_absolute_url(self):
+        """Returns a link to the lesson page with the approprite get var"""
         return u"{}?t={}-{}".format(
             reverse("courses:lesson",
                 kwargs={"course":self.course.slug, "lesson":self.lesson.slug}
@@ -387,6 +436,9 @@ class Task(TraversableOrderedModel):
         """Returns the full code that the task uses for the model answer, for takes_prior
         
         If the previous task has takes_prior, this will include it as well.
+        
+        This returns the previous task's as_prior (if takes_prior is true), the hidden_pre_code of this task, the
+        visible_pre_code, the model_answer and the post_code.
         """
         prior = ""
         if self.takes_prior and self.previous():

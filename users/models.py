@@ -13,9 +13,16 @@ class UserExtraData(models.Model):
     
     When a user is created, an instance of this model is created for them.
     
-    It contains the task that was last ran, the time it was ran and the code and output that was used.
+    It contains the task that was last ran, the time it was ran and the code and output that was used. At the moment
+    code that uses this is commented out, since it is unstable.
     
-    A password_forced field is also used, to store whether the user needs to reset their password.
+    This model has the following fields:
+    user - The user the extra data is for.
+    last_script_time - The time the last script was ran.
+    last_script_output - The last script output.
+    last_script_error - The last script error output.
+    last_task - The last task that was ran by the user.
+    password_forced - If true, then the user has to change their password the next time they log in.
     """ 
     user = models.OneToOneField(User, related_name="extra")
     

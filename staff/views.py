@@ -37,6 +37,8 @@ def add_users(request, course):
     """Handles adding or removing users
     
     Will display a form if GET or incomplete POST, and will erase and re-add all users on a valid POST.
+    
+    The form used is staff/add_user.html.
     """
     course = get_object_or_404(Course, slug=course)
     

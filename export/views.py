@@ -28,7 +28,11 @@ def export(request, course):
 @login_required
 @user_passes_test(lambda u: u.is_staff)
 def import_(request):
-    """Generates and accepts GET and POST requests for importing courses"""
+    """Generates and accepts GET and POST requests for importing courses
+    
+    If the request is get or an invalid POST, uses the template export/import.html, if valid then redirect to the newly
+    uploaded course.
+    """
     ctx = {}
     if request.method == "GET":
         # Return an empty form

@@ -12,6 +12,9 @@ def login(request):
     
     This will accept either "GET" (in which case it displays a form) or "POST" (in which case it tries to log in the
     user). If the user is logged in succesfully, they are redirected to the value of the get var "next" or to "/".
+    
+    The template used to display the login prompt is users/login.html, the template used when rendering a failed
+    REMOTE_USER login is users/denied.html.
     """
     if request.user.is_authenticated():
         # User is already logged in; redirect them somewhere else
@@ -44,14 +47,20 @@ def login(request):
 @require_POST
 @login_required
 def logout(request):
-    """Logs out the user and redirects them to the goodbye page"""
+    """Logs out the user and displays a goodbye message
+    
+    It uses the template users/goodbye.html.
+    """
     alogout(request)
     return render(request, "users/goodbye.html", {})
 
 
 @login_required
 def password_changed(request):
-    """The user is redirected here when their password is changed"""
+    """The user is redirected here when their password is changed, which displays a simple message with a link.
+    
+    Uses the template users/password_changed.html
+    """
     return render(request, "users/password_changed.html", {})
 
 
@@ -59,7 +68,10 @@ def password_changed(request):
 def edit(request):
     """Edits the user's password
     
-    Accepts GET or POST which will make a form or try to change the password, respectively
+    Accepts GET or POST which will make a form or try to change the password, respectively. If the change was sucessfull
+    they are redirected to users:password_changed.
+    
+    The template used is users/edit.html.
     """
     if request.method == "GET":
         return render(request, "users/edit.html",

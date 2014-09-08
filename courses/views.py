@@ -10,7 +10,10 @@ from django.conf import settings
 
 @login_required
 def index(request):
-    """Index page; displays a list of courses available to the user"""
+    """Index page; displays a list of courses available to the user
+    
+    Uses the template courses/index.html.
+    """
     ctx = {}
     ctx["courses"] = Course.get_courses(request.user);
     
@@ -23,7 +26,10 @@ def index(request):
 
 @login_required
 def course(request, course):
-    """Course page; displays a description and list of lessons that the user can see"""
+    """Course page; displays a description and list of lessons that the user can see
+    
+    Uses the template courses/course.html.
+    """
     ctx = {}
     ctx["all_courses"] = Course.get_courses(request.user)
     ctx["course"] = get_object_or_404(Course, slug=course)
@@ -42,10 +48,12 @@ def course(request, course):
 def lesson(request, course, lesson):
     """Lesson page; displays a lesson with an introduction and (usually) the first section and task)
     
-    If a GET variable t exists like t=1, lesson 1 will be displayed
-    If a GET variable t exists like t=1-1, task 1 of lesson 1 will be displayed
+    If a GET variable t exists like t=1, task 1 of section 1 will be displayed
+    If a GET variable t exists like t=1-2, task 2 of section 1 will be displayed
     
     Most of this page is manipulated by JavaScript and AJAX in the "tasks" app.
+    
+    Uses the template courses/lesson.html.
     """
     ctx = {}
     ctx["course"] = get_object_or_404(Course, slug=course)
@@ -96,7 +104,10 @@ def lesson(request, course, lesson):
 
 @login_required
 def print_lesson(request, course, lesson):
-    """Lesson page for print view, displays all sections and tasks in a print friendly format"""
+    """Lesson page for print view, displays all sections and tasks in a print friendly format
+    
+    Uses the template courses/print_lesson.html.
+    """
     ctx = {}
     ctx["course"] = get_object_or_404(Course, slug=course)
     ctx["lesson"] = get_object_or_404(Lesson, slug=lesson, course=ctx["course"])
@@ -110,7 +121,10 @@ def print_lesson(request, course, lesson):
 
 @login_required
 def print_lesson_answers(request, course, lesson):
-    """Lesson answer page for print view, displays everything along with answers in a print friendly format"""
+    """Lesson answer page for print view, displays everything along with answers in a print friendly format
+    
+    Uses the template courses/print_lesson_answers.html.
+    """
     ctx = {}
     ctx["course"] = get_object_or_404(Course, slug=course)
     ctx["lesson"] = get_object_or_404(Lesson, slug=lesson, course=ctx["course"])
