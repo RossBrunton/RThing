@@ -151,12 +151,14 @@ def run(data):
     
     finally:
         # Remove tmp dir
+        tmp_dir = os.path.join(settings.BASE_DIR, "sandboxes", "tmps", str(data.get("user", 0)))
         subprocess.call(
             [
-                os.path.join(os.path.dirname(__file__), "rmwrap"), "-rf",
-                os.path.join(settings.BASE_DIR, "sandboxes", "tmps", str(data.get("user", 0)))
+                os.path.join(os.path.dirname(__file__), "rmwrap"), "-rf", "--preserve-root", tmp_dir
             ]
         )
+        if os.path.isdir(tmp_dir):
+            shutil.rmtree(tmp_dir)
     
     return output
 
