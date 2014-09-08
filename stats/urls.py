@@ -1,3 +1,4 @@
+"""Urls for the stats app, this should be the namespace "stats" """
 from django.conf.urls import patterns, include, url
 
 import stats.views as views

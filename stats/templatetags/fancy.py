@@ -18,11 +18,13 @@ import re
 register = template.Library()
 
 def _get_class(value, max):
+    """Get the CSS class for the value and max such that higher values are better"""
     if value < (max * 0.33): return "bad"
     if value > (max * 0.67): return "good"
     return "okay"
 
 def _get_class_low(value, max):
+    """Get the CSS class for the value and max such that higher values are worse"""
     if value < (max * 0.33): return "bad"
     if value > (max * 0.67): return "good"
     return "okay"

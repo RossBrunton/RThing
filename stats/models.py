@@ -1,3 +1,4 @@
+"""Database models for statistics"""
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -8,6 +9,18 @@ from rthing.utils import py2_str
 
 @py2_str
 class UserOnTask(models.Model):
+    """Represents a user on a task
+    
+    This model has the following fields:
+    user - The user that is on the task.
+    task - The task that the user is on.
+    tries - The number of tries that the user has made on this task. Stops counting when they reveal or get it right.
+    state - One of STATE_NONE (User has not attempted the question), STATE_CORRECT (user has answered the task
+    correctly) or STATE_REVEALED (User has revealed the answer).
+    skipped - Whether the user has skipped the task at least once.
+    seed - The seed that was generated the last time the user ran this question.
+    last - The time when the student last executed this task.
+    """
     STATE_NONE = "n"
     STATE_CORRECT = "c"
     STATE_REVEALED = "r"
@@ -26,6 +39,7 @@ class UserOnTask(models.Model):
         return u"UserOnTask for {} with {}".format(self.user.username, self.task.__str__())
     
     def add_wrong_answer(self, code):
+        """Given a string, creates links a WrongAnswer with that code to this"""
         # After 10 tries don't add a wrong answer
         if self.tries > 10:
             return
@@ -37,7 +51,7 @@ class UserOnTask(models.Model):
     
     @property
     def status(self):
-        """Returns one of the following with increasing priority:
+        """One of the following with increasing priority:
         
         "Not attempted yet" if the user hasn't yet tried the question.
         "Attempted" if the user has attempted the question.
@@ -59,7 +73,7 @@ class UserOnTask(models.Model):
     
     @property
     def status_colour(self):
-        """Returns a class name for fancy text based on the status as follows:
+        """A class name for fancy text based on the status as follows:
         
         "Not attempted yet" - "no-attempt"
         "Attempted" - "attempt"
@@ -79,12 +93,19 @@ class UserOnTask(models.Model):
     
     @property
     def status_span(self):
-        """Returns a string containing a HTML span element with the state and it's style"""
+        """A string containing a HTML span element with the state and its style"""
         return "<span class='fancy {}'>{}</span>".format(self.status_colour, self.status)
 
 
 @py2_str
 class WrongAnswer(models.Model):
+    """Represents a single wrong answer to a task
+    
+    This model has the following fields:
+    uot - The UOT that this is associated with.
+    code - The code that was ran.
+    time - The time that the answer was submitted.
+    """
     uot = models.ForeignKey(UserOnTask, related_name="wrong_answers")
     code = models.TextField(default="", max_length=1000)
     time = models.DateTimeField(auto_now_add=True)

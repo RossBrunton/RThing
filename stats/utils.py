@@ -1,9 +1,20 @@
+"""Utility functions for stats
+
+Many of these accept arbitary keyword arguments. This will be sent directly to the "filter" call of the UserOnTask
+model.
+
+For example, to get the number of attempts for a task, call attempts(task=my_task), or for the number of attempted
+questions of a user, call attempts(user=my_user).
+"""
 from __future__ import division
 from stats.models import UserOnTask
 from functools import reduce
 
 def attempts(**kwargs):
-    """Who has attempted this task"""
+    """The number of attempts
+    
+    This does not sum; if one student made five attempts for a given task, this returns 1.
+    """
     return UserOnTask.objects.filter(user__is_staff=False, tries__gte=1, **kwargs).count()
 
 def correct(**kwargs):

@@ -1,3 +1,4 @@
+"""Unit tests for the stats app"""
 from django.contrib.auth.models import User, Permission
 from django.test import TestCase, Client
 
@@ -6,13 +7,10 @@ from stats import utils
 from stats.models import UserOnTask
 
 class StatsTestCase(TestCase):
-    f = None
-    m = None
-    t = None
-    muot = None
-    fuot = None
+    """Test case for stats"""
     
     def setUp(self):
+        """Set up test cases, this creates users, a task and user on task instances"""
         self.m = User.objects.create_user("Mittens", "mittensthekitten@gmail.com", "meow")
         self.m.save()
         self.f = User.objects.create_user("Fido", "fido@gmail.com", "woof")

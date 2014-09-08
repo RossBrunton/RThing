@@ -1,3 +1,7 @@
+"""Views for the stats app
+
+Most views require staff priviliges.
+"""
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.exceptions import SuspiciousOperation
@@ -14,6 +18,10 @@ from stats import utils
 @login_required
 @user_passes_test(lambda u: u.is_staff)
 def lesson(request, course, lesson):
+    """Displays stats about a given lesson
+    
+    Uses the template stats/lesson.html.
+    """
     ctx = {}
     ctx["course"] = get_object_or_404(Course, slug=course)
     ctx["lesson"] = get_object_or_404(Lesson, slug=lesson, course=ctx["course"])
@@ -46,6 +54,7 @@ def lesson(request, course, lesson):
 @login_required
 @user_passes_test(lambda u: u.is_staff)
 def csv_lesson(request, course, lesson):
+    """Exports the stats for a given lesson into a CSV format"""
     course = get_object_or_404(Course, slug=course)
     lesson = get_object_or_404(Lesson, slug=lesson, course=course)
     
@@ -73,6 +82,12 @@ def csv_lesson(request, course, lesson):
 @login_required
 @user_passes_test(lambda u: u.is_staff)
 def wrong(request, task):
+    """Displays the "wrong" aswers for a question
+    
+    This will also display all the answers provided for a non-automark question.
+    
+    Uses the template stats/wrong.html.
+    """
     ctx = {}
     ctx["task"] = get_object_or_404(Task, pk=task)
     ctx["lesson"] = ctx["task"].section.lesson
@@ -84,6 +99,10 @@ def wrong(request, task):
 @login_required
 @user_passes_test(lambda u: u.is_staff)
 def user(request, name, course, lesson):
+    """Displays the stats for a given user on a given course
+    
+    Uses the template stats/user.html.
+    """
     ctx = {}
     ctx["target_user"] = get_object_or_404(User, username=name)
     ctx["course"] = get_object_or_404(Course, slug=course)
@@ -127,6 +146,7 @@ def user(request, name, course, lesson):
 @login_required
 @user_passes_test(lambda u: u.is_staff)
 def csv_users(request, course, lesson):
+    """Exports the stats for all students on the given lesson"""
     course = get_object_or_404(Course, slug=course)
     lesson = get_object_or_404(Lesson, slug=lesson, course=course)
     
