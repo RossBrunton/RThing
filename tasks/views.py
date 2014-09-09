@@ -4,6 +4,7 @@ from django.core.exceptions import SuspiciousOperation
 from django.http import Http404, HttpResponse
 from django.views.decorators.http import require_POST
 from django.db.models import F
+from django.utils.html import escape
 
 from courses.models import Task
 from tasks import utils
@@ -14,6 +15,7 @@ from rthing.templatetags.lformat import lformat
 import json
 import time
 import datetime
+import re
 
 @login_required
 @require_POST
@@ -170,4 +172,19 @@ def submit(request, task):
     
     uot.save()
     
+    # Escape output
+    data["output"] = _format_output(data["output"])
+    
     return HttpResponse(json.dumps(data), content_type="application/json")
+
+
+def _format_output(output):
+    """Takes in output and html escapes it and then underlines if appropriate"""
+    output = escape(output)
+    
+    # Underline formatting is _L_i_k_e _t_h_i_s, with an optional backspace between _ and the char
+    # Replace _L with <..>L</..> and then replace <..>L</..><..>i</..> with <..>Li</..>
+    output = re.sub("_\b(.| +)", r"<span style='text-decoration:underline'>\1</span>", output);
+    output = re.sub("<\/span>(\s*)<span style='text-decoration:underline'>", r"\1", output);
+    
+    return output;
