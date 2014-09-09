@@ -152,11 +152,17 @@ def run(data):
     finally:
         # Remove tmp dir
         tmp_dir = os.path.join(settings.BASE_DIR, "sandboxes", "tmps", str(data.get("user", 0)))
+        
+        # First use rmwrap to empty it
+        # Piping to null device because otherwise it'll complain that it can't delete the actual folder
         subprocess.call(
             [
                 os.path.join(os.path.dirname(__file__), "rmwrap"), "-rf", "--preserve-root", tmp_dir
-            ]
+            ],
+            stderr=open(os.devnull)
         )
+        
+        # And then delete the actual tmp dir
         if os.path.isdir(tmp_dir):
             shutil.rmtree(tmp_dir)
     
