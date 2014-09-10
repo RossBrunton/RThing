@@ -229,19 +229,10 @@ class Lesson(TraversableOrderedModel):
         
         return self.course.can_see(user) and self.published
     
-    def compact(self, replace):
+    def compact(self):
         """Compacts the order for the sections such that the highest order value is 1-(the number of sections)"""
         o = 0
-        # At this point it is likley that the two vars are the same order
-        
-        def updater(s):
-            if s.pk == replace[0]:
-                s.order = replace[1]
-                print("Changed!")
-            return s
-        
-        sects = sorted([updater(s) for s in self.sections.all()], key=lambda(s): s.order)
-        for s in sects:
+        for s in self.sections.all():
             s.order = o
             s.save(skip_compact=True)
             o += 1
@@ -314,6 +305,13 @@ class Section(TraversableOrderedModel):
     lesson = models.ForeignKey(Lesson, related_name="sections")
     order_with_respect_to = "lesson"
     
+    def __init__(self, *args, **kwargs):
+        super(Section, self).__init__(*args, **kwargs)
+        
+        # Set this, when the ordered model is swapping, this is set to true so that it doesn't try to fix the order
+        # this is an ugly hack and I'm not proud of it
+        self._swapping = False
+    
     def __str__(self):
         return self.title
     
@@ -331,8 +329,15 @@ class Section(TraversableOrderedModel):
     def save(self, skip_compact=False, *args, **kwargs):
         """Override of save method to call "compact" of the lesson after it"""
         super(Section, self).save(*args, **kwargs)
-        if not skip_compact:
-            self.lesson.compact((self.pk, self.order))
+        if not skip_compact and not self._swapping:
+            self.lesson.compact()
+    
+    def swap(self, *args, **kwargs):
+        """Ugly hack to set swapping to true"""
+        self._swapping = True
+        ret = super(Section, self).swap(*args, **kwargs)
+        self._swapping = False
+        return ret
     
     @property
     def course(self):
