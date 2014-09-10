@@ -7,8 +7,10 @@
 {% form_errors form %}
 <section><form method='POST'>
     {% csrf_token %}
-    Each user must be on their own line, and only the first &quot;word&quot; on each line will be used.<br/>
-    Any user that is not in the system will be created.<br/>
+    Each user must be on their own line.<br/>
+    Usernames must not contain spaces; any characters after a space will be ignored.<br/>
+    Any user that is not in the system will be created with their password as their username.<br/>
+    To remove a user from the course, remove them from this list.<br/>
     <br/>
     <label>Users:<br/>
     <textarea name='users'>{{ users }}</textarea></label><br/><br/>
