@@ -1,0 +1,104 @@
+{% extends "base_staff.html" %}
+{% load lformat staticfiles %}
+
+{% block title %}Help{% endblock %}
+{% block location %}Help{% endblock %}
+
+{% block body %}
+<section>
+    <strong><a name='what'>What are Courses, Lessons, Sections and Tasks?</a></strong><br/>
+    Courses contain Lessons which contain Sections which contain Tasks.<br/>
+    <br/>
+    A task is a single prompt with associated text such as instructions on what to do.<br/>
+    <br/>
+    A section contains a number of tasks, and generally serves to group them under a single heading.<br/>
+    <br/>
+    A lesson contains a group sections. Each lesson has its own page, and can be independently published.<br/>
+    <br/>
+    A course contains group of lessons, and contains information on what students can access the course.
+</section>
+
+<section>
+    <strong><a name='admin'>Admin Interface</a></strong><br/>
+    The admin interface allows you to directly change courses, lessons, sections and tasks. You can access the admin
+    interface at <a href='{% url "admin:index" %}'>{% url "admin:index" %}</a> or through any
+    &quot;add&quot;, &quot;edit&quot; or &quot;manage&quot;links.<br/>
+    <br/>
+    You can use the admin to change things, if you have followed an &quot;edit&quot; link, you will see a form that
+    allows you to change the thing you followed the link for. Simply make your modifications and click &quot;save&quot;
+    to save the object.<br/>
+    <br/>
+    If you select save and continue, you will be able to add another thing of the same type, for example, if you added a
+    lesson, save and add another would allow you to add another lesson.<br/>
+    <br/>
+    Field names in <strong>bold</strong> are required, everything else is optional.<br/>
+    <br/>
+    If you reach the admin page from a &quot;manage&quot; link, you will be presented with a list of objects. Simply
+    click on the object you wish to edit to change it. You can also use the &quot;move&quot; arrows to change the order
+    of the objects if it is appropriate.
+</section>
+
+<section>
+    <strong><a name='tasks'>Tasks</a></strong><br/>
+    The code for tasks is stored in 5 fields, &quot;Hidden pre code&quot;, &quot;Visible pre code&quot;,
+    &quot;Model answer&quot;, &quot;Validate answer&quot;, &quot;Post code&quot;. See this diagram:
+    <br/>
+    <img src='{% static "staff/task_format.png" %}' alt='Diagram of task execution'/><br/>
+    All five code fields are ran in the order shown above twice, with the student's code replacing the model answer in
+    one case. The output of all five fields are compared to see if the student got it correct, but only the first
+    three's output will be displayed to the user.<br/>
+    <br/>
+    The &quot;visible pre code&quot; is the only code that is shown to the user on
+    the prompt, but the model answer will be shown to them if they reveal it and answers for the lesson have been
+    released.
+</section>
+
+<section>
+    <strong><a name='takes_prior'>Takes Prior</a></strong><br/>
+    Takes prior tasks will run the previous task's hidden pre code, visible pre code and model answer before any of its
+    own code, as seen in this diagram for tasks called &quot;A&quot; and &quot;B&quot;:
+    <br/>
+    <img src='{% static "staff/takes_prior.png" %}' alt='Diagram of takes prior'/><br/>
+    As you can see, it will run part of the previous task before it runs this task. If the task before A has takes prior
+    set as well, then it will also be joined.
+</section>
+
+<section>
+    <strong><a name='flags'>Uses Random, Uses Image and Automark</a></strong><br/>
+    There are three other flags that may be set on a task, as follows:<br/>
+    <br/>
+    If uses random is true, then the task will ensure that the seed to R's random number is set to the same value for
+    running the student and model answers, so functions that produce random numbers will produce the same random number
+    both times. It also disables caching that usually happens with the model answer, so it should be enabled only when
+    needed.<br/>
+    <br/>
+    If uses image is true, then the system will set up a device that R will use to plot with. If you don't set it, and
+    try to draw plots, you will get an error. This slows down the system, so should only be enabled when necessary.<br/>
+    <br/>
+    If automark is false, then the system won't try to check that the student's answer is correct. It will instead
+    display a "continue" button to go to the next question instead of the skip button.
+</section>
+
+<section>
+    <strong><a name='timeouts'>Timeouts</a></strong><br/>
+    The &quot;timeout&quot; property of courses is how long any code in them should run, in seconds. A higher timeout
+    means that code will run longer before &quot;giving up&quot;. However, this means that students that create code
+    that doesn't terminate (infinite loops) will cause more slowdown to the system.<br/>
+    <br/>
+    The default (and recommended) value is three seconds. If your course has complex code that will take a while to run,
+    you may wish to increase it.
+</section>
+
+<section>
+    <strong><a name='io'>Export/Import</a></strong><br/>
+    Courses may be exported and imported. Courses are exported by going to their pages and clicking the
+    &quot;export&quot; button, and imported using <a href='{% url "export:import" %}'>this</a>.<br/>
+    <br/>
+    The format should be easy to understand, with the following caveats:<br/>
+    - In a multiline string, whitespace is important, so you can't use indentation inside them.<br/>
+    - If the course, lesson or section's title changes, it is considered to be a different one, likewise, if it matches
+    an existing one, it is considered to be that one.<br/>
+    - Tasks use their random id to decide if they are the same as any existing course.<br/>
+    - You can't have newlines between the <code>list lessons</code> and the <code>{cmwzegjqri{</code>
+</section>
+{% endblock %}

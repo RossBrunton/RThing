@@ -6,7 +6,13 @@
 {% block body %}
 {% form_errors form %}
 <section>
-    The following files are visible from formatting:
+    The following files are visible from formatting; images can be displayed using
+    {% if task_files.0 %}
+        [img]{{ task_files.0 }}[/img]
+    {% else %}
+        [img]myfile.png[/img]
+    {% endif %}.
+    
     {% for f in task_files %}
         <form action='{% url "staff:delete" lesson=lesson.slug course=course.slug %}' method='POST'>
             {% csrf_token %}
@@ -17,8 +23,10 @@
     {% endfor %}
 </section>
 
+<hr/>
+
 <section>
-    The following files are visible from code prompts:
+    The following files are visible from code prompts as the files in its running directory.
     {% for f in sandbox_files %}
         <form action='{% url "staff:delete" lesson=lesson.slug course=course.slug %}' method='POST'>
             {% csrf_token %}
@@ -28,6 +36,8 @@
         </form>
     {% endfor %}
 </section>
+
+<hr/>
 
 <section><form method='POST' enctype='multipart/form-data'>
     {% csrf_token %}

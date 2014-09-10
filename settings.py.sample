@@ -41,6 +41,18 @@ TEST_SQLITE = True
 # Email domain; when you create a new user their email will be set to "username@EMAIL_DOMAIN"
 EMAIL_DOMAIN = "localhost"
 
+# Mailing settings
+# Host for sending e-mail.
+EMAIL_HOST = 'localhost'
+
+# Port for sending e-mail.
+EMAIL_PORT = 25
+
+# Optional SMTP authentication information for EMAIL_HOST.
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = False
+
 # Languages and their packages
 IFACES = {
     "dummy":("Dummy Interface", "ifaces.dummy"),

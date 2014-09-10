@@ -96,12 +96,14 @@ class Course(TraversableOrderedModel):
     class Meta:
         ordering = ["code"]
     
-    title = models.CharField(max_length=30, unique=True)
-    slug = models.SlugField(blank=True, max_length=35, unique=True, db_index=True)
-    code = models.CharField(max_length=10, blank=True)
-    description = models.TextField(help_text="See <a href='/staff/help/formatting'>here</a> for formatting help")
-    ending = models.TextField(blank=True)
-    published = models.BooleanField(default=False)
+    title = models.CharField(max_length=30, unique=True, help_text="Title of the course")
+    slug = models.SlugField(blank=True, max_length=35, unique=True)
+    code = models.CharField(max_length=10, blank=True, help_text="Course code")
+    description = models.TextField(
+        help_text="Main description of the course. See <a href='/staff/help/formatting'>here</a> for formatting help"
+    )
+    ending = models.TextField(blank=True, help_text="Displayed after the list of lessons")
+    published = models.BooleanField(default=False, help_text="Can students access this course yet?")
     users = models.ManyToManyField(User, blank=True)
     timeout = models.PositiveIntegerField(default=3)
     
@@ -206,14 +208,18 @@ class Lesson(TraversableOrderedModel):
     class Meta:
         ordering = ["course", "order"]
     
-    title = models.CharField(max_length=30)
-    slug = models.SlugField(blank=True, max_length=35, db_index=True)
-    introduction = models.TextField(help_text="See <a href='/staff/help/formatting'>here</a> for formatting help")
-    closing = models.TextField(blank=True)
-    published = models.BooleanField(default=False)
-    answers_published = models.BooleanField(default=False)
+    title = models.CharField(max_length=30, help_text="Title of this lesson")
+    slug = models.SlugField(blank=True, max_length=35)
+    introduction = models.TextField(
+        help_text="Introductory text. See <a href='/staff/help/formatting'>here</a> for formatting help"
+    )
+    closing = models.TextField(blank=True,
+        help_text="Closing remarks, displayed after the user has completed the lesson"
+    )
+    published = models.BooleanField(default=False, help_text="Can students on this course see this yet?")
+    answers_published = models.BooleanField(default=False, help_text="Can students see and reveal answers yet?")
     
-    course = models.ForeignKey(Course, related_name="lessons")
+    course = models.ForeignKey(Course, related_name="lessons", help_text="The course this lesson is in")
     order_with_respect_to = "course"
     
     
@@ -296,14 +302,18 @@ class Section(TraversableOrderedModel):
     - lesson: The lesson this section is in
     """
     class Meta:
-        ordering = ["lesson", "order"]
+        ordering = ["lesson__course", "lesson", "order"]
     
-    title = models.CharField(max_length=30)
-    slug = models.SlugField(blank=True, max_length=35, db_index=True)
-    introduction = models.TextField(help_text="See <a href='/staff/help/formatting'>here</a> for formatting help")
-    closing = models.TextField(blank=True)
+    title = models.CharField(max_length=30, help_text="The title of this section")
+    slug = models.SlugField(blank=True, max_length=35)
+    introduction = models.TextField(
+        help_text="Text to display under the heading. See <a href='/staff/help/formatting'>here</a> for formatting help"
+    )
+    closing = models.TextField(blank=True,
+        help_text="Text to display before the next section or the closing remarks of the lesson"
+    )
     
-    lesson = models.ForeignKey(Lesson, related_name="sections")
+    lesson = models.ForeignKey(Lesson, related_name="sections", help_text="The lesson this section is in")
     order_with_respect_to = "lesson"
     
     def __init__(self, *args, **kwargs):
@@ -402,31 +412,42 @@ class Task(TraversableOrderedModel):
     - takes_prior: When running, the output of as_prior from the previous task should be ran.
     """
     class Meta:
-        ordering = ["section", "order"]
-    description = models.TextField(help_text="See <a href='/staff/help/formatting'>here</a> for formatting help")
-    after_text = models.TextField(blank=True)
-    wrong_text = models.TextField(blank=True)
-    skip_text = models.TextField(blank=True)
-    commentary = models.TextField(blank=True)
-    language = models.CharField(max_length=10, choices=_IFACE_CHOICES, default=settings.IFACE_DEF)
+        ordering = ["section__lesson__course", "section__lesson", "section", "order"]
+    
+    description = models.TextField(
+        help_text=(
+            "Displayed before the prompt. See <a href='/staff/help/formatting'>here</a> for formatting help<br/>"+\
+            "Please ensure that all code boxes end in a line ending character (usually &quot;;&quot;)"
+        )
+    )
+    after_text = models.TextField(blank=True, help_text="Displayed after the task before the next one")
+    wrong_text = models.TextField(blank=True, help_text="Displayed on wrong answer")
+    skip_text = models.TextField(blank=True, help_text="Displayed on skip")
+    commentary = models.TextField(blank=True, help_text="Displayed on answer page only")
+    
+    language = models.CharField(
+        max_length=10, choices=_IFACE_CHOICES, default=settings.IFACE_DEF, help_text="Language for code"
+    )
     random_id = models.CharField(blank=True, max_length=10)
     
-    hidden_pre_code = models.TextField(blank=True)
-    visible_pre_code = models.TextField(blank=True)
-    model_answer = models.TextField()
-    validate_answer = models.TextField(blank=True)
-    post_code = models.TextField(blank=True)
+    hidden_pre_code = models.TextField(blank=True, help_text="Ran first; not shown to user")
+    visible_pre_code = models.TextField(blank=True, help_text="Ran second; shown to user")
+    model_answer = models.TextField(help_text="The \"correct\" answer that the user's code will compare to")
+    validate_answer = models.TextField(blank=True, help_text="Ran after the model answer")
+    post_code = models.TextField(blank=True, help_text="Ran last")
     
-    uses_random = models.BooleanField(default=False)
-    uses_image = models.BooleanField(default=False)
-    automark = models.BooleanField(default=True)
-    takes_prior = models.BooleanField(default=False)
+    uses_random = models.BooleanField(default=False, help_text="Does the code use random numbers?")
+    uses_image = models.BooleanField(default=False, help_text="Does the code expect plots?")
+    automark = models.BooleanField(default=True, help_text="Should the code be automatically corrected?")
+    takes_prior = models.BooleanField(default=False,
+        help_text="Should the code inherit the context from a previous question?"
+    )
     
     section = models.ForeignKey(Section, related_name="tasks")
     order_with_respect_to = "section"
     
     def __str__(self):
-        return self.description[:50]
+        return self.preview
     
     def get_absolute_url(self):
         """Returns a link to the lesson page with the approprite get var"""
