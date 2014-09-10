@@ -229,6 +229,23 @@ class Lesson(TraversableOrderedModel):
         
         return self.course.can_see(user) and self.published
     
+    def compact(self, replace):
+        """Compacts the order for the sections such that the highest order value is 1-(the number of sections)"""
+        o = 0
+        # At this point it is likley that the two vars are the same order
+        
+        def updater(s):
+            if s.pk == replace[0]:
+                s.order = replace[1]
+                print("Changed!")
+            return s
+        
+        sects = sorted([updater(s) for s in self.sections.all()], key=lambda(s): s.order)
+        for s in sects:
+            s.order = o
+            s.save(skip_compact=True)
+            o += 1
+    
     def complete(self, user):
         """Returns as per Task.complete depending on whether ALL tasks are at least that state
         
@@ -310,6 +327,12 @@ class Section(TraversableOrderedModel):
     def can_see(self, user):
         """Can the given user see this section"""
         return self.lesson.can_see(user)
+    
+    def save(self, skip_compact=False, *args, **kwargs):
+        """Override of save method to call "compact" of the lesson after it"""
+        super(Section, self).save(*args, **kwargs)
+        if not skip_compact:
+            self.lesson.compact((self.pk, self.order))
     
     @property
     def course(self):
