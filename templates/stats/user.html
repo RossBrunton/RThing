@@ -4,7 +4,7 @@
 {% block title %}User stats for {{ target_user.username }} on lesson {{ lesson.title }}{% endblock %}
 {% block location %}User Stats{% endblock %}
 
-{% block body %}
+{% block content %}
 <section>
     You are viewing the stats for {{ target_user.username }} on the lesson 
     <a href='{% url "courses:lesson" course=course.slug lesson=lesson.slug %}'>{{ lesson.title }}</a>.
