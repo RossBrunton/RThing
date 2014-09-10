@@ -27,8 +27,8 @@
         {% block extra-head %}{% endblock %}
     </head>
     
-    <body>
-        {% block content %}
+    <body {% block body-extras %}{% endblock %}>
+        {% block body %}
         <main>This document defines no content.</main>
         {% endblock %}
         <div style='display:none' id='csrf'>{{ csrf_token }}</div>
