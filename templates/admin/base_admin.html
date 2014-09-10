@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block extra-head %}
+<link rel='stylesheet' type='text/css' href='{% static "staffStyles.css" %}'/>
+<link rel='stylesheet' type='text/css' href='{% static "adminStyles.css" %}'/>
+{% endblock %}
+
+{% block body-extras %}class='{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}'{% endblock %}
+
+{% block body %}
+<div class='container'>
+    <nav class='sidebar admin'>
+        <div class='location'>{% block location %}Admin Page{% endblock %}</div>
+        <div><hr/></div>
+        <div class='sidebar-contents'>
+            <a href='{% url "courses:index" %}'>Return to course list</a><br/>
+            <br/>
+            <a href='{% url "admin:courses_course_changelist" %}'>Courses</a><br/>
+            <a href='{% url "admin:courses_lesson_changelist" %}'>Lessons</a><br/>
+            <a href='{% url "admin:courses_section_changelist" %}'>Sections</a><br/>
+            <a href='{% url "admin:courses_task_changelist" %}'>Tasks</a><br/>
+        </div>
+        <div class='stretch'></div>
+        {% if not use_remote_user %}
+            <form action='{% url "users:logout" %}' method='POST' class='logout-form'>
+                <hr/>
+                {% csrf_token %}
+                {{ user.username }} - <input type='submit' value='Log Out'/>
+                <br/><a href='{% url "users:edit" %}'>Change Password</a>
+            </form>
+        {% endif %}
+        <img width='16' height='16' src='{% static "icons/close_menu.png" %}' class='expand-img' alt='Expand'/>
+    </nav>
+    
+    <div class='content-container'>
+        <main class='content'>
+            {% block my_content %}{% endblock %}
+        </main>
+    </div>
+</div>
+{% endblock %}

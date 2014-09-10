@@ -1,0 +1,31 @@
+/* Custom styles for the admin site, so it looks not horrible */
+.content > * {
+    margin:inherit;
+}
+
+.content-container {
+    width:inherit;
+    position:relative;
+}
+
+.sidebar *, .sidebar *:link, .sidebar *:visited {
+    color:inherit;
+    text-decoration:inherit;
+}
+
+.sidebar hr {
+    height:inherit;
+}
+
+body {
+    font-size:inherit;
+    font-family:inherit;
+}
+
+div:not(.content) > a {
+    text-decoration:none;
+}
+
+#header {
+    display:none;
+}
