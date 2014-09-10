@@ -193,15 +193,17 @@ class Command(BaseCommand):
                 write_help("[webuser]", "[nobody]")
         
         if options["suid"] or i in ["y", "yes"]:
-            webuser = input("What is the name/id of the webuser (possibly 'www-data')? ")
-            nobody = input("What shall I use as the name/id as the sandbox user (maybe 'nobody')? ")
+            webuser = input("What is the name/id of the webuser [www-data]? ")
+            if not webuser: webuser = "www-data"
+            nobody = input("What shall I use as the name/id as the sandbox user [nobody]? ")
+            if not nobody: nobody = "nobody"
             
             if sudo:
                 for l in root_commands:
                     self.stdout.write("sudo "+l.format(webuser=webuser, nobody=nobody))
                     os.system("sudo "+l.format(webuser=webuser, nobody=nobody))
             
-                self.stdout.write("Files permissioned succesfully.")
+                self.stdout.write("Files permissioned.")
                 self.stdout.write("Note that any change in permission in the future will likely break the setuid.")
             else:
                 self.stdout.write(
