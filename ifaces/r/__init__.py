@@ -18,9 +18,9 @@ NAMESPACE_DIR are named with the primary key of the lesson they are associated w
 - Execute a single command and exit
 - This is the code which will be ran
 
-It creates four variables, _nsindex, _wdindex, _tmpindex and _argindex. These are locations in the command list that the
-namespace binding, working dictionary, tmp dir binding and code to run are. This is so that the run function can
-directly change them without having to rebuild it.
+It creates four variables, _toindex, _nsindex, _wdindex, _tmpindex and _argindex. These are locations in the command
+list that the timeout, namespace binding, working dictionary, tmp dir binding and code to run are. This is so that the
+run function can directly change them without having to rebuild it.
 
 It also uses the run function to generat a blank plot which it stores in _empty_plot.
 
@@ -95,6 +95,10 @@ def run(data):
         # My server seems to ignore the mode set by os.mkdir
         os.chmod(tmp_path, 0o770)
         
+        # Set timeout
+        _command[_toindex] = "{}s".format(data.get("timeout", 3))
+        
+        # Set tmp location
         _command[_tmpindex] = u"-b {}:/tmp".format(os.path.join(settings.SANDBOX_DIR, "tmps", str(data.get("user", 0))))
         
         # Seed the RNG if needed
@@ -274,7 +278,8 @@ def generic_print(expr):
 _command.append(os.path.join(os.path.dirname(__file__), "timeoutwrap"))
 
 # Timeout
-_command.append("5s")
+_toindex = len(_command)
+_command.append("")
 
 # Proot
 _command.append(os.path.join(os.path.dirname(__file__), "proot"))

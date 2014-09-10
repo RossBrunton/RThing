@@ -103,6 +103,7 @@ class Course(TraversableOrderedModel):
     ending = models.TextField(blank=True)
     published = models.BooleanField(default=False)
     users = models.ManyToManyField(User, blank=True)
+    timeout = models.PositiveIntegerField(default=3)
     
     
     def __str__(self):
