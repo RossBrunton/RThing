@@ -33,7 +33,7 @@ class CourseAdmin(_CustomAdmin):
         }),
         
         (None, {
-            "fields":("ending", "published")
+            "fields":("ending", "published", "timeout")
         })
     )
 

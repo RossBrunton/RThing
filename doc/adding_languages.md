@@ -38,6 +38,7 @@ ascii characters.
 - `uses_random` (optional bool): Whether `uses_random` on the task is true. If this key is absent then assume false.
 - `seed` (optional int): The seed to use for the RNG. If `uses_random` is true, then you may assume this key exists.
 - `uses_image` (optional bool): Whether `uses_image` on the task is true.
+- `timeout` (optional int): The timeout in seconds, the code should not run longer than this.
 
 The output dict, which this function returns, contains the following keys:
 

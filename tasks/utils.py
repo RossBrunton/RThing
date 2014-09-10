@@ -64,7 +64,8 @@ def perform_execute(code, task, user):
         
         user_input = {
             "commands":user_code, "namespace":task.lesson.pk, "uses_random":task.random_poison(),
-            "uses_image":task.uses_image, "automark":task.automark, "seed":seed, "user":user.pk
+            "uses_image":task.uses_image, "automark":task.automark, "seed":seed, "user":user.pk,
+            "timeout":task.course.timeout
         }
         user_output = task.iface.run(user_input)
         
@@ -99,7 +100,8 @@ def perform_execute(code, task, user):
             
             model_input = {
                 "commands":model_code, "namespace":task.lesson.pk, "uses_random":task.random_poison(),
-                "uses_image":task.uses_image, "automark":task.automark, "seed":seed, "user":user.pk, "model":True
+                "uses_image":task.uses_image, "automark":task.automark, "seed":seed, "user":user.pk, "model":True,
+                "timeout":task.course.timeout
             }
             model_output = task.iface.run(model_input)
             
