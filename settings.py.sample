@@ -29,6 +29,9 @@ DEBUG = False
 # Should the user be forbidden from using the prompt after they answer or skip the question
 ANSWER_LOCK = True
 
+# This text will be displayed in the footer
+FOOTER = "This is footer text which hasn't been changed yet."
+
 # A list of the allowed hosts this can run on
 ALLOWED_HOSTS = []
 
@@ -172,6 +175,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
     "users.context_processors.use_remote_checker",
+    "rthing.context_processors.footer_putter"
 )
 
 # Internationalization (not in use)

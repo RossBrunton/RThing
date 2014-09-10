@@ -19,20 +19,27 @@
         <img width='16' height='16' src='{% static "icons/close_menu.png" %}' class='expand-img' alt='Expand'/>
     </nav>
     
-    <main class='content'>
-        <div id='error'>
-            <span id='error-body'></span>
-        <img width=16 height=16 alt='Dismiss' title='Dismiss' src='{% static "icons/close.png" %}' id='error-close'/>
-        </div>
-        {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-            {% if not forloop.first %}<br/>{% endif %}
-            <span{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</span>
-            {% endfor %}
-        </div>
-        {% endif %}
-        {% block body %}&nbsp;{% endblock %}
-    </main>
+    <div class='content-container'>
+        <main class='content'>
+            <div id='error'>
+                <span id='error-body'></span>
+            <img width=16 height=16 alt='Dismiss' title='Dismiss' src='{% static "icons/close.png" %}'
+                id='error-close'/>
+            </div>
+            {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                {% if not forloop.first %}<br/>{% endif %}
+                <span{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% block body %}&nbsp;{% endblock %}
+        </main>
+        
+        <footer>
+            {{ footer|safe }}
+        </footer>
+    </div>
 </div>
 {% endblock %}

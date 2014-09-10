@@ -17,7 +17,7 @@ ul {
     list-style-type:none;
 }
 
-header, section, nav, main { 
+header, section, nav, main, footer { 
     display: block; 
 }
 
@@ -103,12 +103,40 @@ h4 {
     cursor:pointer;
 }
 
+.content-container {
+    /*padding:10px;*/
+    overflow-y:auto;
+    -webkit-flex:1 1 auto;
+    -ms-flex:1 1 auto;
+    flex:1 1 auto;
+    display:-webkit-flex;
+    display:-ms-flexbox;
+    display:flex;
+    height:100%;
+    position:fixed;
+    width:100%;
+    -moz-box-orient: vertical;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+}
+
 .content {
     /*padding:10px;*/
     overflow-y:auto;
     -webkit-flex:1 1 auto;
     -ms-flex:1 1 auto;
     flex:1 1 auto;
+}
+
+footer {
+    padding:10px;
+    padding-bottom:20px;
+    background-color:#333333;
+    color:#bbbbbb;
+    margin:0px !important;
+    border-top:2px solid #bbbbbb;
+    font-size:80%;
 }
 
 .content > * {
