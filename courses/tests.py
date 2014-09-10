@@ -183,3 +183,71 @@ class CoursesTestCase(TestCase):
         self.assertEqual(b.previous(), a)
         self.assertEqual(a.next(), b)
         self.assertEqual(b.next(), None)
+    
+    
+    def test_traversable_ordered_model(self):
+        """Test to see if section ordering works when you set order to arbitary value or call the move/swap functions"""
+        c = Course.objects.create()
+        l = Lesson.objects.create(course=c)
+        ol = Lesson.objects.create(course=c) # Other lesson
+        a = Section.objects.create(lesson=l)
+        a.save()
+        b = Section.objects.create(lesson=l)
+        b.save()
+        oa = Section.objects.create(lesson=ol)
+        oa.save()
+        ob = Section.objects.create(lesson=ol)
+        ob.save()
+        
+        self.assertEqual(a.order, 0)
+        self.assertEqual(b.order, 1)
+        self.assertEqual(oa.order, 0)
+        self.assertEqual(ob.order, 1)
+        
+        a.order = 5
+        a.save()
+        a = Section.objects.get(pk=a.pk) # Get flushed changes
+        b = Section.objects.get(pk=b.pk)
+        oa = Section.objects.get(pk=oa.pk)
+        ob = Section.objects.get(pk=ob.pk)
+        
+        self.assertEqual(a.order, 1)
+        self.assertEqual(b.order, 0)
+        self.assertEqual(oa.order, 0)
+        self.assertEqual(ob.order, 1)
+        
+        # Swapping
+        a.swap([b])
+        a = Section.objects.get(pk=a.pk) # Get flushed changes
+        b = Section.objects.get(pk=b.pk)
+        oa = Section.objects.get(pk=oa.pk)
+        ob = Section.objects.get(pk=ob.pk)
+        self.assertEqual(a.order, 0)
+        self.assertEqual(b.order, 1)
+        self.assertEqual(oa.order, 0)
+        self.assertEqual(ob.order, 1)
+        
+        # Moving
+        b.up()
+        a = Section.objects.get(pk=a.pk) # Get flushed changes
+        b = Section.objects.get(pk=b.pk)
+        oa = Section.objects.get(pk=oa.pk)
+        ob = Section.objects.get(pk=ob.pk)
+        self.assertEqual(a.order, 1)
+        self.assertEqual(b.order, 0)
+        self.assertEqual(oa.order, 0)
+        self.assertEqual(ob.order, 1)
+        
+        a.order = 0
+        a.save()
+        b.order = 0
+        b.save()
+        a = Section.objects.get(pk=a.pk) # Get flushed changes
+        b = Section.objects.get(pk=b.pk)
+        oa = Section.objects.get(pk=oa.pk)
+        ob = Section.objects.get(pk=ob.pk)
+        
+        self.assertNotEqual(b.order, a.order)
+        self.assertEqual(oa.order, 0)
+        self.assertEqual(ob.order, 1)
+        
