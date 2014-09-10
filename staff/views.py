@@ -33,6 +33,7 @@ def help_formatting(request):
 @login_required
 @user_passes_test(lambda u: u.is_staff)
 def help_general(request):
+    """General help, using the template staff/help_general.html"""
     return render(request, "staff/help_general.html", {})
 
 
@@ -58,7 +59,7 @@ def add_users(request, course):
         for user in users:
             u = user.strip().split(" ")[0]
             
-            if u:
+            if u and re.match("^[a-zA-Z0-9@.+_-]+$", u) is not None:
                 user_obj = None
                 try:
                     user_obj = User.objects.get(username=u)
