@@ -231,17 +231,21 @@ window.rthing = (function() {
             }else if(e.which == 40 /* Down */ && getLineNumber(this) == this.value.split("\n").length) {
                 if($(this).data("rlPointer") === undefined) $(this).data("rlPointer", 0);
                 
-                // Increment it
+                // Decrement it
                 $(this).data("rlPointer", $(this).data("rlPointer") - 1);
                 
                 // If less than zero, clear or load the input and set rlPoniter to -1
                 if($(this).data("rlPointer") < 0) {
-                    $(this).data("rlPointer", -1);
-                    if($(this).data("rlCurrent")) {
-                        $(this).val($(this).data("rlCurrent"));
-                    }else{
-                        $(this).val("");
+                    // rlPointer will be -2 if we were already at -1 and decreased it more, so I don't want to
+                    // replace the contents
+                    if($(this).data("rlPointer") == -1) {
+                        if($(this).data("rlCurrent")) {
+                            $(this).val($(this).data("rlCurrent"));
+                        }else{
+                            $(this).val("");
+                        }
                     }
+                    $(this).data("rlPointer", -1);
                     updateTextarea(this);
                     return true;
                 }
