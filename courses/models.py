@@ -488,7 +488,7 @@ class Task(TraversableOrderedModel):
         If the previous task has takes_prior, this will include it as well.
         
         This returns the previous task's as_prior (if takes_prior is true), the hidden_pre_code of this task, the
-        visible_pre_code, the model_answer and the post_code.
+        visible_pre_code and the model_answer.
         """
         prior = ""
         if self.takes_prior and self.previous():
@@ -499,7 +499,7 @@ class Task(TraversableOrderedModel):
         if self.hidden_pre_code: out += [self.hidden_pre_code]
         if self.visible_pre_code: out += [self.visible_pre_code]
         out += [self.model_answer]
-        if self.post_code: out += [self.post_code]
+        #if self.post_code: out += [self.post_code]
         
         return "".join(out)
     
