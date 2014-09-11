@@ -52,8 +52,8 @@ Install packages:
 > pip install python3-memcached # Python 3.*
 
 Set up settings:
-> cp ./settings.py.sample ./settings.py
-> $EDITOR ./settings.py
+> cp ./settings_local.py.sample ./settings_local.py
+> $EDITOR ./settings_local.py
 
 And set up database connection:
 > cp ./db.cnf.sample ./db.cnf
