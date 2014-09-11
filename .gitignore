@@ -13,7 +13,7 @@ __pycache__
 *~
 /site-packages
 /db.cnf
-/settings.py
+/settings_local.py
 /namespaces/*
 /ifaces/r/timeoutwrap
 /ifaces/r/rmwrap
