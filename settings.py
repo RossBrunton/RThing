@@ -93,6 +93,8 @@ else:
         }
     }
 
+# Age of persistent connections, in seconds
+CONN_MAX_AGE = 60
 
 # Caches
 CACHES = {
@@ -116,14 +118,17 @@ else:
 # Template processors
 TEMPLATE_CONTEXT_PROCESSORS = (
     "django.contrib.auth.context_processors.auth",
-    "django.core.context_processors.debug",
-    "django.core.context_processors.i18n",
-    "django.core.context_processors.media",
-    "django.core.context_processors.static",
-    "django.core.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
     "users.context_processors.use_remote_checker",
     "rthing.context_processors.footer_putter",
+)
+
+# Template loaders (keep them in memory)
+TEMPLATE_LOADERS = (
+    ('django.template.loaders.cached.Loader', (
+        'django.template.loaders.filesystem.Loader',
+        'django.template.loaders.app_directories.Loader',
+    )),
 )
 
 # Internationalization (not in use)

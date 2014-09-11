@@ -29,18 +29,20 @@ def perform_execute(code, task, user):
     # Strip whitespace from both ends
     code = code.strip()
     
+    iface = task.iface
+    
     # Ensure the code ends with ";" or whatever
-    if not code.endswith(task.iface.LINE_END):
-        code += task.iface.LINE_END
+    if not code.endswith(iface.LINE_END):
+        code += iface.LINE_END
     
     # First, check to see if they are equivalent and the answer exists
     # if the task cannot be automarked, equiv is always false
-    equiv = task.iface.is_equivalent(task.model_answer, code) and task.automark
+    equiv = iface.is_equivalent(task.model_answer, code) and task.automark
     
     # Look up prior
     prior = ""
     if task.takes_prior and task.previous():
-        prior = task.previous().as_prior() + task.iface.generic_print(_SPLIT_TOKEN)
+        prior = task.previous().as_prior() + iface.generic_print(_SPLIT_TOKEN)
     
     # Generate a seed if needed
     seed = 0
@@ -57,7 +59,7 @@ def perform_execute(code, task, user):
             task.hidden_pre_code,
             task.visible_pre_code,
             code,
-            task.iface.generic_print(_SPLIT_TOKEN),
+            iface.generic_print(_SPLIT_TOKEN),
             task.validate_answer,
             task.post_code
         ])).strip()
@@ -67,7 +69,7 @@ def perform_execute(code, task, user):
             "uses_image":task.uses_image, "automark":task.automark, "seed":seed, "user":user.pk,
             "timeout":task.course.timeout
         }
-        user_output = task.iface.run(user_input)
+        user_output = iface.run(user_input)
         
         if user_output["is_error"]:
             # If the output has an error, assume it's wrong
@@ -93,7 +95,7 @@ def perform_execute(code, task, user):
                 task.hidden_pre_code,
                 task.visible_pre_code,
                 task.model_answer,
-                task.iface.generic_print(_SPLIT_TOKEN),
+                iface.generic_print(_SPLIT_TOKEN),
                 task.validate_answer,
                 task.post_code
             ])).strip()
@@ -103,7 +105,7 @@ def perform_execute(code, task, user):
                 "uses_image":task.uses_image, "automark":task.automark, "seed":seed, "user":user.pk, "model":True,
                 "timeout":task.course.timeout
             }
-            model_output = task.iface.run(model_input)
+            model_output = iface.run(model_input)
             
             if not task.random_poison():
                 cache.set("task_model_{}".format(task.pk), model_output)
