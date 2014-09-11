@@ -23,13 +23,17 @@ URLs that the app uses
 - utils.py
 General utility methods
 - views.py
-Handle URLs and outputs the response
+Handle requests
+- migrations
+Migrations to track changes in database schema
 
 The apps are as follows, and serve as a way to divide up the project
 
 - courses
 General course information and views. This handles the course list, course pages and lesson pages, as well as the
-database models for each. 
+database models for each.
+- export
+Exporting and importing courses to text.
 - rthing
 Contains the root url config which refers to the urls of all other apps and also contains anything that is to general
 for any other app.

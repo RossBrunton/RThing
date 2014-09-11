@@ -60,7 +60,7 @@ And set up database connection:
 > $EDITOR ./db.cnf
 
 Perform database sync:
-> python manage.py syncdb
+> python manage.py migrate
 
 Collect static files:
 > python manage.py collectstatic
