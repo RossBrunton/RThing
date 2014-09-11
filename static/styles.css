@@ -361,6 +361,12 @@ footer {
     cursor:pointer;
     font-size:80%;
     border:1px solid #999999;
+    white-space:pre;
+}
+
+div.l-click {
+    padding:5px;
+    width:80em;
 }
 
 .l-mono {

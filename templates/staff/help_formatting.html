@@ -8,6 +8,13 @@
 <section>
     The following is all the formatting available, and what they result in.
     <br/><br/>
+    You can divide your text into paragraphs by having an empty line between them, like so:
+    <pre>This is the first paragraph
+
+This is the second paragraph</pre>
+    <br/><br/>
+    The following syntax can be used inside paragraphs:
+    <br/><br/>
     <table style='border-spacing:15px'>
         <tr>
             <th>Code</th>
@@ -18,11 +25,6 @@
             <td class="tex2jax_ignore">$a^2 = b^2 + c^2$</td>
             <td>Inline LaTeX</td>
         </tr>
-        
-        <tr>
-            <td class="tex2jax_ignore">$$a^2 = b^2 + c^2$$</td>
-            <td>Block (centred) LaTeX</td>
-        </tr> 
         
         <tr>
             <td>[mono]Text[/mono]</td>
@@ -64,6 +66,25 @@
         <tr>
             <td>#1 + 1#</td>
             <td>Displays the text such that the user can click it to enter it into a prompt</td>
+        </tr>
+    </table>
+    <br/>
+    The following syntax works on whole paragraphs, that is, when using them there has to be an empty line between them
+    and the next or previous paragraph.
+    <table style='border-spacing:15px'>
+        <tr>
+            <th>Code</th>
+            <th>Description</th>
+        </tr>
+        
+        <tr>
+            <td class="tex2jax_ignore">$$a^2 = b^2 + c^2$$</td>
+            <td>The whole paragraph will be rendered as LaTeX, and be dispalyed in the middle of the screen</td>
+        </tr>
+        
+        <tr>
+            <td>##1 + 1##</td>
+            <td>Like #, but surrounds a paragraph and makes the whole paragraph clickable</td>
         </tr>
         
         <tr>

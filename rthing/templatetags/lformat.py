@@ -86,7 +86,8 @@ def lformat(value, arg=None, autoescape=None, print_=False):
     value = re.sub(r"\<div\>[Ii]nfo:(.+?)\<\/div\>", r"<div class='l-info'>\1</div>", value)
     
     # Click transfer thing
-    value = re.sub(r"(\s)\#(.+?)\#", r"\1<span class='l-click'>\2</span>", value)
+    value = re.sub(r"<div>\#\#\n?((?:\s|.)+?)\#\#</div>", r"<div class='l-click'>\1</div>", value)
+    value = re.sub(r"(\s|<div>)\#(.+?)\#", r"\1<span class='l-click'>\2</span>", value)
     
     return mark_safe(value)
 
