@@ -80,6 +80,10 @@ def run(data):
     if "namespace" not in data:
         raise RuntimeError("'namespace' not in provided data: {}".format(str(data)))
     
+    # Now check to see if the namespace folder exists, and if it doesn't, create it
+    if not os.path.isdir(os.path.join(settings.NAMESPACE_DIR, str(data["namespace"]))):
+        os.mkdir(os.path.join(settings.NAMESPACE_DIR, str(data["namespace"])), 0o750)
+    
     # Set the namespace and working directory
     _command[_nsindex] = u"-b {}:/{}".format(
         os.path.join(settings.NAMESPACE_DIR, str(data["namespace"])),
@@ -310,5 +314,5 @@ _command.append("")
 # Now generate the empty image so we can check if the plot is empty
 _empty_plot = None
 _empty_plot = run({
-    "commands":"", "namespace":None, "uses_random":False, "uses_image":True, "automark":False, "seed":0, "user":0
+    "commands":"", "namespace":"Plot", "uses_random":False, "uses_image":True, "automark":False, "seed":0, "user":0
 }).get("media", "")

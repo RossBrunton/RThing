@@ -5,6 +5,26 @@ from ifaces import r
 
 class RTestCase(TestCase):
     """Test case for R interface"""
+    def test_works(self):
+        """Test basic functionality"""
+        result = r.run({"namespace":"0", "commands":"1 + 1"})
+        self.assertTrue("2" in result["out"])
+        self.assertFalse(result["is_error"])
+        
+        result = r.run({"namespace":"0", "commands":"aoeu"})
+        self.assertTrue("aoeu" in result["err"])
+        self.assertTrue(result["is_error"])
+    
+    def test_media(self):
+        """Test images"""
+        result = r.run({"namespace":"0", "commands":"1 + 1", "uses_image":True})
+        self.assertFalse(result["media"]) # Empty image; nothing has been plotted
+        self.assertFalse(result["is_error"])
+        
+        result = r.run({"namespace":"0", "commands":"plot(0:10)", "uses_image":True})
+        self.assertTrue(result["media"])
+        self.assertFalse(result["is_error"])
+    
     def test_equivalence(self):
         """Test that is_equivilant works"""
         self.assertTrue(r.is_equivalent("", ""))

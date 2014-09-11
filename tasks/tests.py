@@ -8,8 +8,6 @@ from tasks import utils
 class TasksTestCase(TestCase):
     """Test case for tasks"""
     lang = "dummy"
-    s = None
-    u = None
     
     def setUp(self):
         """Sets up the test case by creating a sample text and user"""
