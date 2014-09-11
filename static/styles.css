@@ -282,6 +282,7 @@ footer {
 .prompt textarea {
     color:inherit;
     background:inherit;
+    background-color:#333333;
     border:none;
     resize:none;
     -webkit-flex:1 1 auto;
