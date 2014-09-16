@@ -179,7 +179,7 @@ def submit(request, task):
 
 
 def _format_output(output):
-    """Takes in output and html escapes it and then underlines if appropriate"""
+    """Takes in output, html escapes it and then underlines if appropriate"""
     output = escape(output)
     
     # Underline formatting is _L_i_k_e _t_h_i_s, with an optional backspace between _ and the char

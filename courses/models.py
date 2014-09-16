@@ -92,6 +92,7 @@ class Course(TraversableOrderedModel):
     - ending: The text displayed after the lesson list
     - published: Whether the course is published or not
     - users: All the users on the course
+    - timeout: The timeout of all tasks on the course
     """
     class Meta:
         ordering = ["code"]
@@ -105,7 +106,9 @@ class Course(TraversableOrderedModel):
     ending = models.TextField(blank=True, help_text="Displayed after the list of lessons")
     published = models.BooleanField(default=False, help_text="Can students access this course yet?")
     users = models.ManyToManyField(User, blank=True)
-    timeout = models.PositiveIntegerField(default=3)
+    timeout = models.PositiveIntegerField(default=3,
+        help_text="See <a href='/staff/help/general#timeouts'>here</a> for details."
+    )
     
     
     def __str__(self):
@@ -617,6 +620,7 @@ def get_iface(name):
     
     _iface_cache[name] = importlib.import_module(settings.IFACES[name][1])
     return _iface_cache[name]
+
 
 @receiver(post_save, sender=Lesson)
 def _lesson_saved(sender, instance, created, **kwargs):

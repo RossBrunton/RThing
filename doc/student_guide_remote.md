@@ -25,6 +25,6 @@ You can also click text with a grey background to copy it into the prompt.
 ### Keyboard Shortcuts ###
 Use the up and down keys to navigate through the previous commands in the prompt so you can edit them.
 
-Shift+enter will create a new line instead of submiting code.
+Shift+enter will create a new line instead of submitting code.
 
 Ctrl+enter will submit the code, even if the prompt is in multiline mode.

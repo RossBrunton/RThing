@@ -29,7 +29,7 @@ def _wrap_list(name, list_, indent):
     
 
 def encode(value, key="root", indent=0):
-    """Takes a python dict (as value) and optional root object name and indent, and returns the text representing it"""
+    """Takes a python dict (as value) and optional root dict name and indent, and returns the text representing it"""
     if isinstance(value, six.string_types) and "\n" in value:
         return _wrap("str", key, value, indent)
     elif isinstance(value, six.string_types):
@@ -44,7 +44,6 @@ def encode(value, key="root", indent=0):
         return u"{}none {}: None\n".format(" "*indent, key, value)
     else:
         try:
-            # I want dicts and lists to be last
             outs = ""
             for dkey, dvalue in six.iteritems(value):
                 outs += encode(dvalue, dkey, indent+indentation)

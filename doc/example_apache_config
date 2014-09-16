@@ -8,7 +8,7 @@
            allow from all
     </Directory>
     
-    Alias /media /var/www/rthing/media
+    Alias /media /var/www/rthing/media/
     <Directory /var/www/rthing/media>
         order deny,allow
         allow from all

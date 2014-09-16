@@ -52,8 +52,16 @@ User functions, such as password resets and a model that adds extra data to Djan
 Documentation
 
 ### ifaces ###
-Interfaces; each subfolder except `management` should be a language for this system to integrate with. The `management`
+Interfaces; each package except `management` should be a language for this system to integrate with. The `management`
 folder contains commands that the `manage.py` script uses.
+
+### media ##
+Uploads from lecturers that are visible from the web server. This folder should be served under `/media/` and must be
+writeable for the web user.
+
+### namespaces ###
+Directories for files uploaded into lessons for the code prompt. Each folder is a single namespace that will be the
+working directory for an R prompt that runs a task.
 
 ### sandboxes ###
 Sandboxes for each language.

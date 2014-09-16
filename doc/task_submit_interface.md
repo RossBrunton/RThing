@@ -5,7 +5,7 @@ When a task is submitted, this is sent via POST to a URL with the task ID in it 
 /task/submit/n):
 
 - `code` The code the user typed.
-- `mode` One of "answered", "skipped" or "revealed", if ommitted assumed to be "answered"
+- `mode` One of "answered", "skipped" or "revealed", if omitted assumed to be "answered"
 
 The server replies with a JSON object:
 
@@ -21,7 +21,7 @@ The modes are as follows:
 
 - `answered` Read the code provided, and treat it as an answer (the user typed and submitted some code).
 - `skipped` Skip this question and move onto the next task (the user clicked "skip").
-- `revealed` If allowable, reveal the answer to the student and continue onto the next task (the user clicked "reveal")
+- `revealed` If allowable, reveal the answer to the student and continue onto the next task (the user clicked "reveal").
 
 ### Fragments ###
 Fragments are basically elements to add to the document in specific places. When submitting a task the server returns an
@@ -52,6 +52,6 @@ Fragments are displayed in the following order in the main element:
 
 - `lesson-start` - Before all other elements except the messages, error and staff options.
 - `lesson-end` - After all elements.
-- `section-start` - Before any task which has an order with the first half equal to this' order and before lesson-end
-- `section-end` - Before any task which has an order with the first half greater to this' order and before lesson-end
+- `section-start` - Before any task which have an order with the first half equal to this' order and before lesson-end
+- `section-end` - Before any task which have an order with the first half greater to this' order and before lesson-end
 - `task` - Before any task which has a greater order, a section-end with the same order, or lesson-end

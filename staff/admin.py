@@ -7,11 +7,11 @@ from django.utils.translation import ugettext_lazy, ugettext as _
 class StaffAdminSite(admin.sites.AdminSite):
     """The admin site used for the system"""
     def __init__(self, *args, **kwargs):
-        """Sets site_title and site_header to "Rthing Administration", which does nothing in Django 1.6"""
+        """Sets site_title and site_header to "Administration", which does nothing in Django 1.6"""
         super(StaffAdminSite, self).__init__(*args, **kwargs)
         
-        self.site_title = "Rthing Administration"
-        self.site_header = "Rthing Administration"
+        self.site_title = "Administration"
+        self.site_header = "Administration"
 
 
 class CustomUserAdmin(UserAdmin):

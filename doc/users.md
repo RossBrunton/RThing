@@ -2,10 +2,9 @@
 
 ### Remote Logins ###
 The system supports authentication using `REMOTE_LOGIN` instead of using its own authentication. To enable this set
-`USE_REMOTE_USER` in settings.py to true. This does the following:
+`USE_REMOTE_USER` in settings.py to True. This does the following:
 - If the request has the `REMOTE_LOGIN` environment variable set, then the request will automatically log in as the user
-with the username `CLEAN_REMOTE(REMOTE_LOGIN)` for the function CLEAN_REMOTE in settings.py and the value of
-`REMOTE_LOGIN`.
+with the username `CLEAN_REMOTE(REMOTE_LOGIN)` for the function CLEAN_REMOTE in settings.py.
 - Users that don't exist are not created; the system refuses to log them in.
 - If the user has no (or invalid) credentials, the system will display `settings.REMOTE_DENIED_MESSAGE` instead of a log
  in prompt.

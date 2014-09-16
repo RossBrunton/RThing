@@ -8,7 +8,7 @@ To log in, navigate to the URL provided to you and you will be prompted for your
 
 **If you have not logged in yet, your password will be the same as your username**.
 
-If you cannot log in, please contact whoevever is in charge to ensure that you are added to the course.
+If you cannot log in, please contact whoever is in charge to ensure that you are added to the course.
 
 When you first log in, you will be prompted to change your password.
 
@@ -32,6 +32,6 @@ You can also click text with a grey background to copy it into the prompt.
 ### Keyboard Shortcuts ###
 Use the up and down keys to navigate through the previous commands in the prompt so you can edit them.
 
-Shift+enter will create a new line instead of submiting code.
+Shift+enter will create a new line instead of submitting code.
 
 Ctrl+enter will submit the code, even if the prompt is in multiline mode.

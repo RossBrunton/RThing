@@ -5,7 +5,7 @@ from random import choice
 def py2_str(c):
     """Wraps around a class, adding python2 support to __str__
     
-    If running under Python 2 then __str__ will discard non-ascii characters and __unicode__ will be added
+    If running under Python 2 then __str__ will discard non-ascii characters and __unicode__ will be added.
     """
     if six.PY2:
         old_str = c.__str__

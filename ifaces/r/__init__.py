@@ -300,7 +300,7 @@ _command.append("")
 
 _command.append("-r {}".format(os.path.join(settings.SANDBOX_DIR, "r")))
 
-# Rscript
+# R
 _command.append("/usr/bin/R")
 _command.append("--slave")
 _command.append("--vanilla")
