@@ -27,5 +27,5 @@ int main(int argc, char *argv[]) {
     
     execve("/usr/bin/timeout", argv, env);
     perror("execve");
-    return -1;
+    return 1;
 }

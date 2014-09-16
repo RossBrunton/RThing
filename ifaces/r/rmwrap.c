@@ -17,5 +17,5 @@ int main(int argc, char *argv[]) {
     
     execve("/bin/rm", argv, env);
     perror("execve");
-    return -1;
+    return 1;
 }
