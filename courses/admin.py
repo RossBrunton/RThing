@@ -63,11 +63,12 @@ def _task_field(attrs, field, required=False):
     # This uses the private meta attribute of the model, but there seems to be no other way
     try:
         return forms.CharField(
-            widget=widgets.Textarea(attrs=attrs), required=False,
+            widget=widgets.Textarea(attrs=attrs), required=required,
             help_text=Task._meta.get_field_by_name(field)[0].help_text
         )
     except:
-        return forms.CharField(widget=widgets.Textarea(attrs=attrs), required=False)
+        return forms.CharField(widget=widgets.Textarea(attrs=attrs), required=required)
+
 
 class TaskAdminForm(ModelForm):
     """A ModelForm for tasks to allow them to validate themselves"""
@@ -109,7 +110,6 @@ class TaskAdminForm(ModelForm):
     wrong_text = _task_field(_TEXTAREA_MED, "wrong_text")
     skip_text = _task_field(_TEXTAREA_MED, "skip_text")
     commentary = _task_field(_TEXTAREA_MED, "commentary")
-    
 
 class TaskInline(admin.StackedInline):
     """Inline for displaying tasks on section pages"""
@@ -129,6 +129,7 @@ class TaskInline(admin.StackedInline):
             ),
         }),
     )
+
 
 class SectionAdmin(OrderedModelAdmin, _CustomAdmin):
     """Custom admin for sections"""
