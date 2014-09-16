@@ -3,7 +3,7 @@
 
 {% block title %}Print Answers: {{ lesson.title }}{% endblock %}
 
-{% block content %}
+{% block body %}
 
 <h3>{{ lesson.title }} - {% if lesson.course.code %}{{ lesson.course.code }}: {% endif %}{{ lesson.course.title }}
 (Answers)</h3>
@@ -18,11 +18,8 @@
     {% for t in s.tasks.all %}
         <li>
             {{ t.description|lformat_print:lesson.pk }}
-            <div class='prompt'>{% spaceless %}
-                {% if t.visible_pre_code %}
-                {{ t.visible_pre_code }}<br/>{% endif %}
-                {{ t.model_answer }}<br/>
-            {% endspaceless %}</div>
+            <div class='prompt'>{% if t.visible_pre_code %}{{ t.visible_pre_code }}
+{% endif %}{{ t.model_answer }}</div>
             {{ t.commentary }}
         </li>
     {% endfor %}
