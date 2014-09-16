@@ -1,7 +1,10 @@
 ## RThing ##
+This is a web based teaching tool, initially designed for R (hence the unimaginitive name) in a similar style to things like codeacadamy. It uses Django (python) as a web framework, and interfaces with an existing instalation of R. It uses Django's admin interface to allow staff to create courses in a user friendly way.
+
+It was implemented as part of a summer internship by Ross Brunton, and was funded by Heriot-Watt university and The Quality Assurance Agency for Higher Education.
 
 ### Requirements ###
-This application only runs on Linux.
+This application only runs on a Linux server.
 
 This application runs on Python 3.3 or greater or Python 2.7 or greater, so one of those is required. Python 2.7 is
 recommended to avoid any headaches when setting up.

@@ -1,1 +1,0 @@
-It's a type of text file, read it using a text editor.

@@ -1,0 +1,1 @@
+*.md files are text files, you can read them using a text viewer (notepad, cat, etc) or use the markdown package to convert them to HTML. A proper readme file is in README.md
