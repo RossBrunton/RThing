@@ -10,9 +10,8 @@ Creates the sandbox for R by doing the following:
 - Downloads proot (http://proot.me)
 - Checks and asks to see if can gain priviliges.
 - If it can't, then exit now.
-- Change the group of all the files in the project to the web user
+- Change the group and owner of all the files in the project to the web user
 - Grant group read and execute for all files to the web user
-- Give group write for directories to the web user (so files can be created)
 - Change the owner of rmwrap and timeoutwrap to a sandbox user
 - Add the setuid bit to rmwrap and timeoutwrap
 """
@@ -58,7 +57,7 @@ class Command(BaseCommand):
             action='store_true',
             dest='no-suid',
             default=False,
-            help='Do not suid the prootwrap binary. Using this flag is a security issue',
+            help='Do not suid the prootwrap binary',
         ),
         
         make_option('--no-download',
@@ -74,7 +73,7 @@ class Command(BaseCommand):
             raise CommandError("--replace and --no-replace given")
         
         if options["suid"] and options["no-suid"]:
-            raise CommandError("--replace and --no-replace given")
+            raise CommandError("--suid and --no-suid given")
         
         self.stdout.write("Creating sandbox for R")
         
@@ -101,6 +100,7 @@ class Command(BaseCommand):
         llist = settings.R_FILES[:]
         
         # Get libraries for R
+        # Commented out, this doesn't really work
         """
         def addLib(lib):
             ldd = subprocess.Popen(
@@ -155,19 +155,21 @@ class Command(BaseCommand):
         # Dropping to a shell so I can optimise
         os.system("python -OO -m compileall '{}' >> /dev/null".format(settings.BASE_DIR))
         
-        # Priviliged stuff
+        # Privileged stuff
         root_commands = [
-            "chgrp -R {webuser} '{base}'".format(base=settings.BASE_DIR, webuser="{webuser}"),
+            "chown -R {webuser} '{base}'".format(base=settings.BASE_DIR, webuser="{webuser}"),
+            "chgrp -R {webgroup} '{base}'".format(base=settings.BASE_DIR, webgroup="{webgroup}"),
             "chmod -R g=rx '{}'".format(settings.BASE_DIR),
             "chown {nobody} '{prootwrap}'"\
                 .format(prootwrap="' '".join([path.join(bindir, b) for b in binaries]), nobody="{nobody}"),
-            "chmod u+s '{}'"\
-                .format("' '".join([path.join(bindir, b) for b in binaries]))
+            "chmod u+s '{}'".format("' '".join([path.join(bindir, b) for b in binaries]))
         ]
         
         if not options["suid"] and not options["no-suid"]:
             self.stdout.write("I need to do the following, but I need permission to do so:")
-            self.stdout.write("- Change the group of all the files in {} to the web user".format(settings.BASE_DIR))
+            self.stdout.write(
+                "- Change the user and group of all the files in {} to the web user".format(settings.BASE_DIR)
+            )
             self.stdout.write("- Grant group read and execute for all files to the web user")
             self.stdout.write("- Revoke group write for all files to the web user")
             self.stdout.write("- Change the owner of rmwrap and timeoutwrap to a sandbox user")
@@ -175,9 +177,9 @@ class Command(BaseCommand):
             self.stdout.write("The source of these files are in ifaces/r if you are worried")
         
         
-        def write_help(webuser, nobody):
+        def write_help(webuser, webgroup, nobody):
             for l in root_commands:
-                self.stdout.write(l.format(webuser=webuser, nobody=nobody))
+                self.stdout.write(l.format(webuser=webuser, webgroup=webgroup, nobody=nobody))
         
         # Sudo check
         sudo = True
@@ -190,18 +192,20 @@ class Command(BaseCommand):
             
             if i == "?":
                 self.stdout.write("The following commands will be ran:")
-                write_help("[webuser]", "[nobody]")
+                write_help("[webuser]", "[webgroup]", "[nobody]")
         
         if options["suid"] or i in ["y", "yes"]:
             webuser = input("What is the name/id of the webuser [www-data]? ")
             if not webuser: webuser = "www-data"
+            webgroup = input("What is the group name/id of the webuser [www-data]? ")
+            if not webgroup: webgroup = "www-data"
             nobody = input("What shall I use as the name/id as the sandbox user [nobody]? ")
             if not nobody: nobody = "nobody"
             
             if sudo:
                 for l in root_commands:
-                    self.stdout.write("sudo "+l.format(webuser=webuser, nobody=nobody))
-                    os.system("sudo "+l.format(webuser=webuser, nobody=nobody))
+                    self.stdout.write("sudo "+l.format(webuser=webuser, webgroup=webgroup, nobody=nobody))
+                    os.system("sudo "+l.format(webuser=webuser, webgroup=webgroup, nobody=nobody))
             
                 self.stdout.write("Files permissioned.")
                 self.stdout.write("Note that any change in permission in the future will likely break the setuid.")
@@ -209,7 +213,7 @@ class Command(BaseCommand):
                 self.stdout.write(
                     "Sudo was not found on your system; you need to run the following commands manually as root:"
                 )
-                write_help(webuser, nobody)
+                write_help(webuser, webgroup, nobody)
         else:
             self.stdout.write("The system should still run but it will not be sandboxed.")
             self.stdout.write("If someone escapes the sandbox, they can wreck havoc as the webuser.")
