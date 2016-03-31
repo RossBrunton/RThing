@@ -28,7 +28,7 @@ run on Nginx with Gunicorn. Due to the way mod_wsgi works, it will only run with
 into it. Usually this will be 2.7.
 
 An email server is required (for sending password resets), although you can use another server to send it. See
-settings.py.sample for config.
+settings_local.py.sample for config.
 
 For Debian; the packages (`python2.7` or `python3`), `python-virtualenv`, (`python2.7-dev` or `python3-dev`),
 `libmysqlclient-dev`, `memcached`, `gcc`, `apache2`, `libapache2-mod-wsgi`, `ghostscript`, `mysql-server` and `r-base`.
@@ -49,7 +49,7 @@ Activate the virtualenv:
 > source bin/activate
 
 Install packages:
-> pip install django django-ordered-model six
+> pip install django==1.7 django-ordered-model six
 > pip install mysqlclient # mysql only
 > pip install python-memcached # Python 2.*
 > pip install python3-memcached # Python 3.*
@@ -67,6 +67,9 @@ Perform database sync:
 
 Collect static files:
 > python manage.py collectstatic
+
+Create an initial user:
+> python manage.py createsuperuser
 
 Set up the sandbox:
 > python manage.py rsandbox
