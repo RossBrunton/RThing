@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django.shortcuts import render, redirect
 from django.views.decorators.http import require_POST
+from django.db.transaction import atomic
 
 from django.conf import settings
 
@@ -79,14 +80,15 @@ def edit(request):
         )
     
     elif request.method == "POST":
-        f = PasswordChangeForm(request.user, request.POST)
+        with atomic():
+            f = PasswordChangeForm(request.user, request.POST)
+            
+            if not f.is_valid():
+                return render(request, "users/edit.html", {"form":f})
         
-        if not f.is_valid():
-            return render(request, "users/edit.html", {"form":f})
-    
-        f.save()
-        
-        request.user.extra.password_forced = False
-        request.user.extra.save()
+            f.save()
+            
+            request.user.extra.password_forced = False
+            request.user.extra.save()
     
     return redirect("users:password_changed")

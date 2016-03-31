@@ -5,6 +5,7 @@ from django.core.exceptions import SuspiciousOperation
 from django.http import Http404
 from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
+from django.db.transaction import atomic
 
 from courses.models import Course, Lesson, Section, Task
 from staff.forms import NamespaceUploadForm, DeleteForm
@@ -49,24 +50,25 @@ def add_users(request, course):
     course = get_object_or_404(Course, slug=course)
     
     if request.method == "POST":
-        if not "users" in request.POST:
-            raise SuspiciousOperation
-        
-        users = request.POST.get("users", "").split("\n")
-        
-        course.users.clear()
-        
-        for user in users:
-            u = user.strip().split(" ")[0]
+        with atomic():
+            if not "users" in request.POST:
+                raise SuspiciousOperation
             
-            if u and re.match("^[a-zA-Z0-9@.+_-]+$", u) is not None:
-                user_obj = None
-                try:
-                    user_obj = User.objects.get(username=u)
-                except User.DoesNotExist:
-                    user_obj = User.objects.create_user(u, u"{}@{}".format(u, settings.EMAIL_DOMAIN), u)
+            users = request.POST.get("users", "").split("\n")
+            
+            course.users.clear()
+            
+            for user in users:
+                u = user.strip().split(" ")[0]
                 
-                course.users.add(user_obj)
+                if u and re.match("^[a-zA-Z0-9@.+_-]+$", u) is not None:
+                    user_obj = None
+                    try:
+                        user_obj = User.objects.get(username=u)
+                    except User.DoesNotExist:
+                        user_obj = User.objects.create_user(u, u"{}@{}".format(u, settings.EMAIL_DOMAIN), u)
+                    
+                    course.users.add(user_obj)
             
         return redirect("courses:course", course=course.slug)
     

@@ -7,6 +7,7 @@ from django.views.decorators.http import require_POST
 from django.contrib.auth.models import User
 from django.core import serializers
 from django.forms import ValidationError
+from django.db.transaction import atomic
 
 from courses.models import Course, Lesson, Section, Task
 from export.parse import encode, decode
@@ -39,23 +40,24 @@ def import_(request):
         ctx["form"] = ImportForm()
         return render(request, "export/import.html", ctx)
     else:
-        # Try to import the course
-        ctx["form"] = ImportForm(request.POST)
-        
-        if not ctx["form"].is_valid():
-            # Form invalid? Send it right back to the user
-            return render(request, "export/import.html", ctx)
-        
-        try:
-            # Attempt decode
-            data = decode(ctx["form"].cleaned_data["text"].replace("\r\n", "\n"))
+        with atomic():
+            # Try to import the course
+            ctx["form"] = ImportForm(request.POST)
             
-            if data is None:
-                raise RuntimeError("No data could be extracted from the import")
+            if not ctx["form"].is_valid():
+                # Form invalid? Send it right back to the user
+                return render(request, "export/import.html", ctx)
             
-            new = Course.from_dict(data, ctx["form"].cleaned_data["mode"], ctx["form"].cleaned_data["user_mode"])
-            return redirect(new.get_absolute_url())
-        except RuntimeError as e:
-            # Any error? Add it as an error and then show the form again
-            ctx["import_error"] = "Sorry, that failed to import, the error was: {}".format(e)
-            return render(request, "export/import.html", ctx)
+            try:
+                # Attempt decode
+                data = decode(ctx["form"].cleaned_data["text"].replace("\r\n", "\n"))
+                
+                if data is None:
+                    raise RuntimeError("No data could be extracted from the import")
+                
+                new = Course.from_dict(data, ctx["form"].cleaned_data["mode"], ctx["form"].cleaned_data["user_mode"])
+                return redirect(new.get_absolute_url())
+            except RuntimeError as e:
+                # Any error? Add it as an error and then show the form again
+                ctx["import_error"] = "Sorry, that failed to import, the error was: {}".format(e)
+                return render(request, "export/import.html", ctx)
